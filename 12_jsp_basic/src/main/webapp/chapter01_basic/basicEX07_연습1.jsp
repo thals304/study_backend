@@ -1,8 +1,12 @@
 <%@page import="java.util.Random"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<!-- 24.04.08 time 14:40-14:45
+<!-- 24.04.08 time 14:40-14:45 15:37-15:39
 	today 소감문
+	처음에는 그냥 글만 쓰고 체크 박스를 만드라는 문제인 줄 알았으나
+	문제 설명처럼 조건을 나눠서 화면에 보이도록 하는 것이었다.
+	뭔가 앞에 내가 자신없는 js, jquery를 하다가 자바를 하니까 아직은
+	쉽게 느껴진다.
 	
  -->
 <html>
@@ -41,7 +45,9 @@
      }
      else if (rNum == 2){
      %>
-     
+     <input type="radio" name="subject" value="HTML5">HTML5
+     <input type="radio" name="subject" value="CSS3">CSS3
+     <input type="radio" name="subject" value="JAVASCRIPT">JAVASCRIPT
      <%	 
      }
      %>
