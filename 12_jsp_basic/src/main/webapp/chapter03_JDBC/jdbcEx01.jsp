@@ -52,8 +52,6 @@
 			conn.close();
 		}
 	   
-		
-	    
 	%>
 	
 </body>
