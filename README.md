@@ -253,3 +253,317 @@
     </body>
     </html>
     ```
+
+- **JDBC (Java DataBase Connectivity) (mysql <> java)**
+    - **데이터 베이스 연동 방법**
+        - (중요)mysql-connector-j-x.x.xx.jar파일을 WEB-INF 폴더의 lib 폴더에 넣는다.
+        - Class.forName("com.mysql.cj.jdbc.Driver"); 및 연결 정보를 작성한다.(url , id , password)
+        - DriverManager의 getConnection(url , id , password) 메소드를 사용하여
+        데이터베이스 연결 정보가 저장되어있는 Connection 객체를 생성한다.
+    
+    ```html
+    <%@page import="java.sql.DriverManager"%>
+    <%@page import="java.sql.Connection"%>
+    <%@ page language="java" contentType="text/html; charset=UTF-8"
+        pageEncoding="UTF-8"%>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <title>Java DataBase Connectivity</title>
+    </head>
+    <body>
+    
+    	<%
+    	    // 데이터베이스를 연결하기 위한 객체
+    	    Connection conn = null; // import : java.sql.Connection
+    	    
+    	    try{
+    			
+    		    // 연결드라이버 생성 forName
+    		    Class.forName("com.mysql.cj.jdbc.Driver");
+    		    
+    		    // database 연결 정보 > "jdbc:mysql://ip:port/databasename?option"
+    		    String url = "jdbc:mysql://localhost:3306/JDBC_EX?serverTimezone=Asia/Seoul";
+    		 	
+    		    // database 연결 계정
+    		    String user = "root";
+    		    
+    		    // database 연결 비밀번호
+    		    String password = "0000";
+    		    
+    		    // 데이터 베이스에 연결
+    		    conn = DriverManager.getConnection(url,user,password); // import : java.sql.DriverManager
+    	    	System.out.println("연결에 성공하였습니다.");
+    	    }
+    		catch(Exception e){
+    			e.printStackTrace();
+    			System.out.println("연결에 실패하였습니다");
+    		}
+    		finally {
+    			// 데이터 베이스 연결 종료
+    			conn.close();
+    		}	
+    	    
+    	%>
+    	
+    </body>
+    </html>
+    ```
+    
+    - **SELECT 예시**
+    
+    ```html
+    <%@page import="java.util.Date"%>
+    <%@page import="java.sql.ResultSet"%>
+    <%@page import="java.sql.DriverManager"%>
+    <%@page import="java.sql.PreparedStatement"%>
+    <%@page import="java.sql.Connection"%>
+    <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <title>select 예시</title>
+    </head>
+    <body>
+    	<%
+    		// 데이터 베이스를 연결하기 위한 객체
+    		Connection conn = null;        // import : java.sql.Connection
+    	
+    		// 쿼리문을 실행하기 위한 객체
+    		PreparedStatement pstmt = null; // import : java.sql.PreparedStatement
+    		
+    		// select 쿼리의 결과를 저장할 객체
+    		ResultSet rs = null;            // import : java.sql.ResultSet
+    		
+    		try{
+    			Class.forName("com.mysql.cj.jdbc.Driver");
+    			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/JDBC_EX?serverTimezone=Asia/Seoul", "root", "0000");
+    			
+    			// 선처리문 쿼리 작성
+    			pstmt = conn.prepareStatement("SELECT * FROM PRODUCT");
+    			
+    			// executeQuery(); : select문 실행 메서드
+    			rs = pstmt.executeQuery();
+    			
+    			/*
+    			
+    			# db의 컬럼명을 가져 오는 2가지 방법
+    			
+    				1) rs.get자료형메서드("컬럼명");
+    				  
+    					ex) 
+    						rs.getString("PRODUCT_CD"); 
+    						rs.getInt("PRODUCT_PRICE");
+    						rs.getDate("ENROLL_DT");
+    				
+    						
+    				2) rs.get자료형메서드(index);
+    					
+    					ex) 
+    						rs.getString(1);
+    						rs.getInt(2);
+    						rs.getDate(3);
+    				
+    					- 유지보수 및 가독성 향상을 위해서 컬럼명지정 방식을 권장한다.
+    					- index가 1부터 시작되는 점을 유의해야 한다.
+    			
+    		*/
+    			
+    			while(rs.next()){ // rs.next() : 다음 결과물이 있으면 true를 반환한다.
+    				
+    				  String productCd = rs.getString("PRODUCT_CD");  // rs.getString(1);
+    			    String productNm = rs.getString("PRODUCT_NM");  // rs.getString(2);
+    			    int price = rs.getInt("PRICE");                 // rs.getInt(3);
+    			    Date regDt = rs.getDate("REG_DT");               // rs.getDate(4); 
+    			
+    				System.out.println("productCd : " + productCd);
+    				System.out.println("productNm : " + productNm);
+    				System.out.println("price : " + price);
+    				System.out.println("date : " + regDt);
+    				System.out.println();
+    			}
+    			
+    		}
+    		catch (Exception e){
+    			e.printStackTrace();
+    		}
+    		finally {
+    			// 데이터베이스 연결정보 해지
+    			rs.close();
+    			pstmt.close();
+    			conn.close();
+    			
+    		}
+    	%>
+    </body>
+    </html>
+    ```
+    
+    - **INSERT 예시**
+    
+    ```html
+    import="java.sql.DriverManager"%>
+    <%@page import="java.sql.PreparedStatement"%>
+    <%@page import="java.sql.Connection"%>
+    <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <title>Insert 예시</title>
+    </head>
+    <body>
+    	<%
+    		Connection conn = null;
+    	
+    		PreparedStatement pstmt = null;
+    		
+    		try{
+    			Class.forName("com.mysql.cj.jdbc.Driver");
+    			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/JDBC_EX?serverTimezone=Asia/Seoul", "root", "0000");
+    			
+    		/*
+    		
+    			# prepareStatement
+    			
+    			- 원래 statement객체로 사용하였으나 SQL Injection 공격에 대응하는 보안 기법으로 prepareStatement를 사용한다.
+    			
+    			- 우선 ?로 쿼리문의 파라메타 형식을 만들고 setter 메서드로 데이터를 대입하여 쿼리문을 완성한다.
+    			   pstmt.set자료형(인덱스, 값);
+    			
+    			- 인덱스는 1부터 시작한다.
+    			
+    			Ex)
+    			pstmt.setInt(index , value);     // 정수 타입 데이터 적용 메서드
+    			pstmt.setString(index , value);  // 문자열 타입 데이터 적용 메서드
+    			pstmt.setDate(index , value);  	 // 날짜 타입 데이터 적용 메서드
+    		
+    		*/
+    			// ? 기능 : sql 인젝션(injection)을 디펜스함
+    			String sql = "INSERT INTO PRODUCT VALUES(? , ? , ? , NOW())"; 
+    			
+    			// 선처리문 쿼리 작성
+    			pstmt = conn.prepareStatement(sql);
+    			
+    			// 선처리문 쿼리 완성
+    			pstmt.setString(1, "P10016");      // INSERT INTO PRODUCT VALUES("P10016" , ? , ? , NOW())
+    			pstmt.setString(2, "게이밍의자1");  // INSERT INTO PRODUCT VALUES("P10016" , "게이밍의자" , ? , NOW())
+    			pstmt.setInt(3, 185000);           // INSERT INTO PRODUCT VALUES("P10016" , "게이밍의자" , 185000 , NOW())
+    			
+    			/*
+    			  - 화면에서 전송된 데이터를 저장
+    			  pstmt.setString(1, request.getParameter("전송된 데이터"));
+    			  pstmt.setString(2, request.getParameter("전송된 데이터"));
+    			  pstmt.setInt(3, Integer.parseInt(getParameter("전송된 데이터")));
+    			
+    			*/
+    			
+    			// executeUpdate(); : insert , update, delete 실행 메서드
+    			pstmt.executeUpdate();
+    			
+    		}
+    		catch(Exception e){
+    			e.printStackTrace();
+    		}
+    		finally {
+    			pstmt.close();
+    			conn.close();
+    		}
+    	%>
+    </body>
+    </html>
+    ```
+    
+    - **UPDATE 예시**
+    
+    ```html
+    <%@page import="java.sql.DriverManager"%>
+    <%@page import="java.sql.PreparedStatement"%>
+    <%@page import="java.sql.Connection"%>
+    <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <title>Update 예시</title>
+    </head>
+    <body>
+    	<%
+    		Connection conn = null;
+    	
+    		PreparedStatement pstmt = null;
+    		
+    		try{
+    			Class.forName("com.mysql.cj.jdbc.Driver");
+    			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/JDBC_EX?serverTimezone=Asia/Seoul", "root", "0000");
+    			
+    			// UPDATE PRODUCT SET WHERE 띄어쓰기 주의!
+    			String sql = "UPDATE PRODUCT ";  
+    			       sql += "SET PRODUCT_NM = ? ,";
+    			       sql +=     "PRICE = ? ";  
+    			       sql += "WHERE PRODUCT_CD = ? ";
+    			
+    			pstmt = conn.prepareStatement(sql);
+    			
+    			pstmt.setString(1, "수정된 게이밍의자");
+    			pstmt.setInt(2, 160000);
+    			pstmt.setString(3, "P10016");
+    			
+    			pstmt.executeUpdate();
+    		}
+    		catch(Exception e){
+    			e.printStackTrace();
+    		}
+    		finally {
+    			pstmt.close();
+    			conn.close();
+    		}
+    	%>
+    
+    </body>
+    </html>
+    ```
+    
+    - **DELETE 예시**
+    
+    ```html
+    <%@page import="java.sql.DriverManager"%>
+    <%@page import="java.sql.PreparedStatement"%>
+    <%@page import="java.sql.Connection"%>
+    <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <title>Delete 예시</title>
+    </head>
+    <body>
+    
+    	<%
+    		Connection conn = null;
+    	
+    		PreparedStatement pstmt = null;
+    		
+    		try{
+    			Class.forName("com.mysql.cj.jdbc.Driver");
+    			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/JDBC_EX?serverTimezone=Asia/Seoul", "root", "0000");
+    			
+    			pstmt = conn.prepareStatement("DELETE FROM PRODUCT WHERE PRODUCT_CD = 'P10017'");
+    			
+    			pstmt.executeUpdate();
+    			
+    		}
+    		catch(Exception e){
+    			e.printStackTrace();
+    		}
+    		finally {
+    			pstmt.close();
+    			conn.close();
+    		}
+    	%>	
+    	
+    </body>
+    </html>
+    ```
