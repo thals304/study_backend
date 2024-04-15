@@ -746,3 +746,391 @@
     </body>
     </html>
     ```
+
+- **EL (Expression Language)**
+    - 자바코드를 사용하지 않고 간편하게 출력을 지원하기 위한 방법이다.
+    - 자바의 문법과 html의 태그요소들이 섞여있기에 프론트와 백앤드의 효율적인 업무 분리 작업을 위하여 나온 표현 방법이 EL이다.
+    - $ 와 {}를 사용하여 표현한다.
+    - **[ 형식 ]**
+        
+        **${표현1.표현2}     : $ 와 {}를 사용하여 표현한다.**
+        
+        **[표현1 상세]**
+        
+        **${param.} 		      : 파라미터값 접근**
+        
+        **${paramValues.} 	      : 파라미터값 배열로 접근**
+        
+        **${sessionScope.}	      : 세션 Scope에 접근**
+        
+        **${pageScope.}		      : 페이지 Scope에 접근**
+        
+        **${requestScope.} 	      : 리퀘스트 Scope에 접근**
+        
+        **${applicationScope.}    : 어플리케이션 Scope에 접근**
+        
+        **[표현2 상세]**
+        
+        **form형식의 name값 , 세션 및 쿠키의 id 값 등등**
+        
+        [ 예시 ] 
+        
+        ${param.contact}   : 파라메타로 전달되는 값 중에 contact속성
+        
+        ${param.grade}     : 파라메타로 전달되는 값 중에 grade속성
+        
+        ${sessionScope.id} : session중에 id속성
+        
+        ${requestScope.name} : request요청중에 name속성
+        
+        ${name} : request요청중에 name속성(생략가능)
+        
+    
+    ```html
+    
+    import java.io.IOException;
+    
+    import javax.servlet.RequestDispatcher;
+    import javax.servlet.ServletException;
+    import javax.servlet.annotation.WebServlet;
+    import javax.servlet.http.HttpServlet;
+    import javax.servlet.http.HttpServletRequest;
+    import javax.servlet.http.HttpServletResponse;
+    
+    @WebServlet("/elEx01")
+    public class ElEx01 extends HttpServlet {
+    	private static final long serialVersionUID = 1L;
+       
+    	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    		
+    		request.setAttribute("name", "Tim");
+    		request.setAttribute("num1", 12);
+    		request.setAttribute("num2", 3);
+    		
+    		// 배열형 데이터 타입 (3가지 경우)
+    		ArrayList<String> list1 = null;						// 생성 x
+    		ArrayList<String> list2 = new ArrayList<String>();	// 생성 o , 데이터 x
+    		ArrayList<String> list3 = new ArrayList<String>();  // 생성 o , 데이터 o
+    		list3.add("data1");
+    		list3.add("data2");
+    		list3.add("data3");
+    		
+    		request.setAttribute("list1", list1);
+    		request.setAttribute("list2", list2);
+    		request.setAttribute("list3", list3);
+    		
+    		// Spring Ver
+    		// model.addAttribute("list3" , list3); // 주로 사용
+    		// mv.addObject("list3" , list3);
+    		
+    		RequestDispatcher dis = request.getRequestDispatcher("chapter05_el_jstl/elEx01.jsp");
+    		dis.forward(request, response);
+    
+    	}
+    
+    }
+    ```
+    
+    ```html
+    <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <title>EL 기초</title>
+    </head>
+    <body>
+    
+    	<h3>자바의 변수 표기</h3>
+    	<p>${name }</p>
+    	<p>${num1 }</p>
+    	<p>${num2 }</p>
+    	<hr/>
+    	
+    	<h3>산술 연산자</h3>
+    	<p>${num1 + num2 }</p>
+    	<p>${num1 - num2 }</p>
+    	<p>${num1 * num2 }</p>
+    	<p>${num1 / num2 } , ${num1 div num2 }</p>
+    	<p>${num1 % num2 } , ${num1 mod num2 }</p>
+    	<hr/>
+    	
+    	<h3>관계 연산자</h3>
+    	<p>${num1 > num2 }  , ${num1 gt num2 }</p> <!-- Greater Than -->
+    	<p>${num1 >= num2 } , ${num1 ge num2 }</p> <!-- Greater than or Equal to -->
+    	<p>${num1 < num2 }  , ${num1 lt num2 }</p> <!-- Less Than -->
+    	<p>${num1 <= num2 } , ${num1 le num2 }</p> <!-- Less than or Equal to -->
+    	<p>${num1 == num2 } , ${num1 eq num2 }</p> <!-- EQual -->
+    	<p>${num1 != num2 } , ${num1 ne num2 }</p> <!-- Not Equal -->
+    	<hr/>
+    	
+    	<h3>논리 연산자</h3>
+    	<p>${num1 > num2 && name == "Tim"} , ${num1 > num2 and name == "Tim"}</p>
+    	<p>${num1 > num2 || name == "Tim"} , ${num1 > num2 or name == "Tim"}</p>
+    	<p>${!(name == "Tim")} 			   , ${not(name == "Tim")}</p>
+    	<hr/>
+    	
+    	<h3>배열형 데이터 타입</h3>
+    	<p>${list1 == null}</p>
+    	<p>${empty list2}</p>
+    	<p>${not empty list3}</p>
+    </body>
+    </html>
+    ```
+    
+    - **JSTL (JSP Standard Tag Library)**
+        - JSP 개발을 단순화하기 위한 태그 library
+        - jstl-x.x.jar파일을 lib폴더에 넣어주고 사용한다.
+        - <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 태그라이브러리를 선언해주고 jstl core구문을 사용한다.
+        - **변수**
+            - **변수 생성**
+                - **[형식]**
+                    
+                    **<c:set var="변수 이름" value="값"/>**
+                    
+                - 선언된 변수를 EL 형식 ${변수이름}으로 사용 가능하지만 스크립트 표현식으로 사용할 수 없다.
+            - **변수 삭제**
+                - **[형식]**
+                    
+                    **<c:remove var="변수이름" />**	
+                    
+            - **데이터 출력**
+                - **[형식]**
+                    
+                    **<c:out value="" />**
+                    
+            
+            ```html
+            <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+            <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+            <html>
+            <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+            <title>JSTL 기본 문법</title>
+            </head>
+            <body>
+            
+            	<h3>1,2,3) 변수 생성 , 삭제 , 출력</h3>
+            	<%-- 변수 선언 방법 2가지 --%>
+            	<% String testVar = "데이터"; %>
+            	<c:set var="예시 변수명" value="예시 데이터"/>
+            	
+            	<c:set var="name1" value="팀 버너스 리"/>
+            	<c:set var="name2" value="Tim Berners Lee"/>
+            	
+            	<%-- 출력 방법 2가지 --%>
+            	<p>${name1 }</p>
+            	<p><c:out value="${name2 }"/></p>
+            	<hr/>
+            	
+            	<c:remove var="name1"/>
+            	<c:remove var="name2"/>
+            	<p>${name1 }</p>
+            	<p><c:out value="${name2 }"/></p>
+            	
+            	
+            </body>
+            </html>
+            ```
+            
+        - **조건문**
+            - **if 문**
+                - [형식]
+                    
+                    **<c:if test="조건식"></c:if>** 
+                    
+                - 자바의 if문 기능을 한다.
+                - test값의 조건식이 true면 실행된다.
+                - EL로 조건식을 사용한다.
+            - **when ~ otherwise 문**
+                - **[형식]**
+                    
+                    **<c:choose>** 	> 특정한 기능은 하지 않지만 문법적으로 사용해야 된다.
+                    
+                         **<c:when test="조건식"> </c:when>** > 조건식이 참일 경우 수행된다. ****
+                    
+                         **<c:otherwise> </c:otherwise>**        > 조건식이 거짓일 경우 수행된다.
+                    **</c:choose>**
+                    
+                - 자바의 if ~ else문 기능을 한다.
+            - **when , when ~ otherwise문**
+                - **[형식]**
+                    
+                    **<c:choose>** 	 > 특정한 기능은 하지 않지만 문법적으로 사용해야 된다.
+                    
+                           **<c:when test="조건식"></c:when>** > 조건식이 참일 경우 수행된다.
+                    
+                           **<c:when test="조건식"></c:when>** 
+                    
+                           **<c:when test="조건식"></c:when>**
+                    
+                           **<c:otherwise></c:otherwise>**
+                    
+                    **</c:choose>**
+                    
+                - 자바의 if ~ else if문 기능을 한다.
+                - 다중 택일로서 특정 구문이 실행되면 이하 구문은 실행되지 않는다.
+            
+            ```html
+            <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+            <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+            <!DOCTYPE html>
+            <html>
+            <head>
+            <meta charset="UTF-8">
+            <title>분기문</title>
+            </head>	 
+            <body>
+            
+            	<h3>1) if 문 </h3>
+            	<c:set var="grade" value="85"/> <%-- 85는 문자열 취급 --%>
+            	 <%-- 숫자와 비교할 때는 숫자로 알아서 바뀌지만 두 변수의 비교에서는 문자열끼리 비교로 바뀌기 때문에 주의 --%>
+            	<c:if test="${grade >= 90}">
+            		<p>A 학점</p>
+            	</c:if>
+            	<c:if test="${grade >= 80}">
+            		<p>B 학점</p>
+            	</c:if>
+            	<c:if test="${grade >= 70}">
+            		<p>C 학점</p>
+            	</c:if>
+            	
+            	<hr/>
+            	
+            	<%-- if - else문 --%>
+            	<h3>2) when ~ otherwise 문  </h3>
+            	<c:choose>
+            		<c:when test="${grade ge 90}">
+            			<p>합격</p>
+            		</c:when>
+            		<c:otherwise>
+            			<p>불합격</p>
+            		</c:otherwise>
+            	</c:choose>
+            
+            	<hr/>
+            	
+            	<%-- if - else if - else 문 --%>
+            	<h3>3) when ~ when ~ otherwise 문  </h3>
+            	<c:choose>
+            		<c:when test="${grade ge 90}">
+            			<p>A 학점</p>
+            		</c:when>
+            		<c:when test="${grade ge 80 }">
+            			<p>B 학점</p>
+            		</c:when>
+            		<c:when test="${grade ge 70 }">
+            			<p>C 학점</p>
+            		</c:when>
+            		<c:otherwise>
+            			<p>D학점</p>
+            		</c:otherwise>
+            	</c:choose>
+            	
+            </body>
+            </html>
+            ```
+            
+        - **반복문**
+            - **forEach문 1**
+                - **[형식]**
+                    
+                    **<c:forEach var="임시변수명" begin="시작" end="끝" step="증감식"></c:forEach>**
+                    
+                - java의 for문 기능을 한다.
+                - var속성에 임시변수명을 작성하고 begin , end속성으로 반복 횟수를 지정한다.
+                - (옵션)step을 통해서 증감식을 지정할 수 있다.
+            - **forEach문2**
+                - **[형식]**
+                    
+                    **<c:forEach var="임시변수명" items=${배열이름}" varStatus="변수명">	</c:forEach>**
+                    
+                - 자바의 forEach문 기능을 한다.
+                - items 속성에 배열 및 어레이리스트등 반복가능한 객체를 지정한다.
+                - **[ varStatus 속성값 ]**
+                    - **${변수명.current}** : 현재 for문의 해당하는 값
+                    - **${변수명.index}**   : 0부터의 순서
+                    - **${변수명.count}**   : 1부터의 순서
+                    - **${변수명.first}**   : 첫 번째인지 여부
+                    - **${변수명.last}**    : 마지막인지 여부
+                    - **${변수명.begin}**   : for문의 시작 번호
+                    - **${변수명.end}**     : for문의 끝 번호
+                    - **${변수명.step}**    : for문의 증가값
+            
+            ```html
+            <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+            <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+            <!DOCTYPE html>
+            <html>
+            <head>
+            <meta charset="UTF-8">
+            <title>반복문</title>
+            </head>
+            <body>
+            
+            	 <h3>1) forEach문</h3>
+            	 
+            	 <c:forEach var="i" begin="1" end="10">
+            			${i } 
+             	 </c:forEach>
+             	 
+             	 <hr/>
+             	 
+             	 <%-- 
+            	
+            		- JSTL 코드는 JSP 주석으로 처리해야 한다.
+            		- forEach는 내림차순이 적용되지 않는다.
+            		
+            		<c:forEach var="i"  begin="10" end="1">
+            			${i } 
+            		</c:forEach>
+            		
+            	--%>
+             	 
+             	  <c:forEach var="i" begin="1" end="10" step="${i = i + 2 }">
+            			${i } 
+             	  </c:forEach>
+             	  
+             	  <h3>2) forEach문</h3>
+             	  
+             	  <c:forEach var="data" items="${datas }" varStatus="i">
+             	  		 <p id="id_data${i.index}" class="id_class${i.index}"> ${i.index} /${i.count} /${i.first} /${data }</p>
+             	  </c:forEach>
+             	  <hr/>
+             	  
+             	  <table border="1">
+            		<tr>
+            			<th>상품코드</th>
+            			<th>상품이름</th>
+            			<th>부서코드</th>
+            			<th>부서이름</th>
+            			<th>담당자코드</th>
+            			<th>담당자이름</th>
+            		</tr>
+            		<c:choose>
+            			<c:when test="${not empty productList }">
+            				<c:forEach var="productDTO" items="${productList }">
+            					<tr>
+            						<td>${productDTO.pdCd }</td>
+            						<td>${productDTO.pdNm }</td>
+            						<td>${productDTO.deptCd }</td>
+            						<td>${productDTO.deptNm }</td>
+            						<td>${productDTO.mgrCd }</td>
+            						<td>${productDTO.mgrNm }</td>
+            					</tr>
+            				</c:forEach>
+            			</c:when>
+            			<c:otherwise>
+            				<tr align="center">
+            					<td colspan="6">조회된 데이터가 없습니다.</td>
+            				</tr>
+            			</c:otherwise>
+            		</c:choose>
+            		
+            	</table>
+             	  
+             	  
+             	  
+            </body>
+            </html>
+            ```
