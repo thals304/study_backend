@@ -74,7 +74,10 @@
 	<p>${!(name == "Tim")} 			   , ${not(name == "Tim")}</p>
 	<hr/>
 	
-	<h3>배열형 데이터 타입</h3>
+	<h3>배열형 데이터 타입(배열이 null인지 아닌지 true/false로 출력) > 배열 출력은 jstl로 뒤에서 배움</h3>
+	<p>${list1 == null}</p>
+	<p>${empty list2}</p>
+	<p>${not empty list3}</p>
 
 </body>
 </html>
