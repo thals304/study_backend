@@ -1134,3 +1134,225 @@
             </body>
             </html>
             ```
+
+       - **fmt (format)**
+          - Formatting 태그로 포맷에 관련된 태그이다.
+          - <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %> 를 선언한 뒤에 사용한다.
+          - **[ Attribute ]**
+            
+              **requestEncoding** : value 속성을 통해 지정한 문자 셋으로 변경
+            
+              **setLocale** 		: 통화 기호나 시간 대역을 설정한 지역에 맞게 표시
+            
+              **timeZone** 		: 특정 영역의 시간대를 설정
+            
+              **setTimeZone** 	: 특정 영역의 시간대 설정 정보를 변수에 저장
+            
+              **bundle basename** : 속성에 지정된 properties 파일을 읽어옴
+            
+              **setBundle** 	: properties 파일을 읽어와 다양한 영역에서 참조할 수 있게 설정
+            
+              **message bundle**  : 태그를 통해 저장된 key로 value를 가져온다
+            
+              **formatNumber**    : 숫자를 특정 양식에 맞추어 출력
+            
+              **parseNumber**     : 문자열을 숫자 형식으로 변환
+            
+              **formatDate**      : 날자 정보를 가진 객체(Date)를 특정 형식으로 변환하여 출력
+            
+              **parseDate**       : 문자열을 날짜 형식으로 변환하여 출력
+            
+        
+            ```html
+            <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+            <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+            <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+            <!DOCTYPE html>
+            <html>
+            <head>
+            <meta charset="UTF-8">
+            <title>JSTL 포맷</title>
+            </head>
+            <body>
+            
+            	<h3>데이터 형변환</h3>
+            	
+            	<c:set var="num1" value="7"/>
+            	<c:set var="num2" value="12"/>
+            	
+            	<fmt:parseNumber var="num1" value="${num1 }" />
+            	<fmt:parseNumber var="num2" value="${num2 }" />
+            		
+            	<c:if test="${num1 < num2 }">
+            			<p>${num2 }(이)가 크다.</p>
+            	</c:if>
+            	
+            	<h3>날짜 형식</h3>
+            	<p>${now }</p> <!-- 형식 x-->
+            	<p><fmt:formatDate value="${now }"/></p>
+            	<p><fmt:formatDate value="${now }" pattern="yyyy-MM-dd"/></p>
+            	<p><fmt:formatDate value="${now }" pattern="yyyy년MM월dd일 hh시mm분ss초"/></p>
+            	
+            	
+            	<h3>숫자 형식</h3>
+            	<p>${nData }</p> <!-- 형식 x-->
+            	<p><fmt:formatNumber value="${nData }"/></p> <!-- 세자리마다 , 표현 -->
+            	<p><fmt:formatNumber value="${nData }" pattern=".0"/></p> <!-- 소수점 1자리 표현 -->
+            	<p><fmt:formatNumber value="${nData }" pattern=".00"/></p> <!-- 소수점 2자리 표현 -->
+            	<p><fmt:formatNumber value="${nData }" pattern="#,##.00"/></p> <!-- 세자리마다 , 표현 / 소수점 1자리 표현 -->
+            	
+            </body>
+            </html>
+            ```
+            
+            ```html
+            import java.io.IOException;
+            import java.util.Date;
+            
+            import javax.servlet.RequestDispatcher;
+            import javax.servlet.ServletException;
+            import javax.servlet.annotation.WebServlet;
+            import javax.servlet.http.HttpServlet;
+            import javax.servlet.http.HttpServletRequest;
+            import javax.servlet.http.HttpServletResponse;
+            
+            @WebServlet("/jstlEx04")
+            public class JstlEx04 extends HttpServlet {
+            	
+            	private static final long serialVersionUID = 1L;
+                   
+            	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            		
+            		request.setAttribute("nData", 100000000.12345);
+            		request.setAttribute("now" , new Date());
+            	
+            		RequestDispatcher dis = request.getRequestDispatcher("chapter05_el_jstl/jstlEx04.jsp"); 
+            		dis.forward(request, response);
+            		
+            	}
+            
+            }
+            ```
+        
+      - **fn (function)**
+          - function 태그로 문자열 함수에 관련된 태그이다.
+          - <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> 태그라이브러리를 선언한 뒤 사용한다.
+        
+          **fn:contains(A, B)** : 문자열 A에 문자열B가 포함되어 있는지 확인
+        
+          **fn:containsIgnoreCase(A, B)** : 대소문자 구분없이 A에 B가 포함되어 있는지 확인
+        
+          **fn:endWith(A, B)**  : 문자열 A의 끝이 B로 끝나는지 확인
+        
+          **fn:escapeXml(A)**  : A가 XML과 HTML에서 정의된 문자열이 포함되어 있을 경우, 엔티티 코드로 변환
+        
+          **fn:indexOf(A, B)**  : 문자열 A에서 B가 처음으로 위치하는 index를 반환
+        
+          **fn:join(A[], B)**  : 문자열 배열A를 구분자를 붙여 하나의 문자열로 변환
+        
+          **fn:length(A)**  : Collection 객체(List,ArrayList)의 전체 길이를 반환
+        
+          **fn:replace(A, B, C)**  : 문자열 A에서 B에 해당하는 문자를 찾아 C로 변환
+        
+          **fn:split(A, B)**  : A에서 B에서 지정한 문자열로 나눠 배열로 반환
+        
+          **fn:startsWith(A, B)**  : 문자열 A의 시작이 B로 시작하는지 확인
+        
+          **fn:substring(A, B, C)**  : A에서 index 번호 B부터 C까지 해당하는 문자열을 반환
+        
+          **fn:substringAfter(A, B)**   : A에서 B가 나타내는 이후의 문자열을 반환
+        
+          **fn:substringBefore(A, B)**  : A에서 B가 나타내는 이전의 문자열을 반환
+        
+          **fn:toLowerCase(A)**  : A를 모두 소문자로 변환
+        
+          **fn:toUpperCase(A)**  : A를 모두 대문자로 변환
+        
+          **fn:trim(A)**  : 문자열 A에서 앞 뒤 공백을 제거
+        
+            ```html
+            <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+            <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+            <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+            <!DOCTYPE html>
+            <html>
+            <head>
+            <meta charset="UTF-8">
+            <title>함수</title>
+            </head>
+            <body>
+            
+            	 <p>${fileName }</p>
+            	 <p>length : ${fn:length(fileName)}</p> 
+            	 <p>indexOf : ${fn:indexOf(fileName , ".") } </p>
+            	 <p>contains : ${fn:contains(fileName , ".png") }</p>
+            	 <p>
+            	 	<c:choose>
+            	 		<c:when test="${fn:contains(fileName , '.png')}">
+            	 			png 확장자 입니다.
+            	 		</c:when>
+            	 		<c:otherwise>
+            	 		    png 확장자가 아닙니다.
+            	 	    </c:otherwise>
+            	 	</c:choose>
+            	 </p>
+            	 <p>substring : ${fn:substring(fileName , 10 , 13)}</p>
+            	 <c:set var="extention" value="${fn:substring(fileName , 10 , 13)}"/>
+            	 <p>extention : ${extention }</p>
+            	 
+            </body>
+            </html>
+            ```
+            
+            ```html
+            import java.io.IOException;
+            
+            import javax.servlet.RequestDispatcher;
+            import javax.servlet.ServletException;
+            import javax.servlet.annotation.WebServlet;
+            import javax.servlet.http.HttpServlet;
+            import javax.servlet.http.HttpServletRequest;
+            import javax.servlet.http.HttpServletResponse;
+            
+            @WebServlet("/jstlEx05")
+            public class JstlEx05 extends HttpServlet {
+            	private static final long serialVersionUID = 1L;
+                   
+            	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            		
+            		request.setAttribute("fileName" , "test_file.png");
+            	
+            		RequestDispatcher dis = request.getRequestDispatcher("chapter05_el_jstl/jstlEx05.jsp"); 
+            		dis.forward(request, response);
+            		
+            	}
+            
+            }
+            ```
+            
+- **에러 페이지 (error page)**
+    
+    
+    - 에러메세지를 화면에 그대로 노출시키면 웹 서버 관련 정보 및 데이터베이스의 이름 , 테이블명 , 쿼리문 등 중요한 코드들이 브라우저 화면에 노출된다.
+    [보안 취약점 , 해당 취약점은 서비스 오픈 불가]
+    - 보안적인 문제 외에도 에러페이지 화면을 그대로 노출하면 웹서비스를 이용하는 사용자에게 거부감을 준다.
+    - 그러므로 에러 페이지를 별도로 관리해야 한다.
+    - **[ 방법 ]**
+        - **web.xml에 아래의 코드를 추가한다.**
+        
+        ```html
+        <error-page>
+        				<error-code>에러코드</error-code>
+        				<location>jsp파일 경로</location>       
+        			</error-page>
+        			<error-page>
+        				<error-code>에러코드</error-code>
+        				<location>jsp파일 경로</location>	
+        			</error-page>
+        			
+        	# location태그에서는 webapp(/)를 기준으로 에러페이지의 절대경로를 작성한다.
+        ```
+        
+        - **location에 적혀있는 실제 위치에 에러가 날 경우 화면에 보여줄 페이지를 생성한다.**
+
+### MVC2 - 게시판 만들기
