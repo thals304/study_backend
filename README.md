@@ -1356,3 +1356,53 @@
         - **location에 적혀있는 실제 위치에 에러가 날 경우 화면에 보여줄 페이지를 생성한다.**
 
 ### MVC2 - 게시판 만들기
+
+- **DAO (Data Access Object)**
+    - **데이터베이스와의 통신 및 데이터베이스 관련 작업을 처리하는 데 사용**
+    - **JSP MVC2 데이터베이스 연동 메뉴얼**
+        - 데이터베이스 연결 풀링(연결을 미리 만들어 놓고 재사용하여 데이터베이스 연결 및 해제에 따른 오버헤드를 줄임)과 관련된 기능을 사용하고 데이터베이스 애플리케이션의 성능을 향상시키기 위하여 **아래의 라이브러리를 WEB-INF/lib 경로에 추가**한다.
+            
+            **commons-dbcp2-2.2.0.jar
+            commons-pool2-2.5.0.jar
+            mysql-connector-j-8.0.32.jar**
+            
+        - 이클립스에서 **Servers폴더에 있는 Context.xml (경로설정) 파일에 아래의 설정을 추가**한다.
+            - **[ 확인사항 ]**
+                - **url , name , username , password**
+            
+            **<Resource
+            auth="Container"
+            driverClassName="com.mysql.cj.jdbc.Driver"
+            type="javax.sql.DataSource"
+            url="jdbc:mysql://localhost:3306/MVC2_PRACTICE?serverTimezone=Asia/Seoul&useSSL=false"
+            name="jdbc/board"
+            username="root"
+            password="0000"
+            loginTimeout="10"
+            maxWait="5000"
+            />**
+            
+        - **데이터베이스와 연동하는 메서드를 생성**하여 **데이터베이스 연결객체를 생성 및 사용**한다.
+            
+            **(패키지)**
+            
+            **import javax.naming.Context;
+            import javax.naming.InitialContext;
+            import javax.sql.DataSource;**
+            
+            **(연결코드)**
+            
+            **Context initctx = new InitialContext();**	
+            
+            **Context envctx = (Context) initctx.lookup("java:comp/env");** 
+            
+            **DataSource ds = (DataSource) envctx.lookup("jdbc/board");** 	
+            
+            **conn = ds.getConnection();**
+            
+- **DTO(Data Transfer Object)**
+    - **데이터 전송을 위한 객체**
+    - DTO는 데이터를 효과적으로 전송하고 관리하기 위해 사용되며
+    주로 소프트웨어 시스템의 다른 부분 간에 데이터를 전달하거나 데이터베이스와 어플리케이션 간의 상호 작용에 사용
+- **컨트롤러 (Controller) > servlet**
+    - **모델(Model)과 뷰(View) 간의 흐름을 제어하고 클라이언트의 요청을 처리**
