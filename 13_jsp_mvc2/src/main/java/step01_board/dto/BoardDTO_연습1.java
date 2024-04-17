@@ -2,19 +2,8 @@ package step01_board.dto;
 
 import java.util.Date;
 
-public class boardDTO {
-	/*
-
-	# DTO(Data Transfer Object)
+public class BoardDTO_연습1 {
 	
-	- 데이터 전송을 위한 객체
-	
-	- DTO는 데이터를 효과적으로 전송하고 관리하기 위해 사용되며 
-	  주로 소프트웨어 시스템의 다른 부분 간에 데이터를 전달하거나 데이터베이스와 어플리케이션 간의 상호 작용에 사용
-
-	 */
-
-	// DB 컬럼과 매칭
 	private long boardId;
 	private String writer;
 	private String subject;
@@ -22,8 +11,7 @@ public class boardDTO {
 	private String password;
 	private String content;
 	private long readCnt;
-	private Date enrollDt; // import : java.util.Date;
-	
+	private Date  enrollDt;
 	public long getBoardId() {
 		return boardId;
 	}
@@ -72,14 +60,12 @@ public class boardDTO {
 	public void setEnrollDt(Date enrollDt) {
 		this.enrollDt = enrollDt;
 	}
-	
 	@Override
 	public String toString() {
-		return "boardDTO [boardId=" + boardId + ", writer=" + writer + ", subject=" + subject + ", email=" + email
+		return "BoardDTO_연습1 [boardId=" + boardId + ", writer=" + writer + ", subject=" + subject + ", email=" + email
 				+ ", password=" + password + ", content=" + content + ", readCnt=" + readCnt + ", enrollDt=" + enrollDt
 				+ "]";
 	}
-	
 	
 	
 }
