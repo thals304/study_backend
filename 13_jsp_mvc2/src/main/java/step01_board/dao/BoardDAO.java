@@ -165,5 +165,40 @@ public class BoardDAO {
 		
 	}
 	
+	public BoardDTO getBoardDetail (long boardId) {
+		BoardDTO boardDTO = new BoardDTO();
+		
+		try {
+			getConnection();
+			
+			String sql = "UPDATE BOARD SET READ_CNT = READ_CNT + 1 WHERE BOARD_ID = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setLong(1, boardId);
+			pstmt.executeUpdate();
+			
+			pstmt = conn.prepareStatement("SELECT * FROM BOARD WHERE BOARD_ID = ?");
+			pstmt.setLong(1, boardId);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				boardDTO.setBoardId(rs.getLong("BOARD_ID"));
+				boardDTO.setWriter(rs.getString("WRITER"));
+				boardDTO.setEmail(rs.getString("EMAIL"));
+				boardDTO.setSubject(rs.getString("SUBJECT"));
+				boardDTO.setContent(rs.getString("CONTENT"));
+				boardDTO.setReadCnt(rs.getLong("READ_CNT"));
+				boardDTO.setEnrollDt(rs.getDate("ENROLL_DT"));
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			getClose();
+		}
+		
+		System.out.println("detail : " + boardDTO);
+		
+		return boardDTO;
+	}
 	
 }

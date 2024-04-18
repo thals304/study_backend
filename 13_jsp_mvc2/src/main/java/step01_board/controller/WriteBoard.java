@@ -1,6 +1,7 @@
 package step01_board.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -29,7 +30,7 @@ public class WriteBoard extends HttpServlet {
 	
 		request.setCharacterEncoding("utf-8");
 		
-		// 전송받은 데이터를 DTO형태로 만든다.(약속)
+		// 전송받은 데이터를 DTO형태로 만든다.
 		BoardDTO boardDTO = new BoardDTO();
 		boardDTO.setWriter(request.getParameter("writer"));
 		boardDTO.setSubject(request.getParameter("subject"));
@@ -43,6 +44,18 @@ public class WriteBoard extends HttpServlet {
 		// DAO클래스로 DTO데이터 전송
 		//new BoardDAO();
 		BoardDAO.getInstance().insertBoard(boardDTO);
+		
+		response.setContentType("text/html; charset=UTF-8");
+		PrintWriter out = response.getWriter();
+		
+		String jsScript = """
+				<script>
+					alert('게시글이 등록되었습니다.');
+					location.href = 'bList';
+				</script>
+				"""; // location.href = 'url' > 해당url로 이동하는 자바스크립트 함수
+		
+		out.print(jsScript);
 		
 		
 	}

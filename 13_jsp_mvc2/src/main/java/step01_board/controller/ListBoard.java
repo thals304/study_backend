@@ -22,6 +22,7 @@ public class ListBoard extends HttpServlet {
 		// new BoardDAO();
 		ArrayList<BoardDTO> boardList = BoardDAO.getInstance().getBoardList();
 		
+		// jsp에 전달
 		request.setAttribute("boardList", boardList);
 		
 		RequestDispatcher dis = request.getRequestDispatcher("step01_boardEx/bList.jsp");

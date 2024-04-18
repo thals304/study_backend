@@ -4,6 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <title>bWrite</title>
+<!-- servlet 기준으로 써야 하므로 webapp폴더 하위경로부터 작성한다. -->
+<script src="resources/ckeditor/ckeditor.js"></script>
 </head>
 <body>
 
@@ -13,7 +15,7 @@
 			<table border="1">
 				<tr>
 					<td>작성자</td>
-					<td><input type="text" name="writer"/></td> <!-- name은 DTO와 맞추기 -->
+					<td><input type="text" name="writer"/></td>
 				</tr>
 				<tr >
 					<td>제목</td>
@@ -31,6 +33,7 @@
 					<td>글내용</td>
 					<td>
 						<textarea rows="10" cols="50" name="content"></textarea>
+						<script>CKEDITOR.replace("content");</script>
 					</td>
 				</tr>
 				<tr align="center">

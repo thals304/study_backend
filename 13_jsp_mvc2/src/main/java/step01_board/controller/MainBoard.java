@@ -19,9 +19,6 @@ public class MainBoard extends HttpServlet {
        
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		// new BoardDAO();
-		BoardDAO.getInstance().getBoardList();
-		
 		RequestDispatcher dis = request.getRequestDispatcher("step01_boardEx/bMain.jsp");
 		dis.forward(request, response);
 	}
