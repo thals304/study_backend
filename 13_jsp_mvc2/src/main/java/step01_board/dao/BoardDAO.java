@@ -280,20 +280,23 @@ public class BoardDAO {
 		
 	}
 	
-	public void deleteBoard(long boardId) {
+public void deleteBoard(long boardId) {
+		
 		try {
+			
 			getConnection();
-			pstmt = conn.prepareStatement("DELET FROM BOARD WHERE BOARD_ID = ? ");
+			pstmt = conn.prepareStatement("DELETE FROM BOARD WHERE BOARD_ID = ?");
 			pstmt.setLong(1, boardId);
 			pstmt.executeUpdate();
-		}
-		catch(Exception e) {
+			
+		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		finally {
+		} finally {
 			getClose();
 		}
+		
 	}
+
 	
 	
 	
