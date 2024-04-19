@@ -789,6 +789,21 @@
     }
     
     ```
+    - **history  객체**
+      - 사용자가 방문한 url 정보로 이동하는 객체
+      - **[ 페이지 관련 기능 ]**
+        
+          history.go(-1); 	// 한페이지 뒤로 이동
+        
+          history.back();		// 한페이지 뒤로 이동
+        
+          history.go(1);		// 한페이지 앞으로 이동
+        
+          history.forward(); 	// 한페이지 앞으로 이동
+        
+          history.go(n);		// n페이지 앞으로 이동
+        
+          history.go(-n);		// n페이지 뒤로 이동
 
 - **EL (Expression Language)**
     - 자바코드를 사용하지 않고 간편하게 출력을 지원하기 위한 방법이다.
