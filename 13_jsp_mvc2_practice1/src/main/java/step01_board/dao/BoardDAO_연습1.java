@@ -100,5 +100,40 @@ public class BoardDAO_연습1 {
 		return boardList;
 	}
 	
+	public BoardDTO_연습1 getBoardDetail(long boardId) {
+		BoardDTO_연습1 boardDTO = new BoardDTO_연습1();
+		
+		try {
+			getConnection();
+			
+			pstmt = conn.prepareStatement("UPDATE BOARD SET READ_CNT = READ_CNT + 1 WHERE BOARD_ID = ?");
+			pstmt.setLong(1, boardId);
+			pstmt.executeUpdate();
+			
+			pstmt = conn.prepareStatement("SELECT * FROM BAORD WHERE BOARD_ID = ?");
+			pstmt.setLong(1, boardId);
+			rs = pstmt.executeQuery();
+			// 패스워드 제외 값을 db에서 select해서 DTO에 보냄
+			if (rs.next()) {
+				boardDTO.setBoardId(rs.getLong("BOARD_ID"));
+				boardDTO.setWriter(rs.getString("WRITER"));
+				boardDTO.setEmail(rs.getString("EMAIL"));
+				boardDTO.setSubject(rs.getString("SUBJECT"));
+				boardDTO.setContent(rs.getString("CONTENT"));
+				boardDTO.setReadCnt(rs.getLong("READ_CNT"));
+				boardDTO.setEnrollDt(rs.getDate("ENROLL_DT"));
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			getClose();
+		}
+		
+		System.out.println("detail : " + boardDTO);
+		
+		return boardDTO;
+	}
 	
 }

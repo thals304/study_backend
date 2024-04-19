@@ -4,6 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <title>bWriter_연습1</title>
+<script src="resources/ckeditor/ckeditor.js"></script>
 </head>
 <body>
 	
@@ -31,12 +32,13 @@
 					<td>글내용</td>
 					<td>
 						<textarea rows="10" cols="50" name="content"></textarea>
+						<script>CKEDITOR.replace("content");</script>
 					</td>
 				</tr>
 				<tr align="center">
 					<td colspan="2">
 						<input type="submit" value="글쓰기" />
-						<input type="button" value="목록보기">
+						<input type="button" value="목록보기" onclick="location.href='bList_연습1';">
 					</td>
 				</tr>
 			</table>

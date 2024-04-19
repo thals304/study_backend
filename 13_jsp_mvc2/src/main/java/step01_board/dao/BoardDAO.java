@@ -37,7 +37,7 @@ import step01_board.dto.BoardDTO;
 			url="jdbc:mysql://localhost:3306/MVC2_PRACTICE?serverTimezone=Asia/Seoul&amp;useSSL=false"
 			name="jdbc/board" 
 			username="root"
-			password="0000" 
+			password="1234" 
 			loginTimeout="10" 
 			maxWait="5000" 
 		/> 
@@ -50,7 +50,10 @@ import step01_board.dto.BoardDTO;
 		import javax.sql.DataSource;
 		
 		(연결코드)
-		
+		Context initctx = new InitialContext();						 // 데이터베이스와 연결하기 위한 init객체 생성
+		Context envctx = (Context) initctx.lookup("java:comp/env");  // lookup 메서드를 통해 context.xml 파일에 접근하여 자바환경 코드를 검색     
+		DataSource ds = (DataSource) envctx.lookup("jdbc/board"); 	 // <Context>태그안의 <Resource> 환경설정의 name이 jdbc/board인 것을 검색	  
+		conn = ds.getConnection();
 
 */
 
@@ -165,13 +168,21 @@ public class BoardDAO {
 		
 	}
 	
-	public BoardDTO getBoardDetail (long boardId) {
+	
+	public BoardDTO getBoardDetail(long boardId){
+		
 		BoardDTO boardDTO = new BoardDTO();
 		
 		try {
-			getConnection();
 			
-			String sql = "UPDATE BOARD SET READ_CNT = READ_CNT + 1 WHERE BOARD_ID = ?";
+			getConnection();
+			// 재사용이 많다보니 게시물을 볼 때만 카운트가 늘어나도록 if문 사용해서 바꿔보기
+			String sql = """
+				UPDATE BOARD 
+				SET    READ_CNT = READ_CNT + 1
+				WHERE  BOARD_ID = ?
+					""";
+			
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setLong(1, boardId);
 			pstmt.executeUpdate();
@@ -179,6 +190,7 @@ public class BoardDAO {
 			pstmt = conn.prepareStatement("SELECT * FROM BOARD WHERE BOARD_ID = ?");
 			pstmt.setLong(1, boardId);
 			rs = pstmt.executeQuery();
+			
 			if (rs.next()) {
 				boardDTO.setBoardId(rs.getLong("BOARD_ID"));
 				boardDTO.setWriter(rs.getString("WRITER"));
@@ -188,6 +200,92 @@ public class BoardDAO {
 				boardDTO.setReadCnt(rs.getLong("READ_CNT"));
 				boardDTO.setEnrollDt(rs.getDate("ENROLL_DT"));
 			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			getClose();
+		}
+		
+		// 단위 테스트
+		System.out.println("getBoardDetail : " + boardDTO);
+		
+		return boardDTO;
+		
+	}
+	
+	
+	public boolean checkAuthenticationUser(BoardDTO boardDTO) {
+		
+		System.out.println("checkAuthenticationUser param : " + boardDTO);
+		
+		boolean isAuthenticationUser = false;
+		
+		try {
+			
+			getConnection();
+			
+			String sql ="""
+				SELECT *
+				FROM   BOARD
+				WHERE  BOARD_ID = ?
+				AND    PASSWORD = ?	
+					""";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setLong(1, boardDTO.getBoardId());
+			pstmt.setString(2, boardDTO.getPassword());
+			rs = pstmt.executeQuery();
+			
+			if (rs.next()) {
+				isAuthenticationUser = true;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			getClose();
+		}
+		
+		System.out.println("checkAuthenticationUser return : " + isAuthenticationUser);
+		
+		return isAuthenticationUser;
+		
+	}
+	
+	
+	public void updateBoard(BoardDTO boardDTO) {
+		
+		System.out.println("updateBoard param : " + boardDTO);
+		
+		try {
+			
+			getConnection();
+			String sql = """
+				UPDATE BOARD
+				SET    SUBJECT = ?,
+				       CONTENT = ?
+				WHERE  BOARD_ID = ?	
+					""";
+		    pstmt = conn.prepareStatement(sql);
+		    pstmt.setString(1, boardDTO.getSubject());
+		    pstmt.setString(2, boardDTO.getContent());
+		    pstmt.setLong(3, boardDTO.getBoardId());
+		    pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			getClose();
+		}
+		
+	}
+	
+	public void deleteBoard(long boardId) {
+		try {
+			getConnection();
+			pstmt = conn.prepareStatement("DELET FROM BOARD WHERE BOARD_ID = ? ");
+			pstmt.setLong(1, boardId);
+			pstmt.executeUpdate();
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -195,10 +293,8 @@ public class BoardDAO {
 		finally {
 			getClose();
 		}
-		
-		System.out.println("detail : " + boardDTO);
-		
-		return boardDTO;
 	}
+	
+	
 	
 }

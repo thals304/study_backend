@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,9 +18,18 @@
 				<td>작성일</td>
 				<td>조회수</td>
 			</tr>
+			<c:forEach var="boardDTO" items="${boardList }">
+				<tr align="center">
+					<td>${boardDTO.boardId }</td>
+					<td><a href="bDetail_연습1?boardId=${boardDTO.boardId }">${boardDTO.subject}</a></td>
+					<td>${boardDTO.writer}</td>
+					<td>${boardDTO.enrollDt}</td>
+					<td>${boardDTO.readCnt}</td>
+				</tr>
+			</c:forEach>
 			<tr align="right">
 				<td colspan="5">
-					<input type="button"value="글쓰기" onclick="location.href='bWrite';">
+					<input type="button"value="글쓰기" onclick="location.href='bWrite_연습1';">
 				</td>
 			</tr>
 		</table>
