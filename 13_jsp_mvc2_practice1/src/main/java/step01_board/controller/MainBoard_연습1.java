@@ -2,7 +2,8 @@ package step01_board.controller;
 /*
  * 24.04.17 time 19:30-19:51
  * 24.04.18 time 13:46-14:44
- * 24.04.29 time 08:14-08:57
+ * 24.04.19 time 08:14-08:57
+ * 24.04.21 time 21:20-22:33
  * today 소감문
  * 오늘부터 게시판 만들기 3번씩 연습하기 시작하는 첫날이다.
  * 첫날이므로 정답예시를 확인하면서 흐름을 이해하고 모르는 부분을 체크하는 시간을 가질 것이다. 
@@ -12,8 +13,12 @@ package step01_board.controller;
  * bWrite (서블렛, jsp)
  * bList (서블렛, jsp)
  * bDetail (서블렛, jsp)
+ * bAuthentication (서블렛, jsp)
+ * bUpdate (서블렛, jsp)
+ * bDelete (서블렛, jsp)
  * 
  * // detail에서 duplicate entry 발생  > DAO getDetailBoard에서 update 에서 readCnt 증가를 boardId 증가로 잘못 써줌
+ * // Authentication부터 Delete 사이에 문제 발생 > 코드 하나씩 다시 봐야될 듯 DTO에 BoardID가 없다? DTO로 바꾸는 코드 중에 boardId를 boardID라고 잘못쓴 애가 있는거 같음
  * */
 import java.io.IOException;
 

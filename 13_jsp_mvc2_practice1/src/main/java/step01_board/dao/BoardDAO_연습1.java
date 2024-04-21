@@ -110,7 +110,7 @@ public class BoardDAO_연습1 {
 			pstmt.setLong(1, boardId);
 			pstmt.executeUpdate();
 			
-			pstmt = conn.prepareStatement("SELECT * FROM BAORD WHERE BOARD_ID = ?");
+			pstmt = conn.prepareStatement("SELECT * FROM BOARD WHERE BOARD_ID = ?");
 			pstmt.setLong(1, boardId);
 			rs = pstmt.executeQuery();
 			// 패스워드 제외 값을 db에서 select해서 DTO에 보냄
@@ -131,9 +131,72 @@ public class BoardDAO_연습1 {
 			getClose();
 		}
 		
-		System.out.println("detail : " + boardDTO);
+		System.out.println("getBoardDetail : " + boardDTO);
 		
 		return boardDTO;
 	}
 	
+	public boolean checkAuthenticationUser(BoardDTO_연습1 boardDTO) {
+		System.out.println("checkAuthenticationUser param : " + boardDTO);
+		
+		boolean isAuthenticationUser = false;
+		
+		try {
+			getConnection();
+			pstmt = conn.prepareStatement("SELECT * FROM BOARD WHERE BOARD_ID = ? AND PASSWORD = ?");
+			pstmt.setLong(1, boardDTO.getBoardId());
+			pstmt.setString(2, boardDTO.getPassword());
+			rs = pstmt.executeQuery();
+			
+			if (rs.next()) {
+				isAuthenticationUser = true;
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			getClose();
+		}
+		System.out.println("checkAuthenticationUser return : " + isAuthenticationUser);
+		
+		return isAuthenticationUser;
+	}
+	
+	public void updateBoard(BoardDTO_연습1 boardDTO) {
+		
+		System.out.println("updateBoard param : " + boardDTO);
+		
+		try {
+			getConnection();
+			
+			String sql = "UPDATE BOARD SET SUBJECT = ? , CONTENT = ? WHERE BOARD_ID = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, boardDTO.getSubject());
+			pstmt.setString(2, boardDTO.getContent());
+			pstmt.setLong(3, boardDTO.getBoardId());
+			pstmt.executeUpdate();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			getClose();
+		}
+	}
+	
+	public void deleteBoard(Long boardId) {
+		try {
+			getConnection();
+			pstmt = conn.prepareStatement("DELETE FROM BOARD WHERE BOARD_ID = ?");
+			pstmt.setLong(1, boardId);
+			pstmt.executeUpdate();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			getClose();
+		}
+	}
 }

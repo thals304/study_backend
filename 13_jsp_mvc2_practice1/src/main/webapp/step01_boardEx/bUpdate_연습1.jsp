@@ -7,14 +7,9 @@
 <script src="resources/ckeditor/ckeditor.js"></script>
 </head>
 <body>
-
 	<div align="center">
 		<h3>게시글 수정</h3>
 		<form action="bUpdate" method="post" >
-		<!-- 
-			bUpdate Servlet의 doPost 메서드로 이동
-			(boardId, subject, content 파라메타 전달)
-		 -->
 			<table border="1">
 				<tr>
 					<td>작성자</td>
@@ -47,6 +42,5 @@
 			</table>
 		</form>
 	</div>
-	
 </body>
 </html>

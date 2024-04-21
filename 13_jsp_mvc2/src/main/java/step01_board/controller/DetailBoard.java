@@ -22,7 +22,7 @@ public class DetailBoard extends HttpServlet {
 		long boardId = Long.parseLong(request.getParameter("boardId"));
 		
 		// DB로 보내서 게시글 검색해오기
-		BoardDTO boardDTO = BoardDAO.getInstance().getBoardDetail(boardId);
+		BoardDTO boardDTO = BoardDAO.getInstance().getBoardDetail(boardId, true);
 		
 		// bDetail.jsp로 데이터 보내기
 		request.setAttribute("boardDTO", boardDTO);

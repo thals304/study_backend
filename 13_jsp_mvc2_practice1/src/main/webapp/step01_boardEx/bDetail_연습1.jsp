@@ -35,9 +35,9 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					<input type="button" value="수정">
-					<input type="button" value="삭제">
-					<input type="button" value="목록보기" onclick="location.href='bList_연습1';">
+					<input type="button" value="수정" onclick="location.href='bAuthentication?boardId=${boardDTO.boardId}&menu=update';">
+					<input type="button" value="삭제" onclick="location.href='bAuthentication?boardId=${boardDTO.boardID}&menu=delete';">
+					<input type="button" value="목록보기" onclick="location.href='bList';">
 				</td>
 			</tr>
 		</table>

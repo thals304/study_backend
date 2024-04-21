@@ -27,7 +27,7 @@ public class AuthenticationBoard extends HttpServlet {
 		
 		
 		long boardId = Long.parseLong(request.getParameter("boardId")); // boardId
-		BoardDTO boardDTO = BoardDAO.getInstance().getBoardDetail(boardId);
+		BoardDTO boardDTO = BoardDAO.getInstance().getBoardDetail(boardId, false);
 		
 		request.setAttribute("boardDTO" , boardDTO); 				// 1개의 게시글 정보를 bAuthentication.jsp로 전달
 		request.setAttribute("menu", request.getParameter("menu")); // update문자열을 bAuthentication.jsp로 전달
