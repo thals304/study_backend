@@ -15,9 +15,8 @@
 			<input type="hidden" name="boardId" value="${boardId }" />
 			<input type="submit" value="삭제하기">
 			<!-- bDetail로 가는 건데 boardId도 같이 보내주는 이유? 
-			     그러면 목록보기도 boardId를 써줘야 하나?
-			     그리고 deleteBoard & updateBoard에서 수정/삭제되었습니다 하고 
-			     bList로 보낼 때는?
+			     bDetail servlet에서 boardId를 받아서 DB로 보내기 때문에
+			     만약 여기서 boardId를 같이 안보내주면 detail 화면이 빈칸으로 나옴
 			 -->
 			<input type="button" value="취소" onclick="location.href='bDetail?boardId=${boardId}';">
 		</form>

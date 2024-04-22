@@ -19,7 +19,7 @@ public class MainBoard extends HttpServlet {
        
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		RequestDispatcher dis = request.getRequestDispatcher("step01_boardEx/bMain.jsp");
+		RequestDispatcher dis = request.getRequestDispatcher("step01_boardEx/bMain_연습2.jsp");
 		dis.forward(request, response);
 	}
 

@@ -176,10 +176,15 @@ public class BoardDAO {
 		try {
 			
 			getConnection();
-			// 재사용이 많다보니 게시물을 볼 때만(detailBoard) 카운트가 늘어나도록 if문 사용해서 바꿔보기
-			// Detail , Update, Authentication Board일 때 getBoardDetail 메서드 호출 
-			// 파라메타로 boolean - true/false까지 전달하도록 해서 detail만 true 보내고 update&authentication은 false 보내게 함
-			// 근데 목록보기를 누를 때도 카운트가 증가하는 이유?
+			/* 
+			 재사용이 많다보니 게시물을 볼 때만(detailBoard) 카운트가 늘어나도록 if문 사용해서 바꿔보기
+			 Detail , Update, Authentication Board일 때 getBoardDetail 메서드 호출 
+			 파라메타로 boolean - true/false까지 전달하도록 해서 
+			 DetailBoard에서만 true를 보내고 Update & Authentication은 false 보내게 함
+			*/ 
+			
+			System.out.println("toggle : " + toggle);
+			
 			if (toggle) {
 				
 				String sql = """
@@ -262,7 +267,7 @@ public class BoardDAO {
 	public void updateBoard(BoardDTO boardDTO) {
 		// 질문 ! 클래스의 파라메타 boardDTO는 주소를 받아오는 것 아닌가?
 		// 근데 어레이리스트도 아닌데 콘솔에 sysout에서 출력해도 주소가 나오는게 아닌 값이 나오는 이유? 
-		// db와 연결되어있어서?
+		// BoardDTO의 toString 때문에 가능! toString이 없었다면 주소로 나옴
 		System.out.println("updateBoard param : " + boardDTO);
 		
 		try {
