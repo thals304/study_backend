@@ -1412,6 +1412,228 @@
         ```
         
         - **location에 적혀있는 실제 위치에 에러가 날 경우 화면에 보여줄 페이지를 생성한다.**
+- **세션 (Session)**
+    - HTTP 프로토콜은 클라이언트의 요청(request)과 서버의 응답(response)이 이루어지고 나면 더 이상 연결상태를 '지속'하지 않는다.
+    - 클라이언트와 서버의 연결 정보를 계속 유지할 방법이 필요한데 대표적으로 '쿠키(Cookie)'와 '세션(Session)'이 있다.
+    - 세션은 클라이언트와의 연결 정보를 유지하기 위한 정보를 웹 컨테이너(웹 서버)에 저장한다.
+    - 쿠키는 클라이언트와의 연결정보를 유지하기 위한 정보를 클라이언트측에 저장한 뒤에 웹 서버가 클라이언트의 웹브라우저에서 쿠키를 읽어서 사용한다.
+    - 클라이언트측에 저장된 연결정보(쿠키)는 연결정보가 클라이언트에서 관리되고 있다는 점에서 연결정보를 서버측에서 관리하는 것보다 보안상 문제가 생길 확률이 많다.
+    - 세션은 클라이언트와의 연결정보를 서버에서 관리하므로 보안적인 측면에서 쿠키보다 안전하다.
+    - 세션만을 사용하면 서버에 부하를 줄 수도 있으므로 쿠키와 세션을 각각 목적에 맞게 사용하도록 권장한다.
+    - **[ 자주 사용되어지는 메서드 ]**
+        
+        **setAttribute(속성명, 값)** 	: 세션 속성명과 속성값으로 value를 할당한다. 
+        
+        **getAttribute(속성명)**  : 세션 속성명의 값을 Object 타입으로 리턴한다.(할당했던 데이터 타입으로 형변환 후 사용) 
+        해당 되는 속성명이 없을 경우에는 null 값을 리턴한다.
+        
+        **removeAttribute(속성명)** : 세션속성을 제거한다. (해당 속성만 제거)
+        
+        **invalidate()** : 세션속성을 제거한다. (초기화 , 주로 로그아웃시 사용)
+        
+        **setMaxInactiveInterval(유지기간(초))** : 세션을 유지하기 위한 세션 유지시간을 초 단위로 설정한다. (기본값은 30분)
+        
+    
+    **// 로그인 (Login)**
+    
+    ```html
+    @WebServlet("/sessionLogin")
+    public class SessionLogin extends HttpServlet {
+    	private static final long serialVersionUID = 1L;
+    	
+    	// 로그인(인증)화면 요청 or 로 이동
+    	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    		RequestDispatcher dis = request.getRequestDispatcher("chapter07_session_cookie/07_01_session/sessionLogin.jsp"); 
+    		dis.forward(request, response);
+    
+    	}
+    	// 로그인 기능 처리 로직
+    	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    		// 1) 전송된 id , password를 받는다.
+    		String id = request.getParameter("id");
+    		String passwd = request.getParameter("passwd");
+    		
+    	    // 2) SQL쿼리로 인증한다. 
+    		// 예시 : SELECT * FROM MEMBER WHERE MEMBER_ID = ? AND PASSWORD = ?
+    		
+    		String dbId = "qwer1234";
+    		String dbPasswd = "qwer1234";
+    		String dbRole = "user";
+    		
+    		
+    		// 3-1) 인증된 유저이면 session객체에 관련된 정보를 저장한다.
+    		if (dbId.equals(id) && dbPasswd.equals(passwd) ) {
+    				
+    				// 3-1-1) request.getSesstion(); 메서드로 Session 객체를 생성 한다.
+    				HttpSession session = request.getSession();
+    				
+    				// 3-1-2) 세션객체에 인증 관련 정보를 등록한다. 
+    				// session.setAttribute("세션정보" , 데이터);
+    				session.setAttribute("id", id );
+    				session.setAttribute("role", dbRole); // 권한
+    				
+    				// 3-1-3) View로 페이지 이동
+    				RequestDispatcher dis = request.getRequestDispatcher("chapter07_session_cookie/07_01_session/memberView.jsp"); 
+    				dis.forward(request, response);
+    
+    		}
+    		// 3-2) 인증된 유저가 아니면 비인증 유저에 관한 절차를 진행한다.
+    		else {
+    			String jsScript = """
+    					<script>
+    						alert("패스워드를 확인하세요.");
+    						history.go(-1);
+    					</script>
+    				""";
+    			
+    			response.setContentType("text/html; charset=utf-8");
+    			PrintWriter out = response.getWriter();	
+    			out.print(jsScript);
+    			
+    
+    		}
+    
+    	}
+    
+    }
+    
+    ```
+    
+    ```html
+    <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <title>session 로그인</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+    }
+    
+    .login-container {
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px 0px #00000030;
+    }
+    
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .form-control {
+        margin-bottom: 10px;
+    }
+    
+    form h2 {
+        text-align: center;
+    }
+    
+    input[type="text"], input[type="password"] {
+        width: 90%;
+        padding: 10px;
+        margin: 5px 0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    
+    button {
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        background-color: blue;
+        color: white;
+        cursor: pointer;
+    }
+    
+    button:hover {
+        background-color: darkblue;
+    }
+    </style>
+    </head>
+    <body>
+    
+    	 <div class="login-container">
+            <form action="sessionLogin" method="post">
+                <h2>Login</h2>
+                <div class="form-control">
+                    <label for="id">id</label>
+                    <input type="text" name="id" id="id" placeholder="Enter your id">
+                </div>
+                <div class="form-control">
+                    <label for="passwd">Password</label>
+                    <input type="password" name="passwd" id="passwd" placeholder="Enter your password">
+                </div>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    
+    </body>
+    </html>
+    ```
+    
+    ```html
+    <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <title>메인</title>
+    </head>
+    <body>
+    	
+    	
+    	<h3></h3>
+    	<p><a href="myPage">마이페이지로 이동</a></p>
+    	<p><a href="cart">카트리스트로 이동</a></p>
+    	<p><a href="logout">로그아웃</a></p>
+    
+    </body>
+    </html>
+    ```
+    
+    **// 로그아웃 (logout)**
+    
+    ```html
+    @WebServlet("/logout")
+    public class SessionLogout extends HttpServlet {
+    	private static final long serialVersionUID = 1L;
+           
+    	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    		
+    		// 1) request.getSession();	메서드로 Session 객체를 생성한다.
+    		HttpSession session = request.getSession();
+    		
+    		// 2) Session객체에서 로그인관련 데이터를 삭제한다.
+    		// session.removeAttribute("id");   // 특정 속성 제거
+    		// session.removeAttribute("role"); // 특정 속성 제거
+    		
+    		session.invalidate(); // 전체 속성 제거
+    		
+    		// 3) 페이지 이동
+    		String jsScript = """
+    			<script>
+    				alert("로그아웃 되었습니다.");
+    				location.href = "sessionLogin";
+    			</script>""";
+    				
+    		response.setContentType("text/html; charset=UTF-8");
+    		PrintWriter out = response.getWriter();
+    		out.print(jsScript);
+    
+    	}
+    
+    }
+    
+    ```
 
 ### MVC2 - 게시판 만들기
 
