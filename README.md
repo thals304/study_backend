@@ -1874,6 +1874,415 @@
     ```
 
 - **file  > 업로드, 다운로드, 보고, *수정*= (삭제하고 다시 올리기), 삭제**
+    - **파일 업로드**
+        - 파일 업로드를 수행하는 **MultipartRequest 객체 생성 ( 핵심 역할 )**
+            - **[ 생성자의 인수 설명 ]**
+                
+                **첫번째 인자**는 폼에서 가져온 인자 값을 얻기 위해 **request객체를 전달**한다.
+                
+                **두번째 인자**는 업로드 될 **파일의 위치**를 입력한다.
+                
+                **세번째 인자**는 업로드한 **모든 파일의 용량의 합의 최대치**를 의미하며 최대 크기를 넘는경우 Exception이 발생한다.
+                
+                **네번째 인자**는 **한글** 이름이 넘어올 경우 한글에 문제되지 않도록 **인코딩을 지정**한다.
+                
+            - **용량**
+                
+                8bit          > 1Byte
+                1024Byte > 1KB
+                1024KB    > 1MB
+                1024MB   > 1GB
+                1024GB    > 1TB
+                
+        - **JSP 파일**
+            - JSP 파일 전송은 **cos.jar 라이브러리를 이용**한다. (
+            - cos.jar 라이브러리를 **WEB-INF/lib위치에 추가**해준 후
+            **form태그에 enctype="multipart/form-data"라는 속성을 부여**하여 사용한다.
+            - **enctype은 post방식에서만 존재**하기 때문에 GET방식에서는 파일 전송이 불가능하다.
+            - form태그에서 파일을(<input type="file"/>) 웹서버로 전송하게 되면 파일은 서버에 지정된 디렉토리에 저장된다.
+            - 일반적으로 실제 파일은 별도의 파일 서버의 디렉터리에 저장하고
+            **데이터베이스에는 실제 파일을 저장하는 것이 아닌 파일이름 및 관련 정보들만 저장**한다.
+            - 파일 업 & 다운로드와 관련된 이슈는
+            클라이언트가 업로드한 파일의 이름들이 중복되어 파일을 덮어쓸 수 있기 때문에 Rename 정책을 사용해야 한다.
+    
+    // 파일 기본 설정
+    
+    ```html
+    @WebServlet("/fileMain")
+    public class FileMain extends HttpServlet {
+    	
+    	private static final long serialVersionUID = 1L;
+        
+    	// 파일메인 화면으로 이동
+    	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    		RequestDispatcher dis = request.getRequestDispatcher("chapter08_file/fileEx/fileMain.jsp"); 
+    		dis.forward(request, response);
+    	}
+    	
+    }
+    ```
+    
+    ```html
+    // 파일관련 설정 클래스
+    public class FileConfig {
+    
+    	public static final String FILE_REPOSITORY_PATH = "C:\\Users\\somin\\git\\study_backend\\12_jsp_basic\\src\\main\\webapp\\chapter08_file\\fileRepository\\";
+    }
+    ```
+    
+    // 파일 1개 업로드
+    
+    ```html
+    @WebServlet("/upload1")
+    public class Upload1 extends HttpServlet {
+    	
+    	private static final long serialVersionUID = 1L;
+           
+    	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	
+    		// 파일의 저장 경로는 웹서비스의 접근 경로가 아닌 물리적인 실제 경로를 적어주어야 한다.
+    		// String saveDirectory = "C:\\Users\\somin\\git\\study_backend\\12_jsp_basic\\src\\main\\webapp\\chapter08_file\\fileRepository\\";
+    		
+    		// MultipartRequest 이 코드가 실제로 파일 업로드를 담당하는 부분이다.
+    		MultipartRequest multipartRequest = new MultipartRequest(request, FileConfig.FILE_REPOSITORY_PATH , 1024 * 1024 * 100 , "utf-8" );
+    		
+    		/*
+    		 	이슈!
+    			multipart/form-data형식으로 전송 되었기 때문에 request.getParameter가 불가능하고
+    			MultipartRequest 객체의 getParamter메서드를 사용해야 한다.
+    			request.getParameter("uploader"); 불가능
+    		 */
+    		// String uploader = request.getParameter("uploader");
+    		String uploader = multipartRequest.getParameter("uploader");
+    		
+    		Enumeration<?> files = multipartRequest.getFileNames(); // <input type="file/>인 모든 엘리먼트를 반환
+    		
+    		if (files.hasMoreElements()) { // 엘리먼트가 있으면
+    			
+    			String element = (String)files.nextElement(); // <input type="file"/>인 엘리먼트 1개 반환
+    			
+    			String originalFileName = multipartRequest.getOriginalFileName(element); // 서버에 업로드 '한' 파일명을 반환 
+    			String filesystemName   = multipartRequest.getFilesystemName(element);   // 서버에 업로드 '된' 파일명을 반환
+    			String contentType      = multipartRequest.getContentType(element);      // 파일의 타입을 반환
+    			long length             = multipartRequest.getFile(element).length();    // 파일의 크기를 반환(long 타입)
+    
+    		
+    			System.out.println("uploader : " + uploader);
+    			System.out.println("originalFileName : " + originalFileName);
+    			System.out.println("filesystemName : " + filesystemName);
+    			System.out.println("contentType : "      + contentType);
+    			System.out.println("length : "           + length);
+    			System.out.println();
+    
+    		}
+    		
+    		
+    		String jsScript = """
+    				<script>
+    					alert('파일을 업로드 하였습니다.');
+    					location.href = 'fileMain';
+    				</script>""";
+    		
+    		response.setContentType("text/html; charset=UTF-8");
+    		PrintWriter out = response.getWriter();
+    		out.print(jsScript);
+    		
+    	}
+    	
+    }
+    
+    ```
+    
+    ```html
+    <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <title>file</title>
+    </head>
+    <body>
+    
+    	<form action="upload1" method="post" enctype="multipart/form-data">
+    		<fieldset>
+    			<legend>파일 업로드1</legend>
+    			<p>업로더 : <input type="text" name="uploader"></p>
+    			<p>파일명 : <input type="file" name="file"></p>
+    			<input type="submit" value="upload">
+    		</fieldset>
+    	</form>
+    	
+    </body>
+    </html>
+    
+    ```
+    
+    // 파일 여러 개 업로드
+    
+    ```html
+    @WebServlet("/upload2")
+    public class Upload2 extends HttpServlet {
+    	
+    	private static final long serialVersionUID = 1L;
+    
+    	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	
+    		// saveDirectory 맨 뒤에 \\ 를 반드시 추가해줘야함!!
+    		// String saveDirectory ="C:\\Users\\somin\\git\\study_backend\\12_jsp_basic\\src\\main\\webapp\\chapter08_file\\fileRepository\\";
+    		String saveDirectory = FileConfig.FILE_REPOSITORY_PATH;
+    		
+    		MultipartRequest multipartRequest = new MultipartRequest(request, saveDirectory , 1024 * 1024 * 300 , "utf-8");
+    		
+    		Enumeration<?> files = multipartRequest.getFileNames();
+    		
+    		while (files.hasMoreElements()) { // <input type="file" />엘리먼트가 있으면
+    			
+    			String element = (String)files.nextElement();
+    			
+    			if (multipartRequest.getOriginalFileName(element) != null) { // 업로드한 파일이 있으면
+    				
+    				String originalFileName = multipartRequest.getOriginalFileName(element);
+    				
+    				System.out.println("originalFileName : " + originalFileName);
+    				
+    				UUID uuid = UUID.randomUUID(); // UUID.randomUUID() : 해쉬 생성 메서드
+    				System.out.println("uuid : " + uuid);
+    				
+    				// 파일의 확장자를 구한다.
+    				String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+    				System.out.println("extension : " + extension);
+    				
+    				// UUID.확장자 형태파일명을 생성한다.
+    				String fileUUID = uuid + extension;
+    				System.out.println("fileUUID : " + fileUUID);
+    				
+    				File originalFile = new File(saveDirectory + originalFileName); // 기존에 업로드한 파일을 자바객체로 생성한다.
+    				File renameFile = new File(saveDirectory + fileUUID);			// 변환된 파일을 자바객체로 생성한다.
+    				originalFile.renameTo(renameFile);								// 기존에 업로드한 파일을 변환된 파일로 변경// 기존에 업로드한 파일을 변환된 파일로 변경
+    			}
+    			
+    		}
+    		String jsScript = """
+    				<script>
+    					alert('파일을 업로드 하였습니다.');
+    					location.href = 'fileMain';
+    				</script>""";
+    		
+    		response.setContentType("text/html; charset=UTF-8");
+    		PrintWriter out = response.getWriter();
+    		out.print(jsScript);
+    		
+    		
+    		
+    		
+    	}
+    
+    }
+    
+    ```
+    
+    ```html
+    <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <title>file</title>
+    </head>
+    <body>
+    
+    	<form action="upload1" method="post" enctype="multipart/form-data">
+    		<fieldset>
+    			<legend>파일 업로드1</legend>
+    			<p>업로더 : <input type="text" name="uploader"></p>
+    			<p>파일명 : <input type="file" name="file"></p>
+    			<input type="submit" value="upload">
+    		</fieldset>
+    	</form>
+    	
+    	<hr/>
+    	
+    	<form action="upload2" method="post" enctype="multipart/form-data">
+    		<fieldset>
+    		<legend>파일 업로드2</legend>
+    		   <p>업로더 : <input type="text" name="uploader" ></p>
+    		   <p>파일명 : <input type="file" name="file1"></p>
+    		   <p>파일명 : <input type="file" name="file2"></p>
+    		   <p>파일명 : <input type="file" name="file3"></p>
+    		   <input type="submit" value="업로드">
+    		</fieldset>
+    	</form>
+    	
+    </body>
+    </html>
+    ```
+    
+    - **파일 다운로드**
+    
+    ```html
+    @WebServlet("/download")
+    public class Download extends HttpServlet {
+    	private static final long serialVersionUID = 1L;
+           
+    	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	
+    		//import java.io.File;
+    		//import java.io.FileInputStream;
+    		//import java.io.IOException;
+    		//import java.io.OutputStream;
+    				
+    				
+    		request.setCharacterEncoding("utf-8");
+    		
+    		// 다운로드 받을 파일의 위치 지정
+    		// fileRepository에 사진이 있어야 함
+    		// String saveDirectory = "C:\\Users\\somin\\git\\study_backend\\12_jsp_basic\\src\\main\\webapp\\chapter08_file\\fileRepository\\";
+    		String saveDirectory = FileConfig.FILE_REPOSITORY_PATH;
+    		String fileName = request.getParameter("fileName");
+    		
+    		String downloadFilePath = saveDirectory + fileName; 
+    		
+    		// 파일을 읽어 스트림에 담기
+    		File file = new File(downloadFilePath);
+    	    FileInputStream in = new FileInputStream(downloadFilePath);
+    		
+    	    // 한글명 파일 처리 명령어
+    	    fileName = new String(fileName.getBytes("utf-8"), "8859_1");   
+    	    
+    	    // 파일다운로드 헤더지정
+    	    response.setContentType("application/octet-stream");							
+    	    response.setHeader("Content-Disposition", "attachment; filename=" + fileName ); 
+    	    
+    	    // 다운로드 명령어
+    	    OutputStream os = response.getOutputStream();
+    	    
+    	    int length;
+    	    byte[] b = new byte[(int)file.length()];
+    
+    	    while ((length = in.read(b)) > 0) {
+    	    	os.write(b,0,length);
+    	    }
+    	    
+    	    os.flush();
+    	    
+    	    os.close();
+    	    in.close();
+    		
+    
+    	}
+    
+    }
+    ```
+    
+    ```html
+    <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <title>file</title>
+    </head>
+    <body>
+    
+    	<fieldset>
+    		<legend>파일 다운로드</legend>	
+    		<table border="1"> 
+    			<tr>
+    				<td><img src="chapter08_file/fileSample/test6.PNG" width="70" height="70"></td>
+    				<td>이미지1</td>
+    				<td><a href="download?fileName=test6.PNG">다운로드</a></td>
+    			</tr>
+    			<tr>
+    				<td><img src="chapter08_file/fileSample/test7.png" width="70" height="70"></td>
+    				<td>이미지2</td>
+    				<td><a href="download?fileName=test7.png">다운로드</a></td>
+    			</tr>
+    			<tr>
+    				<td><img src="chapter08_file/fileSample/test8.jpg" width="70" height="70"></td>
+    				<td>이미지3</td>
+    				<td><a href="download?fileName=test8.jpg">다운로드</a></td>
+    			</tr>
+    		</table>
+    	</fieldset>
+    
+    </body>
+    </html>
+    
+    ```
+    
+    - **파일 삭제**
+    
+    ```html
+    @WebServlet("/delete")
+    public class Delete extends HttpServlet {
+    	private static final long serialVersionUID = 1L;
+           
+    	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    		
+    		request.setCharacterEncoding("utf-8");
+    		String deleteFile = request.getParameter("deleteFile");
+    		
+    		File file = new File(FileConfig.FILE_REPOSITORY_PATH + deleteFile);
+    		
+    		if (file.exists()) { // 파일이 존재하면
+    			file.delete();   // delete 메서드로 파일을 삭제한다.
+    			
+    		String jsScript = """
+    				<script>
+    					alert('파일을 삭제 하였습니다.');
+    					location.href = 'fileMain';
+    				</script>""";
+    		
+    		response.setContentType("text/html; charset=UTF-8");
+    		PrintWriter out = response.getWriter();
+    		out.print(jsScript);
+    		
+    		}
+    		else { // 파일이 존재하지 않으면
+    			String jsScript = """
+    					<script>
+    						alert('파일이 존재하지 않습니다.');
+    						location.href = 'fileMain';
+    					</script>""";
+    			
+    			response.setContentType("text/html; charset=UTF-8");
+    			PrintWriter out = response.getWriter();
+    			out.print(jsScript);
+    		}
+    ```
+    
+    ```html
+    <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <title>file</title>
+    </head>
+    <body>
+    
+    	<form action="delete" method="post">
+    		<fieldset>
+    		<legend>파일 삭제</legend>
+    		   <p>삭제할 파일명 : <input type="text" name="deleteFile" ></p>
+    		   <input type="submit" value="삭제하기">
+    		</fieldset>
+    	</form>
+    	
+    	<hr>
+    
+    	<form action="update" method="post" enctype="multipart/form-data">
+    		<fieldset>
+    		<legend>파일 수정</legend>
+    		   <p>삭제할 파일명 : <input type="text" name="deleteFileName"></p>
+    		   <p>수정할 파일 : <input type="file" name="updateFile"></p>
+    		   <input type="submit" value="수정하기">
+    		</fieldset>
+    	</form>
+    
+    </body>
+    </html>
+    ```
         
 
 ### MVC2 - 게시판 만들기
