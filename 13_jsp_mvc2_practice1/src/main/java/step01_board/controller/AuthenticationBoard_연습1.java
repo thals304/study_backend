@@ -14,7 +14,7 @@ import step01_board.dao.BoardDAO_연습1;
 import step01_board.dto.BoardDTO_연습1;
 
 
-@WebServlet("/bAuthentication")
+@WebServlet("/bAuthentication_연습1")
 public class AuthenticationBoard_연습1 extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -47,12 +47,12 @@ public class AuthenticationBoard_연습1 extends HttpServlet {
 		if (isAuthenticationUser) {
 			if (menu.equals("update")) {
 				jsScript = "<script>";
-				jsScript += "location.href='bUpdate?boardId="+ boardId +"';"; 
+				jsScript += "location.href='bUpdate_연습1?boardId="+ boardId +"';"; 
 				jsScript += "</script>";
 			}
 			else if (menu.equals("delete")) {
 				jsScript = "<script>";
-				jsScript += "location.href='bDelete?boardId="+ boardId +"';"; 
+				jsScript += "location.href='bDelete_연습1?boardId="+ boardId +"';"; 
 				jsScript += "</script>";
 			}
 		}

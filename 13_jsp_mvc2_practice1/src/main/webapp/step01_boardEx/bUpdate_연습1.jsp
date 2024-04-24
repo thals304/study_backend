@@ -9,7 +9,7 @@
 <body>
 	<div align="center">
 		<h3>게시글 수정</h3>
-		<form action="bUpdate" method="post" >
+		<form action="bUpdate_연습1" method="post" >
 			<table border="1">
 				<tr>
 					<td>작성자</td>
@@ -36,7 +36,7 @@
 					<td colspan="2">
 						<input type="hidden" name="boardId" value="${boardDTO.boardId }"/>
 						<input type="submit" value="수정하기"/>
-						<input type="button" value="목록보기" onclick="location.href='bList';" />
+						<input type="button" value="목록보기" onclick="location.href='bList_연습1';" />
 					</td>
 				</tr>
 			</table>

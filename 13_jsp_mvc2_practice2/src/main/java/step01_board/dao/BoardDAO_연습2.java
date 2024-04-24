@@ -165,4 +165,47 @@ public class BoardDAO_연습2 {
 		
 		return isAuthenticationUser;
 	}
+	
+	public void updateBoard(BoardDTO_연습2 boardDTO) {
+		
+		System.out.println("updateBoard param : " + boardDTO);
+		
+		try {
+			getConnection();
+			String sql = """
+					UPDATE BOARD
+					SET SUBJECT = ? , 
+					    CONTENT = ?
+					WHERE BOARD_ID = ?
+					""";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, boardDTO.getSubject());
+			pstmt.setString(2, boardDTO.getContent());
+			pstmt.setLong(3, boardDTO.getBoardId());
+			pstmt.executeUpdate();
+			
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			getClose();
+		}
+	}
+	
+	public void deleteBoard(long boardId) {
+		try {
+			getConnection();
+			pstmt = conn.prepareStatement("DELETE FROM BOARD WHERE BOARD_ID = ?");
+			pstmt.setLong(1, boardId);
+			pstmt.executeUpdate();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			getClose();
+		}
+	}
 }

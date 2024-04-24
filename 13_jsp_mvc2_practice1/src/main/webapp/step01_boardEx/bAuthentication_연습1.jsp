@@ -12,7 +12,7 @@
 			bAuthentication 서블렛의 doPost메서드로 
 			password, boardId, menu 3개의 데이터 전송
 		 -->
-		<form action="bAuthentication" method="post">
+		<form action="bAuthentication_연습1" method="post">
 			<table border="1">
 				<tr>
 					<td>작성자</td>
@@ -37,7 +37,7 @@
 				<input type="hidden" name="menu" value="${menu }"/>
 				<input type="submit" value="인증"/>
 				<!-- 게시글 전제조회 화면으로 단순 이동 -->
-				<input type="button" value="목록보기" onclick="location.href='bList';"/>
+				<input type="button" value="목록보기" onclick="location.href='bList_연습1';"/>
 			</p>
 		</form>
 	</div>

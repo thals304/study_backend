@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import step01_board.dao.BoardDAO_연습1;
 import step01_board.dto.BoardDTO_연습1;
 
-@WebServlet("/bUpdate")
+@WebServlet("/bUpdate_연습1")
 public class UpdateBoard_연습1 extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -38,14 +38,15 @@ public class UpdateBoard_연습1 extends HttpServlet {
 		
 		BoardDAO_연습1.getInstance().updateBoard(boardDTO);
 		
-		String jsScript = "";
 		
 		response.setContentType("text/html; charset=UTF-8");
 		PrintWriter out = response.getWriter();
 		
+		String jsScript = "";
+		
 		jsScript = "<script>";
 		jsScript += "alert('게시글이 수정되었습니다.');";
-		jsScript += "location.href='bList'";
+		jsScript += "location.href='bList_연습1'";
 		jsScript += "</script>";
 		
 		out.print(jsScript);

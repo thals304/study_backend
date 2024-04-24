@@ -2,6 +2,8 @@ package step01_board.controller;
 
 import java.io.IOException;
 
+import java.io.PrintWriter;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,6 +31,27 @@ public class UpdateBoard_연습2 extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		request.setCharacterEncoding("utf-8");
+		
+		BoardDTO_연습2 boardDTO = new BoardDTO_연습2();
+		boardDTO.setBoardId(Long.parseLong(request.getParameter("boardId")));
+		boardDTO.setSubject(request.getParameter("subject"));
+		boardDTO.setContent(request.getParameter("content"));
+		
+		BoardDAO_연습2.getInstance().updateBoard(boardDTO);
+		
+		
+		response.setContentType("text/html; charset=UTF-8");
+		PrintWriter out = response.getWriter();
+		
+		String jsScript = """
+				<script>
+					alert('게시글이 수정되었습니다.');
+					location.href = 'bList';
+				</script>
+				""";
+		
+		out.print(jsScript);
 	}
 
 }

@@ -60,10 +60,15 @@ public class SessionLogin extends HttpServlet {
 	    // 2) SQL쿼리로 인증한다. 
 		// 예시 : SELECT * FROM MEMBER WHERE MEMBER_ID = ? AND PASSWORD = ?
 		
+		// user 환경일 때
 		String dbId = "qwer1234";
 		String dbPasswd = "qwer1234";
 		String dbRole = "user";
 		
+		// admin 환경일 때
+		// String dbId = "admin";
+		// String dbPasswd = "admin";
+		// String dbRole = "admin";
 		
 		// 3-1) 인증된 유저이면 session객체에 관련된 정보를 저장한다.
 		if (dbId.equals(id) && dbPasswd.equals(passwd) ) {

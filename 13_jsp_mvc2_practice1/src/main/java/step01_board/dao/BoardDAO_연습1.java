@@ -170,7 +170,12 @@ public class BoardDAO_연습1 {
 		try {
 			getConnection();
 			
-			String sql = "UPDATE BOARD SET SUBJECT = ? , CONTENT = ? WHERE BOARD_ID = ?";
+			String sql = """
+					     UPDATE BOARD 
+                         SET SUBJECT = ? , 
+                             CONTENT = ? 
+                         WHERE BOARD_ID = ?
+                         """;
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, boardDTO.getSubject());
 			pstmt.setString(2, boardDTO.getContent());

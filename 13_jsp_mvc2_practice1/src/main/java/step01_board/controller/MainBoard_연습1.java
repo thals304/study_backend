@@ -19,6 +19,9 @@ package step01_board.controller;
  * 
  * // detail에서 duplicate entry 발생  > DAO getDetailBoard에서 update 에서 readCnt 증가를 boardId 증가로 잘못 써줌
  * // Authentication부터 Delete 사이에 문제 발생 > 코드 하나씩 다시 봐야될 듯 DTO에 BoardID가 없다? DTO로 바꾸는 코드 중에 boardId를 boardID라고 잘못쓴 애가 있는거 같음
+ *                                       > bDetail_연습1.jsp의 삭제 버튼에서 ${boardDTO.boardId}를 ${ boardDTO.boardID}라서 잘못 씀
+ * // 인증에서 password를 잘못 입력했을 때 alert과 history.go(-1)가 안먹힘 (선생님과 같이한 자료에서도 같은 오류 발생)
+ *    > 검색해보니 숫자형포맷오류 
  * */
 import java.io.IOException;
 
