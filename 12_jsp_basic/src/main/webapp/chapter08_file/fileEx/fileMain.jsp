@@ -56,40 +56,40 @@
 		<legend>파일 다운로드</legend>	
 		<table border="1"> 
 			<tr>
-				<td><img width="70" height="70"></td>
+				<td><img src="chapter08_file/fileSample/test6.PNG" width="70" height="70"></td>
 				<td>이미지1</td>
-				<td><a href="#">다운로드</a></td>
+				<td><a href="download?fileName=test6.PNG">다운로드</a></td>
 			</tr>
 			<tr>
-				<td><img width="70" height="70"></td>
+				<td><img src="chapter08_file/fileSample/test7.png" width="70" height="70"></td>
 				<td>이미지2</td>
-				<td><a href="#">다운로드</a></td>
+				<td><a href="download?fileName=test7.png">다운로드</a></td>
 			</tr>
 			<tr>
-				<td><img width="70" height="70"></td>
+				<td><img src="chapter08_file/fileSample/test8.jpg" width="70" height="70"></td>
 				<td>이미지3</td>
-				<td><a href="#">다운로드</a></td>
+				<td><a href="download?fileName=test8.jpg">다운로드</a></td>
 			</tr>
 		</table>
 	</fieldset>
 	
 	<hr>
 	
-	<form >
+	<form action="delete" method="post">
 		<fieldset>
 		<legend>파일 삭제</legend>
-		   <p>삭제할 파일명 : <input type="text" ></p>
+		   <p>삭제할 파일명 : <input type="text" name="deleteFile" ></p>
 		   <input type="submit" value="삭제하기">
 		</fieldset>
 	</form>
 	
 	<hr>
 
-	<form>
+	<form action="update" method="post" enctype="multipart/form-data">
 		<fieldset>
 		<legend>파일 수정</legend>
-		   <p>삭제할 파일명 : <input type="text" ></p>
-		   <p>수정할 파일 : <input type="file" ></p>
+		   <p>삭제할 파일명 : <input type="text" name="deleteFileName"></p>
+		   <p>수정할 파일 : <input type="file" name="updateFile"></p>
 		   <input type="submit" value="수정하기">
 		</fieldset>
 	</form>
