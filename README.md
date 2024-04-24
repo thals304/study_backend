@@ -1635,6 +1635,247 @@
     
     ```
 
+    **// 마이페이지** 
+
+    ```html
+    @WebServlet("/myPage")
+    public class SessionMyPage extends HttpServlet {
+    	private static final long serialVersionUID = 1L;
+        
+    	// 마이페이지 화면으로 이동
+    	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    		
+    		// 1) request.getSession();	메서드로 Session 객체를 생성한다.
+    		HttpSession session = request.getSession();
+    		
+    		// 2) getAttribute(세션정보); 메서드를 사용하여 로그인관련 데이터를 가져온다.
+    		String id = (String)session.getAttribute("id");
+    		
+    		// 3-1) Session객체에 정보가 있으면 (인증)
+    		if (id != null) {		
+    			/* 
+    			 
+    				 3-1-1) DAO에서 유저 관련 데이터를 조회하는 로직 
+    				   SELECT * FROM MEMBER WHERE MEMBER_ID = 'user';
+    			 
+    			 */
+    			
+    			// 3-1-2) DAO에서 조회한 데이터를 request객체에 저장 
+    			// request.setAttribute("변수명", db에서 가져온 정보 );
+    			request.setAttribute("name","익명" );
+    			request.setAttribute("hp","010-1234-5678" );
+    			request.setAttribute("address","서울 경기 인천" );
+    			
+    			// 3-1-3) View로 페이지 이동 (데이터 포함)
+    			RequestDispatcher dis = request.getRequestDispatcher("chapter07_session_cookie/07_01_session/myPage.jsp"); 
+    			dis.forward(request, response);
+    		}	
+    		// 3-1) Session객체에 정보가 없으면 (비인증)
+    		else {
+    			String jsScript = """
+    					<script>
+    						alert("로그인을 먼저 진행해주세요");
+    						history.go(-1);
+    					</script>
+    				""";
+    			
+    			response.setContentType("text/html; charset=utf-8");
+    			PrintWriter out = response.getWriter();	
+    			out.print(jsScript);
+    
+    		}
+    
+    	}
+    
+    }
+    
+    ```
+    
+    ```html
+    <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+    </head>
+    <body>
+    	<%-- view(jsp)에서 session객체에 접근하는 방법 : ${sessionScope.속성명} --%>
+    	<%-- view(jsp)에서 request객체에 접근하는 방법 : ${requestScope.속성명} or ${속성명} --%>
+    	<h3>${sessionScope.id }님의 마이페이지 (${sessionScope.role })</h3> <%-- sessionScope. 생략 불가능 --%>
+    	<h5> 이름 : ${requestScope.name } </h5> <%-- requestScope. 생략 가능 --%> 
+    	<h5> 연락처 : ${hp }</h5>
+    	<h5> 주소 : ${address }</h5>
+    	
+    </body>
+    </html>
+    ```
+    
+    **// 카트리스트**
+    
+    ```html
+    @WebServlet("/cart")
+    public class SessionCart extends HttpServlet {
+    	
+    	private static final long serialVersionUID = 1L;
+    	
+    	// 카트리스트 화면으로 이동
+    	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	
+    		// 1) request.getSession();	메서드로 Session 객체를 생성한다.
+    		HttpSession session = request.getSession();
+    		
+    		// 2)  getAttribute(세션정보); 메서드를 사용하여 로그인관련 데이터를 가져온다.
+    		String id  = (String)session.getAttribute("id");
+    		
+    		// 3-1) Session객체에 정보가 있으면 (인증)
+    		if (id != null) {	
+    				/* 
+    				 
+    					 3-1-1) DAO에서 유저 관련 데이터를 조회하는 로직 
+    					   SELECT * FROM MEMBER WHERE MEMBER_ID = 'user';
+    				 
+    				 */
+    				
+    				// 3-1-2) DAO에서 조회한 데이터를 request객체에 저장
+    				request.setAttribute("cart1","저장한 상품1" );
+    				request.setAttribute("cart2","저장한 상품2" );
+    				request.setAttribute("cart3","저장한 상품3" );
+    			
+    				// 3-1-3) View로 페이지 이동 (데이터 포함)
+    				RequestDispatcher dis = request.getRequestDispatcher("chapter07_session_cookie/07_01_session/cart.jsp"); 
+    				dis.forward(request, response);
+    		}	
+    		// 3-2) Session객체에 정보가 없으면 (비인증)
+    		else {
+    			String jsScript = """
+    					<script>
+    						alert("로그인을 먼저 진행해주세요");
+    						history.go(-1);
+    					</script>
+    				""";
+    			
+    			response.setContentType("text/html; charset=utf-8");
+    			PrintWriter out = response.getWriter();	
+    			out.print(jsScript);
+    		}
+    		
+    		
+    	}
+    
+    }
+    ```
+    
+    ```html
+    <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <title>카트리스트</title>
+    </head>
+    <body>
+    
+    	<%-- view(jsp)에서 session객체에 접근하는 방법 : ${sessionScope.속성명} --%>
+    	<%-- view(jsp)에서 request객체에 접근하는 방법 : ${reuqestScope.속성명} or ${속성명}--%>
+    	
+    
+    	<h3>${sessionScope.id }님의 카트리스트 (${sessionScope.role })</h3>
+    	<h5>상품1 : ${cart1 }</h5>
+    	<h5>상품2 : ${cart2 }</h5>
+    	<h5>상품3 : ${cart3 }</h5>
+    	
+    </body>
+    </html>
+    ```
+    
+    **// admin**
+    
+    if문 주의! role에 데이터가 있으면서 role이 admin이어야만 가능 (role에 데이터가 있는데 user인 경우에 접근 불가능하도록) 
+    
+    ```html
+    @WebServlet("/admin")
+    public class SessionAdmin extends HttpServlet {
+    	
+    	private static final long serialVersionUID = 1L;
+    	
+    	// 관리자 화면으로 이동
+    	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    
+    		// 1) request.getSession();	메서드로 Session 객체를 생성한다.
+    		HttpSession session = request.getSession();
+    		
+    		// 2) getAttribute(세션정보); 메서드를 사용하여 권한관련 데이터를 가져온다.
+    		String role = (String)session.getAttribute("role");
+    		
+    		// 3-1) 권한이 관리자 혹은 운영자인지 판별한다. 권한이 있고 admin이면 (인증)
+    		if (role != null && role.equals("admin")) {
+    			
+    			/* 
+    			 
+    				 3-1-1) DAO에서 관리자 관련 데이터를 조회하는 로직 
+    				   SELECT * FROM MEMBER WHERE MEMBER_ID = 'admin';
+    			 
+    			 */
+    			
+    			// 3-1-2) DAO에서 조회한 데이터를 request객체에 저장
+    			request.setAttribute("productList" , "상품1, 상품2, 상품3");
+    			request.setAttribute("userList" , "유저1 , 유저2 , 유저3");
+    			request.setAttribute("orderList" , "결제1 , 결제2, 결제3");
+    			
+    			// 3-1-3) View로 페이지 이동 (데이터 포함)
+    			RequestDispatcher dis = request.getRequestDispatcher("chapter07_session_cookie/07_01_session/admin.jsp"); 
+    			dis.forward(request, response);
+    			
+    		}
+    		// 3-2) 로그인을 하지 않았거나 관리자 권한이 아니면 (비인증)
+    		else {
+    			
+    			String jsScript = """
+    					<script>
+    						alert("접근 금지");
+    						history.go(-1);
+    					</script>
+    				""";
+    			
+    			response.setContentType("text/html; charset=utf-8");
+    			PrintWriter out = response.getWriter();	
+    			out.print(jsScript);
+    			
+    		}
+    		
+    		
+    	}
+    
+    }
+    
+    ```
+    
+    ```html
+    <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta charset="UTF-8">
+    <title>admin</title>
+    </head>
+    <body>
+    
+    	<%-- view(jsp)에서 session객체에 접근하는 방법 : ${sessionScope.속성명} --%>
+    	<%-- view(jsp)에서 request객체에 접근하는 방법 : ${reuqestScope.속성명} or ${속성명}--%>
+    
+    	<h3>'${sessionScope.id}'님의 운영자화면 (${sessionScope.role } 권한)</h3>
+    	<h5>상품관리 : ${productList }</h5>
+    	<h5>유저관리 : ${userList }</h5>
+    	<h5>결제관리 : ${orderList }</h5>
+    
+    </body>
+    </html>
+    ```
+
+- **file  > 업로드, 다운로드, 보고, *수정*= (삭제하고 다시 올리기), 삭제**
+        
+
 ### MVC2 - 게시판 만들기
 
 - **DAO (Data Access Object)**
