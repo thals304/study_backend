@@ -1,5 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
+<!-- 24.04.24 time 15:38-15:48
+	today 소감문 
+	파일 타입이 1개일 때는 if문을 이용하고 파일 타입이 여러 개 일때는 while문을 사용하는데
+	파일 여러 개 중에서 업로드 한 것만 파일명과 uuid+확장명을 올려야 한다는 점이 다르고
+	script로 업로드 완료했다는 것이 while문 밖에 써야 한다는 점이 앞에서와 다른 점이라는 걸
+	주의하면 될 것 같다.  
+ -->
 <html>
 <head>
 <meta charset="UTF-8">
