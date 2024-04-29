@@ -2348,3 +2348,155 @@
 
 ### spring boot
 
+- **spring boot 문법**
+    - **의존관계주입(di, ioc)**
+        
+        - **(before) AsIs Model**
+            - 객체의 생성 순서 **Controller > Service > DAO**
+            - 객체가 생성됨과 동시에 **상위클래스 내부에서 하위클래스의 객체를 생성**한다.
+            - 결합력(의존성)이 강하다.
+            - 상위클래스와 하위 클래스간의 종속성이 생긴다.
+            - 유지보수시 재사용성이 줄어들며 클래스를 수정해야 하는 빈도 및 위험이 높아진다.
+            - 유연성과 테스트 용이성이 부족하다.
+            - 유지보수가 어려워 질 수 있다.
+            
+            ```html
+            public class AsIsController {
+            	
+            	AsIsService asIsService = new AsIsService();
+            
+            }
+            ```
+            
+            ```html
+            public class AsIsService {
+            
+            	AsIsDAO asIsDAO = new AsIsDAO();
+            }
+            ```
+            
+            ```html
+            public class AsIsDAO {
+            
+            }
+            ```
+            
+        - **(after) Tobe Model**
+            - IoC컨테이너에 의해서 ToBeDAO , ToBeService , ToBeController 객체가 생성 및 관리된다.
+            - **ToBeDAO > ToBeService > ToBeController**의 순서로 객체가 생성 및 주입된다.
+            - 외부에서 생성된 객체를 주입한다.
+            - 결합력(의존성)이 약하다.
+            - 유연성과 테스트 용이성이 좋다.
+            - 유지보수에도 용이하다.
+        
+        ```html
+        public interface ToBeDAO {
+        
+        }
+        ```
+        
+        ```html
+        import org.springframework.stereotype.Repository;
+        
+        @Repository // 해당 클래스를 repository로 지정하여 spring bean으로 등록한다.
+        public class ToBeDAOImpl implements ToBeDAO{
+        
+        }
+        ```
+        
+        ```html
+        public interface ToBeService {
+        
+        }
+        ```
+        
+        ```html
+        import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.stereotype.Service;
+        
+        @Service // 해당 클래스를 service로 지정하여 spring bean으로 등록한다.
+        public class ToBeServiceImpl implements ToBeService{
+        
+        	// before
+        	// private ToBeDAO toBeDAO = new ToBeDAOImpl();
+        	
+        	// after
+        	@Autowired
+        	private ToBeDAO toBeDAO;
+        }
+        ```
+        
+        ```html
+        import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.stereotype.Controller;
+        
+        @Controller // 해당 클래스를 controller로 지정하여 spring bean으로 등록한다.
+        public class ToBeController {
+        	
+        	// before
+        	// ToBeService toBeService = new ToBeServiceImpl();
+        	// 인터페이스 타입으로 객체 생성 : 인터페이스 변수명 = new 클래스명();
+        	
+        	// after
+        	@Autowired
+        	ToBeService toBeService;
+        	
+        }
+        
+        ```
+        
+        **+) 패스워드 인코더 적용 예시**
+        
+        1. build.gradle 파일에 아래의 의존성 추가 후에 refresh build project
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        (build.gradle > 우클릭 > gradle > refresh)
+        2. config 객체를 생성
+        3. 의존성 주입하여 기능 구현
+        
+        ```html
+        import org.springframework.context.annotation.Bean;
+        import org.springframework.context.annotation.Configuration;
+        import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+        import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+        import org.springframework.security.crypto.password.PasswordEncoder;
+        
+        @Configuration // 스프링 컨테이너는 @Configuration이 붙은 클래스를 구성 클래스로 인식하고 이 안에서 선언된 메소드들을 통해 빈을 등록한다.
+        @EnableWebSecurity // @EnableWebSecurity 어노테이션은 스프링 시큐리티 설정을 활성화한다.
+        public class SecurityConfig {
+        
+        	@Bean // @Bean 어노테이션은 메소드 레벨에서 사용되며 메소드가 반환하는 객체를 스프링 컨테이너의 빈으로 등록하도록 한다.
+        	public PasswordEncoder passwordEncoder() {
+        		
+        	    PasswordEncoder encoder = new BCryptPasswordEncoder();
+        		
+        	    // 테스트 코드 및 기타 로직 구현 가능
+        		
+        		return encoder;   // PasswordEncoder는 스프링 시큐리티에서 비밀번호를 안전하게 인코딩하거나 검증할 때 사용하는 인터페이스이다.
+        	}
+        	
+        	
+        }
+        
+        ```
+        
+        ```html
+        import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.security.crypto.password.PasswordEncoder;
+        import org.springframework.stereotype.Service;
+        
+        @Service
+        public class SecurityService {
+        
+        	// before
+        	// 테스트 코드 및 기타 로직 구현 불가능
+        	// private PasswordEncoder encoder = new BCryptPasswordEncoder();
+        	
+        	// after
+        	@Autowired
+        	private PasswordEncoder encoder;
+        }
+        
+        ```
+        
+    - **MVC(핵심개발)** - thymeleaf, from , mybatis, AJAX + restapi
+        
