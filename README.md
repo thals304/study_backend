@@ -2346,7 +2346,7 @@
 - **컨트롤러 (Controller) > servlet**
     - **모델(Model)과 뷰(View) 간의 흐름을 제어하고 클라이언트의 요청을 처리**
 
-### spring boot
+### SPRING BOOT
 
 - **spring boot 문법**
     - **의존관계주입(di, ioc)**
@@ -2499,4 +2499,273 @@
         ```
         
     - **MVC(핵심개발)** - thymeleaf, from , mybatis, AJAX + restapi
+        - **@Controller**
+            - 스프링 프레임워크에서 @Controller 어노테이션은 클래스 레벨에서 사용되며
+            해당 클래스를 웹 요청을 처리하는 컨트롤러로 지정하는 데 사용한다.
+            - @Controller가 붙은 클래스는 스프링 MVC의 웹 레이어의 일부로서
+            클라이언트의 요청을 받아 처리한 후 적절한 응답을 반환하는 역할을 한다.
+            - **[ 주요 기능과 사용 목적 ]**
+                - @Controller 어노테이션이 지정된 클래스는 HTTP 요청을 처리하는 엔드포인트를 정의한다.
+                이러한 클래스 내에서 정의된 메소드들은 특정 요청 경로(URL), HTTP 메소드(GET, POST 등)에 매핑한다.
+                - 요청 매핑: @RequestMapping 어노테이션 또는 그와 유사한 어노테이션(@GetMapping, @PostMapping 등)을 사용하여 메소드를 특정 요청에 매핑한다.
+                이러한 메소드들은 요청을 처리하고, 데이터 모델을 준비하며, 뷰 이름을 반환하여 클라이언트에게 응답을 보낸다.
+                - 데이터 모델과 뷰: 컨트롤러 메소드는 데이터 모델을 뷰에 전달할 수 있다.
+                모델 데이터는 Model 객체를 통해 뷰에 전달되며 뷰 템플릿(예: Thymeleaf, JSP 등)에서 이 데이터를 사용하여 동적인 웹 페이지를 생성할 수 있다.
+                - 뷰 리졸버: 스프링 MVC는 컨트롤러가 반환한 뷰 이름을 기반으로 실제 뷰 템플릿의 위치를 찾으며 이 과정은 뷰 리졸버(view resolver)에 의해 수행된다.
         
+        ```html
+        import org.springframework.stereotype.Controller;
+        import org.springframework.web.bind.annotation.GetMapping;
+        import org.springframework.web.bind.annotation.PostMapping;
+        import org.springframework.web.bind.annotation.RequestMapping;
+        import org.springframework.web.bind.annotation.RequestMethod;
+        
+        @Controller
+        public class MVCController {
+        
+        	//@RequestMapping(value="/main" , method=RequestMethod.GET) // value에는 url주소를 작성 , method는 요청방식을 작성한다. (method를 생략할 경우 GET, POST를 모두 처리한다.)
+        	@GetMapping("/main")    // Get요청의 'localhost/main' URL에 매핑
+        	//@PostMapping("/main") // Post요청의 'localhost/main' URL에 매핑
+        	public String main() {
+        		
+        		/*
+        		
+        			- Spring Boot Controller에서 메서드의 return타입은 view(html)를 명시할 String타입을 기본적으로 사용한다.
+        	  		
+        	  		- application.properties 파일의 아래의 설정으로 바인딩되어 view(html)화면으로 포워딩 한다.
+        			
+        				1) view 파일 위치지정 (src/main/resources/templates 하위 폴더)
+        				spring.thymeleaf.prefix=classpath:/templates/
+        			
+        				2) view 파일 확장자지정
+        				spring.thymeleaf.suffix=.html
+        	
+        				[ 예시 ]
+        				return "home"		 	 > /templates/home.html 파일로 이동
+        				return "goods/main"   	 > /templates/goods/main.html 파일로 이동
+        				return "order/orderList" > /templates/order/orderList.html 파일로 이동
+        				
+        		 */
+        		
+        		return "main"; // /templates/main.html 파일로 이동한다.
+        	
+        	}
+        	
+        	
+        	@GetMapping("/source") // localhost/source
+        	public String source() {
+        		
+        		/*
+        	  	
+        	  		# return "redirect:/경로"로 사용할 경우 다른 URL로 리다이렉트(Re Direct)한다. 
+        	 
+        	 		예시)
+        	 		return "redirect:/admin/memberList"	 > @GetMapping("/admin/memberList")으로 이동한다.
+        	  		return "redirect:/order/modifyOrder" > @GetMapping("/order/modifyOrder")으로 이동한다.
+        		
+        		 */
+        		
+        		return "redirect:/target"; // @GetMapping("/target")으로 이동한다.
+        		//return "target"; 		   // /templates/target.html로 이동한다.
+        	
+        	}
+        	
+        	
+        	@GetMapping("/target")
+        	public String target() {
+        
+        		/*
+        		  
+        		 	# html로 이동하는 방법과 URL redirect의 차이점
+        			 
+        			1) html로 이동하는 경우 : 단순 페이지만 이동  
+        			2) redirect하는 경우    : (주로사용하는 방법) url에 포함된 모든 비즈니스 로직(Controller , Service , DAO)을 수행한 후 페이지 이동
+        			
+        		*/
+        		
+        		System.out.println("SELECT * FROM TABLE");
+        		System.out.println("request.setAttribute('data1' , data1)");
+        		System.out.println("request.setAttribute('data2' , data2)");
+        		System.out.println("request.setAttribute('data3' , data3)");
+        		System.out.println();
+        		
+        		return "target";
+        		
+        	}	
+        	
+        }
+        
+        ```
+        
+        - **DTO > 롬복(lombok)**
+            - 롬복은 Java 라이브러리로, 반복되는 코드(예: getter, setter, toString 등) 작성을 줄여주는 도구이다.
+            - 이를 사용하면 클래스의 가독성을 높이고, 유지보수를 용이하게 만들 수 있다.
+            - **주요 어노테이션**
+                - **@Data**  : 클래스의 모든 필드에 대한 getter, setter를 자동으로 생성한다. equals(), hashCode(), toString() 메서드도 포함한다.
+                - **@Getter / @Setter** : 클래스 또는 필드 레벨에서 사용할 수 있으며, 각 필드에 대한 getter와 setter 메서드를 생성한다.
+                - **생성자**
+                    - **@NoArgsConstructor**: 매개변수가 없는 기본 생성자를 생성한다.
+                    - **@RequiredArgsConstructor**: final 또는 @NonNull 필드에 대한 생성자를 생성한다.
+                    - **@AllArgsConstructor**: 모든 필드를 매개변수로 하는 생성자를 생성한다.
+                - **@Builder** : 객체의 불변성을 유지하면서 객체 생성을 보다 용이하게 하는 빌더 패턴을 구현한다.
+                - **@Slf4j** 로깅을 위한 Logger 객체를 자동으로 생성한다. SLF4J(Logging Facade)를 사용한다.
+                - **@Value** 불변 클래스를 만들기 위해 사용되며, 모든 필드를 final로 만들고, getter만 생성한다.
+                - **@NonNull** 필드가 null이 아님을 나타내며, 해당 필드에 대한 생성자나 setter에서 자동으로 null 체크를 추가한다.
+            - **롬복 사용의 장점**
+                - **코드 간소화**: 반복적인 메서드 작성을 줄여준다.
+                - **가독성 향상**: 필요한 로직에 더 집중할 수 있게 해준다.
+                - **유지보수 용이**: 필드 변경 시 관련 메서드를 일일이 수정할 필요가 없다.
+        - **DAO > @Repository**
+            - 스프링 프레임워크에서 @Repository 어노테이션은 데이터 접근 계층(DAO, Data Access Object)의 클래스에 사용된다.
+            - 이 어노테이션은 클래스를 스프링 컨테이너에 빈으로 등록하며, 주로 데이터베이스와의 통신을 담당하는 컴포넌트임을 나타낸다.
+                - @Repository는 스프링의 스테레오타입 어노테이션 중 하나로, 데이터베이스 연산을 수행하는 클래스에 부여함으로써 스프링이 해당 클래스를 DAO로 인식하게 한다.
+            - **[ 주요 기능과 사용 목적 ]**
+                - **예외 변환**: @Repository 어노테이션을 사용하면, 스프링은 데이터 접근 계층에서 발생하는 예외를 스프링이 제공하는 데이터 접근 예외로 자동 변환한다.
+                이를 통해 데이터베이스 기술(예: JDBC, JPA 등)에 종속적인 예외를 스프링의 일관된 예외 계층 구조로 처리할 수 있게 됩니다.
+                - **빈 자동 등록**: @Repository 어노테이션을 사용하여 클래스를 정의하면 스프링 컨테이너는 해당 클래스의 인스턴스를 빈으로 자동 등록한다.
+                이를 통해 의존성 주입과 같은 스프링 컨테이너의 기능을 활용할 수 있다.
+                - **코드의 명시성**: 이 어노테이션은 클래스가 데이터 접근 계층의 컴포넌트임을 명시적으로 표현한다.
+                이는 애플리케이션의 아키텍처를 이해하는 데 도움이 된다.
+        - **Model And View**
+            - **HttpServeletRequest**
+                - 컨트롤러 클래스 메서드의 파라메타로 HttpServletRequest를 추가하여 사용한다.
+                - **setAttribute("속성명", 데이터) 메서드를 사용**하여 데이터를 뷰로 전송 한다.
+                
+                ```html
+                import org.springframework.beans.factory.annotation.Autowired;
+                import org.springframework.stereotype.Controller;
+                import org.springframework.ui.Model;
+                import org.springframework.web.bind.annotation.GetMapping;
+                import org.springframework.web.servlet.ModelAndView;
+                
+                import com.application.mvc.data.SupposeDAO;
+                
+                import jakarta.servlet.http.HttpServletRequest;
+                
+                @Controller
+                public class C2V_modelAndView {
+                
+                	//SupposeDAO supposeDAO = new SupposeDAO();
+                	
+                	@Autowired
+                	private SupposeDAO supposeDAO;
+                	
+                	@GetMapping("/request") //localhost/request
+                	public String request(HttpServletRequest request) {
+                		
+                		// 데이터 전송
+                		request.setAttribute("string"  , supposeDAO.getString());
+                		request.setAttribute("int"     , supposeDAO.getInt());
+                		request.setAttribute("double"  , supposeDAO.getDouble());
+                		request.setAttribute("boolean" , supposeDAO.getBoolean());
+                		request.setAttribute("date"    , supposeDAO.getDate());
+                		request.setAttribute("dto"     , supposeDAO.getDTO());
+                		request.setAttribute("dtoList" , supposeDAO.getDTOList());
+                		request.setAttribute("map"     , supposeDAO.getMap());
+                		request.setAttribute("mapList" , supposeDAO.getMapList());
+                		
+                		return "chapter02_modelAndView/c2v"; // /templates/chapter02_modelAndView/c2v.html 파일로 이동
+                	
+                	}
+                	
+                }
+                
+                ```
+                
+            - **Model**
+                - 컨트롤러 클래스 메서드의 파라메타로 Model을 추가하여 사용한다.
+                - **addAttribute("속성명", 데이터) 메서드를 사용**하여 데이터를 뷰로 전송 한다.
+                
+                ```html
+                import org.springframework.beans.factory.annotation.Autowired;
+                import org.springframework.stereotype.Controller;
+                import org.springframework.ui.Model;
+                import org.springframework.web.bind.annotation.GetMapping;
+                import org.springframework.web.servlet.ModelAndView;
+                
+                import com.application.mvc.data.SupposeDAO;
+                
+                import jakarta.servlet.http.HttpServletRequest;
+                
+                @Controller
+                public class C2V_modelAndView {
+                
+                	//SupposeDAO supposeDAO = new SupposeDAO();
+                	
+                	@Autowired
+                	private SupposeDAO supposeDAO;
+                	
+                	@GetMapping("/model") //localhost/model
+                	public String model(Model model) {
+                		
+                		// 데이터 전송
+                		model.addAttribute("string"  , supposeDAO.getString());
+                		model.addAttribute("int"     , supposeDAO.getInt());
+                		model.addAttribute("double"  , supposeDAO.getDouble());
+                		model.addAttribute("boolean" , supposeDAO.getBoolean());
+                		model.addAttribute("date"    , supposeDAO.getDate());
+                		model.addAttribute("dto"     , supposeDAO.getDTO());
+                		model.addAttribute("dtoList" , supposeDAO.getDTOList());
+                		model.addAttribute("map"     , supposeDAO.getMap());
+                		model.addAttribute("mapList" , supposeDAO.getMapList());
+                		
+                		return "chapter02_modelAndView/c2v"; // /templates/chapter02_modelAndView/c2v.html 파일로 이동
+                	
+                	}
+                	
+                }
+                
+                ```
+                
+            - **ModelAndView**
+                - ModelAndView 객체를 메서드에서 생성한다.
+                - **setViewName("뷰 경로"); 메서드를 사용**하여 뷰 경로를 지정한다.
+                - setViewName(); 메서드 대신 **생성자의 인수로 뷰 경로를 지정**할 수 있다.
+                - **addObject("속성명", 데이터); 메서드를 사용**하여 데이터를 뷰로 전송 한다.
+                - ModelAndView 객체를 return한다.
+                - 관례적으로 **객체명은 mv 혹은 mav**로 사용한다.
+                
+                ```html
+                import org.springframework.beans.factory.annotation.Autowired;
+                import org.springframework.stereotype.Controller;
+                import org.springframework.ui.Model;
+                import org.springframework.web.bind.annotation.GetMapping;
+                import org.springframework.web.servlet.ModelAndView;
+                
+                import com.application.mvc.data.SupposeDAO;
+                
+                import jakarta.servlet.http.HttpServletRequest;
+                
+                @Controller
+                public class C2V_modelAndView {
+                
+                	//SupposeDAO supposeDAO = new SupposeDAO();
+                	
+                	@Autowired
+                	private SupposeDAO supposeDAO;
+                	
+                	@GetMapping("/modelAndView") //localhost/modelAndView
+                	public ModelAndView modelAndView() {
+                		
+                		ModelAndView mv = new ModelAndView();
+                		mv.setViewName("chapter02_modelAndView/c2v");
+                		
+                		// 데이터 전송
+                		mv.addObject("string"  , supposeDAO.getString());
+                		mv.addObject("int"     , supposeDAO.getInt());
+                		mv.addObject("double"  , supposeDAO.getDouble());
+                		mv.addObject("boolean" , supposeDAO.getBoolean());
+                		mv.addObject("date"    , supposeDAO.getDate());
+                		mv.addObject("dto"     , supposeDAO.getDTO());
+                		mv.addObject("dtoList" , supposeDAO.getDTOList());
+                		mv.addObject("map"     , supposeDAO.getMap());
+                		mv.addObject("mapList" , supposeDAO.getMapList());
+                		
+                		return mv;
+                		
+                	}
+                	
+                	
+                }
+                
+                ```
