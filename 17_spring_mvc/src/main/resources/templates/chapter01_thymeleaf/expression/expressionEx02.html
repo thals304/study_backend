@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"> <!-- html태그에 thymeleaf(xmlns:th="http://www.thymeleaf.org") 속성을 적용하여 thymeleaf를 사용한다. -->
+<head>
+<meta charset="UTF-8">
+<title>expression</title>
+</head>
+<body>
+
+	
+	<!--
+	 
+	 	# Session 데이터 출력
+	 
+		- Thymeleaf에서 세션 데이터에 접근하려면 ${session} 객체를 사용한다. 
+		
+		- ${session.속성명} 형태로 세션에 저장된 데이터를 뷰에서 접근한다.
+		
+	 -->
+	<h3>Session 데이터 출력</h3>
+	<!-- before : ${sessionScope.id} -->
+	<p th:text="|id : ${session.id}|">없음</p>             <!-- session.setAttribute("id", "qwer1234"); -->
+	<p th:text="|userRole : ${session.userRole}|">없음</p> <!-- session.setAttribute("userRole", "admin"); -->
+	
+	<p>id : [[${session.id}]]             </p><!-- session.setAttribute("id", "abcde"); -->
+	<p>userRole : [[${session.userRole}]] </p><!-- session.setAttribute("userRole", "admin"); -->
+
+</body>
+</html>
