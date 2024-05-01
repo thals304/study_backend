@@ -2360,7 +2360,7 @@
             - 유연성과 테스트 용이성이 부족하다.
             - 유지보수가 어려워 질 수 있다.
             
-            ```html
+            ```java
             public class AsIsController {
             	
             	AsIsService asIsService = new AsIsService();
@@ -2368,14 +2368,14 @@
             }
             ```
             
-            ```html
+            ```java
             public class AsIsService {
             
             	AsIsDAO asIsDAO = new AsIsDAO();
             }
             ```
             
-            ```html
+            ```java
             public class AsIsDAO {
             
             }
@@ -2389,13 +2389,13 @@
             - 유연성과 테스트 용이성이 좋다.
             - 유지보수에도 용이하다.
         
-        ```html
+        ```java
         public interface ToBeDAO {
         
         }
         ```
         
-        ```html
+        ```java
         import org.springframework.stereotype.Repository;
         
         @Repository // 해당 클래스를 repository로 지정하여 spring bean으로 등록한다.
@@ -2404,13 +2404,13 @@
         }
         ```
         
-        ```html
+        ```java
         public interface ToBeService {
         
         }
         ```
         
-        ```html
+        ```java
         import org.springframework.beans.factory.annotation.Autowired;
         import org.springframework.stereotype.Service;
         
@@ -2426,7 +2426,7 @@
         }
         ```
         
-        ```html
+        ```java
         import org.springframework.beans.factory.annotation.Autowired;
         import org.springframework.stereotype.Controller;
         
@@ -2453,7 +2453,7 @@
         2. config 객체를 생성
         3. 의존성 주입하여 기능 구현
         
-        ```html
+        ```java
         import org.springframework.context.annotation.Bean;
         import org.springframework.context.annotation.Configuration;
         import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -2479,7 +2479,7 @@
         
         ```
         
-        ```html
+        ```java
         import org.springframework.beans.factory.annotation.Autowired;
         import org.springframework.security.crypto.password.PasswordEncoder;
         import org.springframework.stereotype.Service;
@@ -2499,6 +2499,9 @@
         ```
         
     - **MVC(핵심개발)** - thymeleaf, from , mybatis, AJAX + restapi
+        
+        **view(html) Controller(java) service(java) DAO(java) Mapper(sql)**
+        
         - **@Controller**
             - 스프링 프레임워크에서 @Controller 어노테이션은 클래스 레벨에서 사용되며
             해당 클래스를 웹 요청을 처리하는 컨트롤러로 지정하는 데 사용한다.
@@ -2513,7 +2516,7 @@
                 모델 데이터는 Model 객체를 통해 뷰에 전달되며 뷰 템플릿(예: Thymeleaf, JSP 등)에서 이 데이터를 사용하여 동적인 웹 페이지를 생성할 수 있다.
                 - 뷰 리졸버: 스프링 MVC는 컨트롤러가 반환한 뷰 이름을 기반으로 실제 뷰 템플릿의 위치를 찾으며 이 과정은 뷰 리졸버(view resolver)에 의해 수행된다.
         
-        ```html
+        ```java
         import org.springframework.stereotype.Controller;
         import org.springframework.web.bind.annotation.GetMapping;
         import org.springframework.web.bind.annotation.PostMapping;
@@ -2615,6 +2618,50 @@
                 - **코드 간소화**: 반복적인 메서드 작성을 줄여준다.
                 - **가독성 향상**: 필요한 로직에 더 집중할 수 있게 해준다.
                 - **유지보수 용이**: 필드 변경 시 관련 메서드를 일일이 수정할 필요가 없다.
+            
+            ```java
+            import java.util.Date;
+            
+            import lombok.Data;
+            import lombok.Getter;
+            import lombok.Setter;
+            
+            @Data
+            public class BrandDTO {
+            
+            	private long brandId;
+            	private String brandNm;
+            	private Date enteredDt;
+            	private String activeYn;
+            }
+            
+            ```
+            
+            ```java
+            import java.util.Date;
+            
+            import lombok.Data;
+            import lombok.Getter;
+            import lombok.Setter;
+            import lombok.ToString;
+            
+            //@Getter
+            //@Setter
+            //@ToString
+            @Data
+            public class ProductDTO {
+            
+            	private long productId;
+            	private String productNm;
+            	private int price;
+            	private int deliveryPrice;
+            	private Date enrollDt; // java.util.Date;
+            	private long brandId;	
+            	
+            }
+            
+            ```
+            
         - **DAO > @Repository**
             - 스프링 프레임워크에서 @Repository 어노테이션은 데이터 접근 계층(DAO, Data Access Object)의 클래스에 사용된다.
             - 이 어노테이션은 클래스를 스프링 컨테이너에 빈으로 등록하며, 주로 데이터베이스와의 통신을 담당하는 컴포넌트임을 나타낸다.
@@ -2626,12 +2673,156 @@
                 이를 통해 의존성 주입과 같은 스프링 컨테이너의 기능을 활용할 수 있다.
                 - **코드의 명시성**: 이 어노테이션은 클래스가 데이터 접근 계층의 컴포넌트임을 명시적으로 표현한다.
                 이는 애플리케이션의 아키텍처를 이해하는 데 도움이 된다.
-        - **Model And View**
+            
+            ```java
+            import java.util.ArrayList;
+            import java.util.Date;
+            import java.util.HashMap;
+            import java.util.List;
+            import java.util.Map;
+            
+            import org.springframework.stereotype.Repository;
+            
+            @Repository
+            public class SupposeDAO {
+            
+            	/*
+            	 
+            		view 레이어 실습을 위해 Database에서 다양한 데이터 타입을 조회하였다고 가정한 상태
+            	 
+            	 */
+            	
+            	// String 타입 예시
+            	public String getString() {
+            		return "글자 데이터";
+            	}
+            	
+            	// int , long 타입 예시
+            	public int getInt() {
+            		return 7777777;
+            	}
+            
+            	// double 타입 예시
+            	public double getDouble() {
+            		return 7777777.777;
+            	}
+            	
+            	// boolean 타입 예시
+            	public boolean getBoolean() {
+            		return true;
+            	}
+            
+            	// Date 타입 예시
+            	public Date getDate() {
+            		return new Date(); // import java.util.Date;
+            	}
+            	
+            	// DTO 타입 예시
+            	public ProductDTO getDTO() {
+            		
+            		ProductDTO productDTO = new ProductDTO();
+            		productDTO.setProductId(1);
+            		productDTO.setProductNm("노트북1");
+            		productDTO.setPrice(1000000);
+            		productDTO.setDeliveryPrice(2500);
+            		productDTO.setEnrollDt(new Date());
+            		productDTO.setBrandId(1);
+            		
+            		return productDTO;
+            
+            	}
+            	
+            	
+            	// List<DTO> 타입 예시
+            	public List<ProductDTO> getDTOList() {
+            		
+            		List<ProductDTO> productList = new ArrayList<ProductDTO>();
+            		
+            		for (int i = 1; i < 11; i++) {
+            			ProductDTO productDTO = new ProductDTO();
+            			productDTO.setProductId(i);
+            			productDTO.setProductNm("노트북 " + i);
+            			productDTO.setPrice(100000 * i);
+            			productDTO.setDeliveryPrice(2500);
+            			productDTO.setEnrollDt(new Date());
+            			productDTO.setBrandId(i);
+            			productList.add(productDTO);
+            		}
+            
+            		return productList;
+            
+            	}
+            	
+            	
+            	// Map 타입 예시
+            	public Map<String,Object> getMap() {
+            		
+            		Map<String,Object> productMap = new HashMap<String, Object>();
+            		
+            		//ProductDTO property
+            		productMap.put("productId", 1);
+            		productMap.put("productNm", "노트북1");
+            		productMap.put("brandId", 1);
+            		productMap.put("price", 10000);
+            		productMap.put("deliveryPrice", 2500);
+            		productMap.put("enrollDt",  new Date());
+            		
+            		// ProductDTO property에 포함되지 않는 데이터
+            		productMap.put("addTax", 10000 * 0.1);
+            		productMap.put("totalPrice" , 10000 + 10000 * 0.1);
+            		
+            		//BrandDTO property
+            		productMap.put("brandNm", "브랜드1");
+            		productMap.put("enteredDt", new Date());
+            		productMap.put("activeYn", "Y");
+            		
+            		return productMap;
+            
+            	}
+            
+            	
+            	// List<Map> 타입 예시
+            	public List<Map<String,Object>> getMapList() {
+            		
+            		List<Map<String,Object>> productMapList = new ArrayList<Map<String,Object>>();
+            		
+            		for (int i = 1; i < 11; i++) {
+            			
+            			Map<String,Object> productMap = new HashMap<String, Object>();
+            			productMap.put("productId", i);
+            			productMap.put("productNm", "노트북 " + i);
+            			productMap.put("brandId", i);
+            			productMap.put("price", 10000 * i);
+            			productMap.put("deliveryPrice", 2500);
+            			productMap.put("enrollDt",  new Date());
+            			
+            			// ProductDTO property에 포함되지 않는 데이터
+            			productMap.put("addTax", (10000 * i) * 0.1);
+            			productMap.put("totalPrice" , (10000 * i) + (10000 * i) * 0.1);
+            			
+            			//BrandDTO property
+            			productMap.put("brandNm", "브랜드" + i);
+            			productMap.put("enteredDt", new Date());
+            			productMap.put("activeYn", "Y");
+            			
+            			productMapList.add(productMap);
+            			
+            		}
+            		
+            		return productMapList;
+            		
+            	}
+            	
+            }
+            
+            ```
+            
+        - **화면 전송 ( Controller → View )**
             - **HttpServeletRequest**
                 - 컨트롤러 클래스 메서드의 파라메타로 HttpServletRequest를 추가하여 사용한다.
                 - **setAttribute("속성명", 데이터) 메서드를 사용**하여 데이터를 뷰로 전송 한다.
                 
-                ```html
+                ```java
                 import org.springframework.beans.factory.annotation.Autowired;
                 import org.springframework.stereotype.Controller;
                 import org.springframework.ui.Model;
@@ -2676,7 +2867,7 @@
                 - 컨트롤러 클래스 메서드의 파라메타로 Model을 추가하여 사용한다.
                 - **addAttribute("속성명", 데이터) 메서드를 사용**하여 데이터를 뷰로 전송 한다.
                 
-                ```html
+                ```java
                 import org.springframework.beans.factory.annotation.Autowired;
                 import org.springframework.stereotype.Controller;
                 import org.springframework.ui.Model;
@@ -2725,7 +2916,7 @@
                 - ModelAndView 객체를 return한다.
                 - 관례적으로 **객체명은 mv 혹은 mav**로 사용한다.
                 
-                ```html
+                ```java
                 import org.springframework.beans.factory.annotation.Autowired;
                 import org.springframework.stereotype.Controller;
                 import org.springframework.ui.Model;
@@ -2768,4 +2959,329 @@
                 	
                 }
                 
+                ```
+                
+        - **데이터 전송 (Controller → View)**
+            - **Representational State Transfer**
+                - 웹 시스템에서 서버와 클라이언트간의 자원(resource)를 교환하기 위한 아키텍처 스타일
+                - 자원을 표현(representation) 으로 구분하여 해당 자원의 상태(get , post , put , delete)를 주고 받는 모든 것을 의미한다.
+                    - **@ResponseBody**
+                        - HTTP 본문의 응답을 나타내는데 사용한다.
+                        - 이는 클라이언트가 요청한 작업의 결과를 포함하며 , 데이터 형식은 JSON , XML , HTML 등으로 표현된다.
+                        - 서버에서 클라이언트로 전송되는 데이터의 실제 내용을 담고 있고 , 클라이언트가 이 정보를 바탕으로 필요한
+                        로직을 처리하거나 클라이언트 UI를 업데이트할 수 있다.
+                        - ResponseEntity와 기능이 같으며 헤더와 상태 코드를 제외한 HTML 본문만 전송한다.
+                    
+                    ```java
+                    @Controller
+                    public class C2V_REST {
+                    
+                    	@GetMapping("/responseBody")
+                    	@ResponseBody // 사용하면 데이터 전송 , 안 사용하면 html파일로 포워딩 
+                    				  //  PrintWriter         , RequestDispatcher
+                    	public String responseBody() {
+                    		
+                    		//return "target";
+                    		String jsScript = """
+                    				<script>
+                    					alert('확인되었습니다.');
+                    				</script>
+                    				""";
+                    		
+                    		return jsScript;
+                    		
+                    		}
+                    	}
+                    ```
+                    
+                    - **@RestController**
+                        - @ResponseController 어노테이션이 추가된 컨트롤러는 기본 반환 타입(String)이 뷰 경로로 구현되지 않고 @ResponseBody로 구현된다.
+                        - ResponseBody와 기능이 같으며 헤더와 상태 코드를 제외한 HTML 본문만 전송한다.
+                        - 메서드가 아닌 '클래스'영역에 @RestController어노테이션을 작성하여 구현한다.
+                        - RESTFul API의 Controller 역할을 한다.
+                    
+                    ```java
+                    //@Controller   // 기본값은 페이지 이동
+                    @RestController // 기본값은 데이터 전송
+                    class RestControllerEx {
+                    	
+                    	@GetMapping("/restEx") // localhost/restEx
+                    	// @ResponseBody 어노테이션 없이 데이터 전송형태로 동작
+                    	public String restEx() {
+                    		
+                    		String jsScript = """
+                    				<script>
+                    					alert('확인되었습니다.');
+                    				</script>
+                    				""";
+                    		return jsScript;
+                    		
+                    	}
+                    	
+                    	@GetMapping("/read")
+                    	public String read() {
+                    		return "조회"; // 1) html  2) [data]
+                    	}
+                    	
+                    	@GetMapping("/create")
+                    	public String create() {
+                    		return "추가"; 
+                    	}
+                    	
+                    	@GetMapping("/update")
+                    	public String update() {
+                    		return "수정"; 
+                    	}
+                    	
+                    	@GetMapping("/delete")
+                    	public String delete() {
+                    		return "삭제"; 
+                    	}
+                    	
+                    }
+                    ```
+                    
+                    - **ResponseEntity**
+                        - HTTP에서 Request와 Response 동작시 전송되는 정보는 크게 body(몸체) , headers(헤더), status code(상태 코드)가 있다.
+                        - @ResponseBody에 없는 헤더와 상태코드를 함께 반환한다.
+                        - **[ 구성요소 ]**
+                            
+                            **I) body (옵션)**
+                            - HTTP의 request 또는 response가 전송하는 데이터(본문)
+                            
+                            **II) headers (옵션)**
+                            - HTTP의 request 또는 response에 대한 부가적인 정보
+                            
+                            (한글 헤더 참고)
+                            HttpHeaders responseHeaders = new HttpHeaders();
+                            responseHeaders.add("Content-Type", "text/html; charset=utf-8");
+                            
+                            **III) status code (필수)**
+                            - 클라이언트의 요청이 성공적으로 처리되었는지 상태를 알려주는 것
+                            
+                        
+                        ```java
+                        @Controller
+                        public class C2V_REST {
+                        
+                        	@GetMapping("/responseEntity")
+                        	public ResponseEntity<Object> responseEntity() {
+                        		
+                        		// 1) 상태코드
+                        		// return new ResponseEntity<Object>(HttpStatus.OK);
+                        		
+                        		// 2) 본문(html의 body) + 상태코드
+                        		String jsScript = """
+                        				<script>
+                        					alert('확인되었습니다.');
+                        				</script>
+                        				""";
+                        		//return new ResponseEntity<Object>(jsScript , HttpStatus.OK);
+                        		
+                        		// 3) 본문(html의 body) + 헤더(html의 head) + 상태코드
+                        		HttpHeaders header = new HttpHeaders();	   
+                        		header.add("Content-Type" , "text/html; charset=UTF-8");
+                        		
+                        		return new ResponseEntity<Object>(jsScript , header , HttpStatus.OK);
+                        		
+                        	}
+                        
+                        }
+                        ```
+                        
+        - **Thymeleaf (View에서 사용하는 문법)**
+            - **html태그에 thymeleaf(xmlns:th="[http://www.thymeleaf.org](http://www.thymeleaf.org/)") 속성을 적용하여 thymeleaf를 사용**한다.
+                
+                ```java
+                import org.springframework.beans.factory.annotation.Autowired;
+                import org.springframework.stereotype.Controller;
+                import org.springframework.ui.Model;
+                import org.springframework.web.bind.annotation.GetMapping;
+                
+                import com.application.mvc.data.SupposeDAO;
+                
+                import jakarta.servlet.http.HttpServletRequest;
+                import jakarta.servlet.http.HttpSession;
+                
+                @Controller
+                public class ExpressionController {
+                	
+                	// SupposeDAO supposeDAO = new SupposeDAO();
+                	
+                	@Autowired
+                	SupposeDAO supposeDAO;
+                	
+                	@GetMapping("/ex01")
+                	public String ex01(Model model) {
+                		// 데이터 전송 예시
+                		model.addAttribute("string"  , supposeDAO.getString());
+                		model.addAttribute("int"     , supposeDAO.getInt());
+                		model.addAttribute("double"  , supposeDAO.getDouble());
+                		model.addAttribute("boolean" , supposeDAO.getBoolean());
+                		model.addAttribute("date"    , supposeDAO.getDate());
+                		model.addAttribute("dto"     , supposeDAO.getDTO());
+                		model.addAttribute("dtoList" , supposeDAO.getDTOList());
+                		model.addAttribute("map"     , supposeDAO.getMap());
+                		model.addAttribute("mapList" , supposeDAO.getMapList());
+                
+                		return "chapter01_thymeleaf/expression/expressionEx01";
+                	}
+                	
+                	@GetMapping("/ex02")
+                	public String ex02(HttpServletRequest request) {
+                		
+                		// session 예시
+                		HttpSession session = request.getSession();
+                		
+                		session.setAttribute("id", "qwer1234");
+                		session.setAttribute("userRole", "admin");
+                		
+                		return "chapter01_thymeleaf/expression/expressionEx02";
+                	
+                	}
+                
+                }
+                ```
+                
+            - **문법**
+                - **데이터 표현식1 (Data Expressions)**
+                    - **${...} 표현식**은 주로 컨트롤러에서 전달한 데이터를 HTML 페이지에 동적으로 표시할 때 사용된다.
+                    - html 태그속성에 **th:text=${..} 표현식을 사용**하여 데이터를 출력한다.
+                
+                ```html
+                <!DOCTYPE html>
+                <html xmlns:th="http://www.thymeleaf.org"> <!-- html태그에 thymeleaf 속성(xmlns:th="http://www.thymeleaf.org")을 적용하여 thymeleaf를 사용한다. -->
+                <head>
+                <meta charset="UTF-8">
+                <title>expression</title>
+                </head>
+                <body>
+                	
+                	<h3>1. 데이터 출력</h3> 
+                	<p th:text="${string}"></p>  <!-- model.addAttribute("string" , supposeDAO.getString()); -->
+                	<p th:text="${int}"></p>     <!-- model.addAttribute("int" , supposeDAO.getInt()); -->	 
+                	<p th:text="${double}"></p>  <!-- model.addAttribute("double" , supposeDAO.getDouble()); -->
+                	<p th:text="${boolean}"></p> <!-- model.addAttribute("boolean" , supposeDAO.getBoolean()); -->
+                	<p th:text="${date}"></p>    <!-- model.addAttribute("date" , supposeDAO.getDate()); -->
+                	<p th:text="${dto}"></p>     <!-- model.addAttribute("dto" , supposeDAO.getDTO()); -->
+                	<p th:text="${dtoList}"></p> <!-- model.addAttribute("dtoList" , supposeDAO.getDTOList()); -->
+                	<p th:text="${map}"></p>     <!-- model.addAttribute("map" , supposeDAO.getMap()); -->
+                	<p th:text="${mapList}"></p> <!-- model.addAttribute("mapList" , supposeDAO.getMapList()); -->
+                	
+                </body>
+                </html>
+                ```
+                
+                - **데이터 표현식2 (Data Expressions)**
+                    - **[[${속성}]] 표현식**은 주로 컨트롤러에서 전달한 데이터를 HTML 페이지에 동적으로 표시할 때 사용된다.
+                    - html 태그속성이 아닌 엘리먼트에 표현식을 사용하여 데이터를 출력한다.
+                    - 정적 및 동적의 유연한 화면레이어를 구성할 수 없다.
+                
+                ```html
+                <!DOCTYPE html>
+                <html xmlns:th="http://www.thymeleaf.org"> <!-- html태그에 thymeleaf 속성(xmlns:th="http://www.thymeleaf.org")을 적용하여 thymeleaf를 사용한다. -->
+                <head>
+                <meta charset="UTF-8">
+                <title>expression</title>
+                </head>
+                <body>
+                
+                	<h3>2. 데이터 출력</h3>
+                	<p>[[${string}]]</p>		<!-- model.addAttribute("string" , supposeDAO.getString()); -->
+                	<p>[[${int}]]</p>			<!-- model.addAttribute("int" , supposeDAO.getInt()); -->	 
+                	<p>[[${double}]]</p>		<!-- model.addAttribute("double" , supposeDAO.getDouble()); -->
+                	<p>[[${boolean}]]</p>		<!-- model.addAttribute("boolean" , supposeDAO.getBoolean()); -->
+                	<p>[[${date}]]</p>			<!-- model.addAttribute("date" , supposeDAO.getDate()); -->
+                	<p>[[${dto}]]</p>			<!-- model.addAttribute("dto" , supposeDAO.getDTO()); -->
+                	<p>[[${dtoList}]]</p>		<!-- model.addAttribute("dtoList" , supposeDAO.getDTOList()); -->
+                	<p>[[${map}]]</p>			<!-- model.addAttribute("map" , supposeDAO.getMap()); -->
+                	<p>[[${mapList}]]</p>		<!-- model.addAttribute("mapList" , supposeDAO.getMapList()); -->
+                
+                </body>
+                </html>
+                ```
+                
+                - **정적 및 동적 화면의 출력의 우선순위**
+                    - 전송되는 데이터가 없을 경우 정적데이터가 화면에 출력된다.
+                    **(html 확장자파일을 직접실행하여 확인할 수 있다.)**
+                    - 전송되는 데이터가 있을 경우 전송된 동적데이터가 화면에 출력된다.
+                    **(WAS가 실행되고 URL로 접근하여 확인할 수 있다.)**
+                    - ex)
+                    <p th:text="${string}">HTML에 정적으로 기록된 데이터입니다.</p> html 확장자 파일에서는 HTML에 정적으로 기록된 데이터입니다. 가 나오고 
+                    WAS를 통해 URL로 접근할 때는 ${string} 값이 나옴
+                    - ex) 
+                    <p>[[${string}]]</p>
+                    html 확장자 파일에서는 [[${string}]]가 그대로 나오고
+                    WAS를 통해 URL로 접근할 때는 [[${string}]] 값이 나옴
+                
+                ```html
+                <!DOCTYPE html>
+                <html xmlns:th="http://www.thymeleaf.org"> <!-- html태그에 thymeleaf 속성(xmlns:th="http://www.thymeleaf.org")을 적용하여 thymeleaf를 사용한다. -->
+                <head>
+                <meta charset="UTF-8">
+                <title>expression</title>
+                </head>
+                <body>
+                
+                	<h3>3. 데이터 출력 우선순위예시</h3>
+                	
+                	<!-- 정적 및 동적 렌더링이 가능하다. -->
+                	<p th:text="${string}">HTML에 정적으로 기록된 데이터입니다.</p>
+                	<p th:text="${dto}">HTML에 정적으로 기록된 데이터입니다.</p>
+                	
+                	<!-- 정적 및 동적 렌더링이 불가능하다. -->
+                	<p>[[${string}]]</p>
+                	<p>[[${dto}]]</p>
+                	
+                </body>
+                </html>
+                ```
+                
+                - **복수의 데이터 및 문자열 조합 출력**
+                    - '+' , **'|' 기호를 사용**하여 복수의 데이터 및 문자열을 조합하여 출력할 수 있다.
+                
+                ```html
+                <!DOCTYPE html>
+                <html xmlns:th="http://www.thymeleaf.org"> <!-- html태그에 thymeleaf 속성(xmlns:th="http://www.thymeleaf.org")을 적용하여 thymeleaf를 사용한다. -->
+                <head>
+                <meta charset="UTF-8">
+                <title>expression</title>
+                </head>
+                <body>
+                
+                	<h3>4. 복수 데이터 , 문자열 조합 출력예시</h3>
+                	<!-- error code : <p th:text="${int}원">0원</p>   --> 
+                	
+                	<p th:text="|${int}원|">0원</p>    <!-- 문자열 조합예시 -->
+                	<p th:text="|글자 데이터 입니다 : ${string}|">없음</p> <!-- 문자열 조합예시 -->
+                	<p th:text="|${dto.productNm} : ${dto.price}원|">없음</p><!-- 복수의 데이터 출력 예시 (dto) --> 
+                	<p th:text="|${map.productNm} / ${map.price} / ${map.addTax} / ${map.totalPrice}|">없음</p><!-- 복수의 데이터 출력 예시 (map) -->				
+                
+                </body>
+                </html>
+                ```
+                
+                - **Session 데이터 출력**
+                    - Thymeleaf에서 세션 데이터에 접근하려면 ${session} 객체를 사용한다.
+                    - **${session.속성명} 형태**로 세션에 저장된 데이터를 뷰에서 접근한다.
+                
+                ```java
+                <!DOCTYPE html>
+                <html xmlns:th="http://www.thymeleaf.org"> <!-- html태그에 thymeleaf(xmlns:th="http://www.thymeleaf.org") 속성을 적용하여 thymeleaf를 사용한다. -->
+                <head>
+                <meta charset="UTF-8">
+                <title>expression</title>
+                </head>
+                <body>
+                
+                	<h3>Session 데이터 출력</h3>
+                	<!-- before : ${sessionScope.id} -->
+                	<p th:text="|id : ${session.id}|">없음</p>             <!-- session.setAttribute("id", "qwer1234"); -->
+                	<p th:text="|userRole : ${session.userRole}|">없음</p> <!-- session.setAttribute("userRole", "admin"); -->
+                	
+                	<p>id : [[${session.id}]]            </p><!-- session.setAttribute("id", "abcde"); -->
+                	<p>userRole : [[${session.userRole}]] </p><!-- session.setAttribute("userRole", "admin"); -->
+                
+                </body>
+                </html>
                 ```
