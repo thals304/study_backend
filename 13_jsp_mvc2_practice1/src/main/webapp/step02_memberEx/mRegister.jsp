@@ -1,5 +1,4 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,9 +6,9 @@
 <title>mRegister</title>
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script src="resources/jquery/jquery-3.7.1.min.js"></script>
-
 <script>
-	// 우편번호 검색
+
+	// 우편번호 검색 
 	function execDaumPostcode() {
 	    new daum.Postcode({
 	        oncomplete: function(data) {
@@ -37,75 +36,65 @@
 	        }
 	    }).open();
 	}
-	
+
 </script>
 <script>
-	
-	
+	// 이 불리언 변수가 필요한 이유?
+	// form의 유효성을 위함?
 	let isValidId = false;
 	let isValidConfirmPasswd = false;
 	
-	// 유효성 체크
-	function checkFormData() {
-		
-		if (!isValidConfirmPasswd) {
-			alert("패스워드를 확인하세요.");
-			$("#confirmPasswd").focus();
-			return false;
-		}
-		
-		if (!isValidId) {
+	// form 유효성 체크
+	// 유효성 체크를 안해주면 전체가 빈 폼으로 데이터가 올라가는 경우 발생
+	// 왜 아이디와 비번만 유효성 체크를 해주는건가? 필수 데이터라서?
+	function checkFormData(){
+		if(!isValidId){
 			alert("아이디 중복체크를 확인하세요.");
 			$("#memberId").focus();
 			return false;
 		}
 		
-	}	
+		if(!isValidConfirmPasswd){
+			alert("패스워드를 확인하세요.");
+			$("confirmPasswd").focus();
+			return false;
+		}
+	}
+	
 	
 	$().ready(function(){
-		// 비밀번호 확인 
-		$("#confirmPasswd").blur(function(){
-			
-			if ($("#passwd").val() == $("#confirmPasswd").val()){
-				$("#msg").html("<span style='color:green;'>패스워드 일치</span>");
-				isValidConfirmPasswd = true;
-			}
-			else {
-				$("#msg").html("<span style='color:red;'>패스워드 불일치</span>");
-				isValidConfirmPasswd = false;
-			}
-			
-			
-		});
-		
 		// 아이디 중복 확인
+		// 왜 post가 아닌 get인 이유?
 		$("#btnOverlapped").click(function(){
-			
 			$.ajax({
-				
 				url : "checkDuplicateId",
-				type : "get",
+				type : "get" ,
 				data : {"memberId" : $("#memberId").val()},
-				success : function(result) {
-					
-					if (result == "isDuple") {
-						$("#overlappedIdMsg").html("<span style='color:red;'>사용할 수 없는 아이디 입니다.</span>")
+				success : function(data){
+					if (data == "isDuple"){
+						$("#overlappedIdMsg").html("<span style='color : red;'> 사용할 수 없는 아이디입니다. </span>");
 						isValidId = false;
 					}
 					else {
-						$("#overlappedIdMsg").html("<span style='color:green;'>사용할 수 있는 아이디 입니다.</span>")
+						$("#overlappedIdMsg").html("<span style='color : green;'> 사용할 수 있는 아이디입니다. </span>");
 						isValidId = true;
 					}
-					
-				}
-				
-			});
-			
+				} 
+			})
 		});
 		
-		
+		// 비밀번호 확인
+		$("#confirmPasswd").blur(function(){
+			if($("#passwd").val() == $("#confirmPasswd").val()){
+				$("#msg").html("<span style='color : green'> 패스워드 일치 </span>");
+				isValidConfirmPasswd = true;
+			}
+			else {
+				$("#msg").html("<span style='color : red'> 패스워드 불일치 </span>");
+				isValidConfirmPasswd = false;
+			}
+		});
 	});
-
 </script>
 </head>
 <body>
@@ -184,6 +173,6 @@
 			</table>
 		</form>		
 	</div>
-	
+
 </body>
 </html>
