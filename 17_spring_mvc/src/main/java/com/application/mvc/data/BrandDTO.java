@@ -40,11 +40,42 @@ import lombok.Setter;
 	3) 유지보수 용이: 필드 변경 시 관련 메서드를 일일이 수정할 필요가 없다.
 
 */
-@Data
+//@Data
 public class BrandDTO {
 
 	private long brandId;
 	private String brandNm;
 	private Date enteredDt;
 	private String activeYn;
+	public long getBrandId() {
+		return brandId;
+	}
+	public void setBrandId(long brandId) {
+		this.brandId = brandId;
+	}
+	public String getBrandNm() {
+		return brandNm;
+	}
+	public void setBrandNm(String brandNm) {
+		this.brandNm = brandNm;
+	}
+	public Date getEnteredDt() {
+		return enteredDt;
+	}
+	public void setEnteredDt(Date enteredDt) {
+		this.enteredDt = enteredDt;
+	}
+	public String getActiveYn() {
+		return activeYn;
+	}
+	public void setActiveYn(String activeYn) {
+		this.activeYn = activeYn;
+	}
+	@Override
+	public String toString() {
+		return "BrandDTO [brandId=" + brandId + ", brandNm=" + brandNm + ", enteredDt=" + enteredDt + ", activeYn="
+				+ activeYn + "]";
+	}
+	
+	
 }

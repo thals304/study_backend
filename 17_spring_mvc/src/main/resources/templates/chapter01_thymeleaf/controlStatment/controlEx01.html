@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>control statement</title>
+</head>
+<body>
+
+	<!-- 
+		
+		# 조건문
+		
+		- 타임리프(Thymeleaf)에서 th:if와 th:unless는 조건부로 HTML 요소를 렌더링하는 데 사용되는 속성이다. 
+		
+		- 이 두 속성은 조건에 따라 특정 HTML 요소가 표시되거나 숨겨지도록 지시할 수 있다.
+
+			I) th:if
+			 		
+				- th:if 속성은 지정된 조건이 true일 때 태그를 렌더링한다.
+				
+			II) th:unless	
+				 
+				 - th:unless 속성은 지정된 조건이 false일 때 태그를 렌더링한다.
+		
+				 - else구문과 다르게 if없이 th:unless를 독립적으로 사용할 수 있다. 
+	
+		- 조건식에 '>' , '>=' , '<'  , '<=' , '==' , '!='
+				   'gt', 'ge' , 'lt' , 'le' , 'eq' , 'ne' 
+
+					'&&' , '||' , '!' 
+					'and' , 'or' , 'not' 모두 사용가능하다.
+	
+	 -->
+
+	<h3>1. If</h3>
+	<div th:if="${menu == '권한관리'}">
+		<p>권한관리 화면입니다.</p>
+	</div>
+	<div th:if="${menu == '일정관리'}">
+		<p>일정관리 화면입니다.</p>
+	</div>
+	<div th:if="${menu == '위험관리'}">
+		<p>위험관리 화면입니다.</p>
+	</div>
+	
+	<hr/>
+	
+	
+	<h3>2. If Unless</h3>
+	<div th:if="${deliveryPrice == 0}">
+		<p>배송비 : 무료</p>
+		<p>배송일자 : 내일</p>
+	</div>
+	<div th:unless="${deliveryPrice == 0}">
+		<p th:text="|배송비 : ${deliveryPrice}원 |"></p>
+		<p>배송일자 : 내일</p>
+	</div>
+	<hr/>
+	
+	
+	<h3>3. If ~ else if (지원 없음)</h3>
+	<div th:if="${grade >= 90}">
+		<p>A학점</p>
+	</div>
+	<div th:if="${not(grade >= 90) && grade >= 80 }">
+		<p>B학점</p>
+	</div>
+	<div th:if="${not(grade >= 90) && not(grade >= 80) && grade >= 70 }">
+		<p>C학점</p>
+	</div>
+	<hr/>
+	
+	<!-- 
+	 
+	 	# th:block
+	 	
+		 	- th:block는 타임리프의 속성 중 하나로 HTML 요소를 생성하지 않고 템플릿의 일부를 그룹화하고 싶을 때 사용한다.
+		 	
+		 	- 보통 HTML 요소를 생성하지 않으면서도 타임리프의 로직을 사용해야 할 때 유용하다. 
+	
+			[예시 ] 
+			<th:block th:if="${condition}">
+			    <p>Some content</p>
+			</th:block>
+			
+		    - 여기서 condition은 타임리프의 표현식이며 이를 통해 조건부로 HTML 코드를 그룹화하고 조건에 따라 렌더링할 수 있다.
+		    
+		    - th:block은 실제로 브라우저에 렌더링되지 않지만 조건이 충족될 때 그 안에 있는 내용은 렌더링한다.
+	
+	-->
+	
+	<h3>4. block</h3>
+	<th:block th:if="${deliveryPrice == 0}">
+		<p>배송비   : 무료</p>
+		<p>배송일자 : 내일</p>
+	</th:block>
+	<th:block th:unless="${deliveryPrice == 0}">
+		<p th:text="|배송비 : ${deliveryPrice}원|"></p>
+		<p>배송일자 : 내일</p>
+	</th:block>
+	<hr/>
+	
+	
+
+</body>
+</html>

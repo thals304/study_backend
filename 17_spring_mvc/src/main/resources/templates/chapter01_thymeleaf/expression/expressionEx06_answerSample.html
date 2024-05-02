@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>연습예제</title>
+</head>
+<body>
+
+	<table border="1">
+		<caption>상품정보</caption>
+		<tr>
+			<td>상품 ID</td>
+			<td th:text="${productDTO.brandId}"></td>
+		</tr>
+		<tr>
+			<td>상품명</td>
+			<td th:text="${productDTO.productNm}"></td>
+		</tr>
+		<tr>
+			<td>가격</td>
+			<td th:text="|${productDTO.price}원|"></td>
+		</tr>
+		<tr>
+			<td>배송비</td>
+			<td th:text="|${productDTO.deliveryPrice}원|"></td>
+		</tr>
+	</table>
+
+</body>
+</html>

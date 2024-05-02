@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>연습예시</title>
+</head>
+<body>
+
+	<div th:if="${com == '바위' || me == '바위'}">
+		<p>비겼다.</p>
+	</div>
+	<div th:if="${com == '바위' || me == '보'}">
+		<p>내가 이겼다.</p>
+	</div>
+	<div th:if="${com == '바위' || me == '가위'}">
+		<p>내가 졌다.</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>연습예시</title>
+</head>
+<body>
+
+	<div th:if="${me < com}">
+		<p>UP!</p>
+	</div>
+	<div th:if="${me == com}">
+		<p>Bingo!</p>
+	</div>
+	<div th:if="${me < com}">
+		<p>Down!</p>
+	</div>
+
+</body>
+</html>

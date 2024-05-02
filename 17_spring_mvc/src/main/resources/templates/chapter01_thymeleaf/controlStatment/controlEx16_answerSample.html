@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>연습예시</title>
+</head>
+<body>
+
+	<table border="1">
+		<tr>
+			<th>productNm</th>
+			<th>price</th>
+			<th>addTax</th>
+			<th>totalPrice</th>
+			<th>brandNm</th>
+		</tr>
+		<tr th:each="productMap : ${productMapList}">
+			<td th:id="|productNm${productMapStat.index}|" 
+			    th:name="|productNm${productMapStat.index}|" 
+				th:text="${productMap.productNm}"></td>
+				
+			<td th:id="|price${productMapStat.index}|" 
+				th:name="|price${productMapStat.index}|" 
+				th:text="${productMap.price}"></td>
+				
+			<td th:id="|addTax${productMapStat.index}|" 
+			    th:name="|addTax${productMapStat.index}|" 
+				th:text="${productMap.addTax}"></td>
+			
+			<td th:id="|totalPrice${productMapStat.index}|"
+				th:name="|totalPrice${productMapStat.index}|" 
+				th:text="${productMap.totalPrice}"></td>
+				
+			<td th:id="|brandNm${productMapStat.index}|"
+				th:name="|brandNm${productMapStat.index}|" 
+				th:text="${productMap.brandNm}"></td>
+		</tr>
+	</table>
+
+</body>
+</html>

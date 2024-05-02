@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>control statement</title>
+</head>
+<body>
+
+	<!-- 
+	
+		# 반복문 th:each
+	
+		- 타임리프(Thymeleaf)에서 반복문은 th:each 속성을 사용하여 구현한다. 
+		
+		- 리스트, 배열, 맵 등 다양한 종류의 컬렉션에 대해 동작한다.
+		
+		- 타임리프의 th:each 속성을 사용하면 서버 사이드에서 생성된 데이터 컬렉션을 효율적으로 웹 페이지에 표시할 수 있다.
+		
+			1. #numbers 객체
+			
+				[ 형식 ]
+				${#numbers.sequence(from , to)}
+				${#numbers.sequence(from , to , step)}
+				
+				예시) 
+				th:each="변수 : ${numbers.sequence(1,100)}"        > 1부터 100까지 반복	
+				th:each="변수 : ${numbers.sequence(100,1)}"    	   > 100부터 1까지 반복
+				th:each="변수 : ${numbers.sequence(1900,2024,10)}" > 1900부터 2024까지 10씩 증가하며 반복
+		
+	 -->
+	 
+    <h3>1. #numbers 객체</h3>
+    <th:block th:each="var : ${#numbers.sequence(1,10)}">
+    	<th:block th:text="${var}"> </th:block>
+    </th:block>
+    <br/>
+    
+    <th:block th:each="leapYear : ${#numbers.sequence(0 , 2024 , 400)}">
+    	<th:block th:text="${leapYear}"></th:block>
+    </th:block>
+    <hr/>
+    
+    
+    <!--  
+    	
+    	# 객체 반복 > th:each
+		
+		[ 형식 ]
+		th:each="변수 : ${반복가능자료형(array,list)}"
+		
+		예시) 
+		th:each="변수 : ${boardList}"   > controller에서 전송된 boardList의 개수만큼 반복	
+		th:each="변수 : ${productList}" > controller에서 전송된 productList의 개수만큼 반복
+		th:each="변수 : ${orderList}"   > controller에서 전송된 orderList의 개수만큼 반복
+    -->
+    
+	<h3>2-1) 객체반복(DTO List)</h3>
+	<table border="1">
+		<tr>
+			<th>상품ID</th>
+			<th>상품이름</th>
+			<th>가격</th>
+			<th>배송비</th>
+			<th>등록일자</th>
+			<th>브랜드ID</th>
+		</tr>
+		<tr th:each="dto : ${dtoList}">  <!-- model.addAttribute("dtoList" , dtoList); -->
+			<td th:text="${dto.productId}"></td>
+			<td th:text="${dto.productNm}"></td>
+			<td th:text="${dto.price}"></td>
+			<td th:text="${dto.deliveryPrice}"></td>
+			<td th:text="${dto.enrollDt}"></td>
+			<td th:text="${dto.brandId}"></td>
+		</tr>
+	</table>
+	<hr/>
+
+	<h3>2-2) 객체반복(Map List)</h3>
+	<table border="1">
+		<tr>
+			<th>상품ID</th>
+			<th>상품이름</th>
+			<th>브랜드ID</th>
+			<th>가격</th>
+			<th>배송비</th>
+			<th>등록일자</th>
+			<th>부가세</th>
+			<th>최종금액</th>
+			<th>브랜드명</th>
+			<th>활성화여부</th>
+		</tr>
+		<tr th:each="map : ${mapList}">  <!-- model.addAttribute("mapList" , mapList); -->
+			<td th:text="${map.productId}"></td>
+			<td th:text="${map.productNm}"></td>
+			<td th:text="${map.brandId}"></td>
+			<td th:text="${map.price}"></td>
+			<td th:text="${map.deliveryPrice}"></td>
+			<td th:text="${map.enrollDt}"></td>
+			<td th:text="${map.addTax}"></td>
+			<td th:text="${map.totalPrice}"></td>
+			<td th:text="${map.brandNm}"></td>
+			<td th:text="${map.activeYn}"></td>
+		</tr>
+	</table>
+
+</body>
+</html>

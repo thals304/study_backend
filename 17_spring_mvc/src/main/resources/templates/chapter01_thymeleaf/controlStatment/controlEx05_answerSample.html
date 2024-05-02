@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>연습예시</title>
+</head>
+<body>
+
+	<div th:if="${role == 'admin'}">
+		<p>관리자 화면 입니다.</p>
+	</div>
+	
+	<div th:if="${role == 'user'}">
+		<p>유저 화면 입니다.</p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>연습예시</title>
+</head>
+<body>
+
+	<table border="1">
+		<tr th:each="productId : ${productIds}">
+			<td th:id="|productId${productIdStat.count}|" th:text="${productId}"></td>
+		</tr>
+	</table>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>연습예시</title>
+</head>
+<body>
+
+	<select>
+		<option th:each="year : ${#numbers.sequence(2024,1900)}" th:text="${year}"></option>
+	</select>
+
+	<select>
+		<option th:each="month : ${#numbers.sequence(1,12)}" th:text="${month}"></option>
+	</select>
+
+	<select>
+		<option th:each="date : ${#numbers.sequence(1,31)}" th:text="${date}"></option>
+	</select>
+	
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"> <!-- html태그에 thymeleaf(xmlns:th="http://www.thymeleaf.org") 속성을 적용하여 thymeleaf를 사용한다. -->
+<head>
+<meta charset="UTF-8">
+<title>expression</title>
+</head>
+<body>
+
+	<!--
+	 
+	    # utext , [(${속성})]
+	 
+		- 타임리프에서 utext(unescaped text)는 HTML을 이스케이프 처리하지 않고 원시 HTML 코드로 출력할 때 사용하는 속성이다. 
+		
+		- 기본적으로 타임리프는 모든 변수 값을 HTML 이스케이프 처리하여 XSS(Cross-Site Scripting) 공격을 방지한다. 
+		  즉 문자열에 포함된 HTML 태그가 브라우저에 의해 해석되지 않고 그대로 표시된다. 
+		
+		- 하지만 때때로 안전하게 관리되는 HTML 콘텐츠를 페이지에 직접 삽입해야 할 필요가 있다. 
+		  이 때 utext 속성 [[${속성}]] 표현식을 사용한다. 
+		
+	-->
+	
+	<h3>escaped text</h3>
+	<p th:text="${data1}">hi</p>
+	<p th:text="${data2}">hello</p>
+	<p>[[${data1}]]</p>
+	<p>[[${data2}]]</p>
+	<hr/>
+		
+	<h3>unescaped text</h3>
+	<p th:utext="${data1}"></p>
+	<p th:utext="${data2}"></p>
+	<p>[(${data1})]</p>
+	<p>[(${data2})]</p>
+	<hr/>
+	
+
+</body>
+</html>

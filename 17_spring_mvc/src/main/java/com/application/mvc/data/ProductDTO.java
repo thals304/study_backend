@@ -49,6 +49,47 @@ import lombok.ToString;
 @Data
 public class ProductDTO {
 
+	@Override
+	public String toString() {
+		return "ProductDTO [productId=" + productId + ", productNm=" + productNm + ", price=" + price
+				+ ", deliveryPrice=" + deliveryPrice + ", enrollDt=" + enrollDt + ", brandId=" + brandId + "]";
+	}
+	public long getProductId() {
+		return productId;
+	}
+	public void setProductId(long productId) {
+		this.productId = productId;
+	}
+	public String getProductNm() {
+		return productNm;
+	}
+	public void setProductNm(String productNm) {
+		this.productNm = productNm;
+	}
+	public int getPrice() {
+		return price;
+	}
+	public void setPrice(int price) {
+		this.price = price;
+	}
+	public int getDeliveryPrice() {
+		return deliveryPrice;
+	}
+	public void setDeliveryPrice(int deliveryPrice) {
+		this.deliveryPrice = deliveryPrice;
+	}
+	public Date getEnrollDt() {
+		return enrollDt;
+	}
+	public void setEnrollDt(Date enrollDt) {
+		this.enrollDt = enrollDt;
+	}
+	public long getBrandId() {
+		return brandId;
+	}
+	public void setBrandId(long brandId) {
+		this.brandId = brandId;
+	}
 	private long productId;
 	private String productNm;
 	private int price;

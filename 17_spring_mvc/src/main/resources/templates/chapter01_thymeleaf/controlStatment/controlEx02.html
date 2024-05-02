@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>control statement</title>
+</head>
+<body>
+
+	<!-- 
+		
+		# th:switch , th:case
+		
+		- 타임리프(Thymeleaf)의 th:switch는 다중 조건을 처리할 때 유용한 속성이다. 
+		
+		- th:switch는 Java의 switch 문과 유사한 구조를 가지고 있다.
+		
+		- 이를 통해 여러 경우를 평가하고 각각 다른 동작을 수행할 수 있다. 
+	
+	 -->
+	<h3>th:switch ! th:case</h3>
+	<th:block th:switch="${menu}">
+		<p th:case="권한관리">권한관리 화면</p>
+		<p th:case="일정관리">일정관리 화면</p>
+		<p th:case="위험관리">위험관리 화면</p>
+	</th:block>
+</body>
+</html>

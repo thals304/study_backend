@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>연습예제</title>
+</head>
+<body>
+
+	<table border="1">
+		<caption>DTO</caption>
+		<tr>
+			<td>productId</td>
+			<td th:text="${productDTO.productId}"></td>
+		</tr>
+		<tr>
+			<td>productNm</td>
+			<td th:text="${productDTO.productNm}">1</td>
+		</tr>
+		<tr>
+			<td>price</td>
+			<td th:text="${productDTO.price}"></td>
+		</tr>
+		<tr>
+			<td>deliveryPrice</td>
+			<td th:text="${productDTO.deliveryPrice}"></td>
+		</tr>
+	</table>
+
+	<hr />
+
+	<table border="1">
+		<caption>Map</caption>
+		<tr>
+			<td>productNm</td>
+			<td th:text="${map.productNm}"></td>
+		</tr>
+		<tr>
+			<td>price</td>
+			<td th:text="${map.price}"></td>
+		</tr>
+		<tr>
+			<td>addTax</td>
+			<td th:text="${map.addTax}"></td>
+		</tr>
+		<tr>
+			<td>totalPrice</td>
+			<td th:text="${map.totalPrice}"></td>
+		</tr>
+		<tr>
+			<td>brandNm</td>
+			<td th:text="${map.brandNm}"></td>
+		</tr>
+		<tr>
+			<td>atctiveYn</td>
+			<td th:text="${map.activeYn}"></td>
+		</tr>
+	</table>
+
+</body>
+</html>

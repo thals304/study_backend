@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	 <table border="1">
+		   	  <caption>상품정보</caption>
+		   	  <tr>
+		   	  	<td>상품 ID</td>
+		   	  	<td th:text="${brandID}"></td>
+		   	  </tr>
+		   	  <tr>
+		   	  	<td>상품명</td>
+		   	  	<td th:text="${productNm}"></td>
+		   	  </tr>
+		   	  <tr>
+		   	  	<td>가격</td>
+		   	  	<td th:text="|${price}원|"></td>
+		   	  </tr>
+		   	  <tr>
+		   	  	<td>배송비</td>
+		   	  	<td th:text="|${deliveryPrice}원|"></td>
+		   	  </tr>
+		   </table>
+		   
+</body>
+</html>
