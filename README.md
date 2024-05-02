@@ -3285,3 +3285,427 @@
                 </body>
                 </html>
                 ```
+
+                - **utext , [(${속성})]**
+                    - 타임리프에서 utext(unescaped text)는 HTML을 이스케이프 처리하지 않고 원시 HTML 코드로 출력할 때 사용하는 속성이다.
+                    - 기본적으로 타임리프는 모든 변수 값을 HTML 이스케이프 처리하여 XSS(Cross-Site Scripting) 공격을 방지한다.
+                    즉 문자열에 포함된 HTML 태그가 브라우저에 의해 해석되지 않고 그대로 표시된다.
+                    - 하지만 때때로 안전하게 관리되는 HTML 콘텐츠를 페이지에 직접 삽입해야 할 필요가 있다.
+                    이 때 utext 속성 [[${속성}]] 표현식을 사용한다.
+                
+                ```java
+                 @Controller
+                 public class ExpressionController {
+                 
+                 @GetMapping("/ex03") // localhost/th/expression/ex03
+                	public String ex03(Model model) {
+                		
+                		// unescape 예시
+                		model.addAttribute("data1", "<h6 style='color:red;'>unescape 테스트 데이터1</h6>");
+                		model.addAttribute("data2", "<div align='center'>unescape 테스트 데이터2</div>");
+                		
+                		return "chapter01_thymeleaf/expression/expressionEx03";
+                		
+                			}
+                	}
+                ```
+                
+                ```html
+                <!DOCTYPE html>
+                <html xmlns:th="http://www.thymeleaf.org"> <!-- html태그에 thymeleaf(xmlns:th="http://www.thymeleaf.org") 속성을 적용하여 thymeleaf를 사용한다. -->
+                <head>
+                <meta charset="UTF-8">
+                <title>expression</title>
+                </head>
+                <body>
+                
+                	<h3>escaped text</h3>
+                	<p th:text="${data1}">hi</p>
+                	<p th:text="${data2}">hello</p>
+                	<p>[[${data1}]]</p>
+                	<p>[[${data2}]]</p>
+                	<hr/>
+                		
+                	<h3>unescaped text</h3>
+                	<p th:utext="${data1}"></p>
+                	<p th:utext="${data2}"></p>
+                	<p>[(${data1})]</p>
+                	<p>[(${data2})]</p>
+                	<hr/>
+                	
+                </body>
+                </html>
+                ```
+                
+                - **조건문**
+                    - 타임리프(Thymeleaf)에서 th:if와 th:unless는 조건부로 HTML 요소를 렌더링하는 데 사용되는 속성이다.
+                    - 이 두 속성은 조건에 따라 특정 HTML 요소가 표시되거나 숨겨지도록 지시할 수 있다.
+                    - **th:if**
+                        - th:if 속성은 지정된 **조건이 true일 때 태그를 렌더링**한다.
+                    - **th:unless**
+                        - th:unless 속성은 지정된 **조건이 false일 때 태그를 렌더링**한다.
+                        - else구문과 다르게 **if없이 th:unless를 독립적으로 사용**할 수 있다.
+                    - 조건식에 '>' , '>=' , '<'  , '<=' , '==' , '!=’
+                        
+                              'gt', 'ge' , 'lt' , 'le' , 'eq' , 'ne’
+                        
+                               '&&' , '||' , '!' 
+                        
+                               'and' , 'or' , 'not' 모두 사용 가능하다.
+                        
+                    
+                    ```java
+                    @Controller
+                    @RequestMapping("/th/control")
+                    public class ControlStatementController {
+                    
+                    	@Autowired
+                    	private SupposeDAO supposeDAO;
+                    	
+                    	@GetMapping("/ex01") // localhost/th/control/ex01
+                    	public String ex01(Model model) {
+                    	
+                    		// th:if , th:unless 예시
+                    		String menu = "일정관리"; // 권한관리 , 일정관리 , 위험관리
+                    		String role = "admin";    // admin , user
+                    		int deliveryPrice = 3000; // 0 , 3000
+                    		int grade = 75; 		  // 75 , 85 , 95
+                    		
+                    		model.addAttribute("menu" , menu);
+                    		model.addAttribute("role" , role);
+                    		model.addAttribute("deliveryPrice" , deliveryPrice);
+                    		model.addAttribute("grade" , grade);
+                    		
+                    		return "chapter01_thymeleaf/controlStatment/controlEx01";
+                    		
+                    		}
+                    	}
+                    ```
+                    
+                    ```html
+                    <!DOCTYPE html>
+                    <html xmlns:th="http://www.thymeleaf.org">
+                    <head>
+                    <meta charset="UTF-8">
+                    <title>control statement</title>
+                    </head>
+                    <body>
+                    
+                    	<h3>1. If</h3>
+                    	<div th:if="${menu == '권한관리'}">
+                    		<p>권한관리 화면입니다.</p>
+                    	</div>
+                    	<div th:if="${menu == '일정관리'}">
+                    		<p>일정관리 화면입니다.</p>
+                    	</div>
+                    	<div th:if="${menu == '위험관리'}">
+                    		<p>위험관리 화면입니다.</p>
+                    	</div>
+                    	
+                    	<hr/>
+                    	
+                    	<h3>2. If Unless</h3>
+                    	<div th:if="${deliveryPrice == 0}">
+                    		<p>배송비 : 무료</p>
+                    		<p>배송일자 : 내일</p>
+                    	</div>
+                    	<div th:unless="${deliveryPrice == 0}">
+                    		<p th:text="|배송비 : ${deliveryPrice}원 |"></p>
+                    		<p>배송일자 : 내일</p>
+                    	</div>
+                    	<hr/>
+                    	
+                    	<h3>3. If ~ else if (지원 없음)</h3>
+                    	<div th:if="${grade >= 90}">
+                    		<p>A학점</p>
+                    	</div>
+                    	<div th:if="${not(grade >= 90) && grade >= 80 }">
+                    		<p>B학점</p>
+                    	</div>
+                    	<div th:if="${not(grade >= 90) && not(grade >= 80) && grade >= 70 }">
+                    		<p>C학점</p>
+                    	</div>
+                    	
+                    	</body>
+                    </html>
+                    ```
+                    
+                    **+) th:block**
+                    
+                    - th:block는 타임리프의 속성 중 하나로 HTML 요소(ex. div, span 등)를 생성하지 않고 템플릿의 일부를 그룹화하고 싶을 때 사용한다.
+                    - 보통 HTML 요소를 생성하지 않으면서도 타임리프의 로직을 사용해야 할 때 유용하다.
+                    - 여기서 condition은 타임리프의 표현식이며 이를 통해 조건부로 HTML 코드를 그룹화하고 조건에 따라 렌더링할 수 있다.
+                    - th:block은 실제로 브라우저에 렌더링되지 않지만 조건이 충족될 때 그 안에 있는 내용은 렌더링한다.
+                    
+                    ```html
+                    <!DOCTYPE html>
+                    <html xmlns:th="http://www.thymeleaf.org">
+                    <head>
+                    <meta charset="UTF-8">
+                    <title>control statement</title>
+                    </head>
+                    <body>
+                    
+                    	<h3>4. block</h3>
+                    	<th:block th:if="${deliveryPrice == 0}">
+                    		<p>배송비   : 무료</p>
+                    		<p>배송일자 : 내일</p>
+                    	</th:block>
+                    	<th:block th:unless="${deliveryPrice == 0}">
+                    		<p th:text="|배송비 : ${deliveryPrice}원|"></p>
+                    		<p>배송일자 : 내일</p>
+                    	</th:block>
+                    	<hr/>
+                    	
+                    </body>
+                    </html>
+                    ```
+                    
+                    - **th:switch , th:case**
+                        - 타임리프(Thymeleaf)의 th:switch는 다중 조건을 처리할 때 유용한 속성이다.
+                        - th:switch는 Java의 switch 문과 유사한 구조를 가지고 있다.
+                        - 이를 통해 여러 경우를 평가하고 각각 다른 동작을 수행할 수 있다.
+                    
+                    ```java
+                    @Controller
+                    @RequestMapping("/th/control")
+                    public class ControlStatementController {
+                    
+                      @GetMapping("/ex02")
+                    	public String ex02(Model model) {
+                    	
+                    		// th:switch , th:case 예시
+                    		String menu = "일정관리"; // 권한관리 , 일정관리 , 위험관리
+                    		model.addAttribute("menu" , menu);
+                    		
+                    		return "chapter01_thymeleaf/controlStatment/controlEx02";
+                    		
+                    			}
+                    	}
+                    ```
+                    
+                    ```html
+                    <!DOCTYPE html>
+                    <html xmlns:th="http://www.thymeleaf.org">
+                    <head>
+                    <meta charset="UTF-8">
+                    <title>control statement</title>
+                    </head>
+                    <body>
+                    
+                    	<h3>th:switch ! th:case</h3>
+                    	<th:block th:switch="${menu}">
+                    		<p th:case="권한관리">권한관리 화면</p>
+                    		<p th:case="일정관리">일정관리 화면</p>
+                    		<p th:case="위험관리">위험관리 화면</p>
+                    	</th:block>
+                    	
+                    </body>
+                    </html>
+                    ```
+                    
+                - **반복문**
+                    - **th:each**
+                        - 타임리프(Thymeleaf)에서 반복문은 th:each 속성을 사용하여 구현한다.
+                        - 리스트, 배열, 맵 등 다양한 종류의 컬렉션에 대해 동작한다.
+                        - 타임리프의 th:each 속성을 사용하면 서버 사이드에서 생성된 데이터 컬렉션을 효율적으로 웹 페이지에 표시할 수 있다.
+                        - **#numbers 객체 (java for문과 같은 기능)**
+                            - **[ 형식 ]**
+                                
+                                **${#numbers.sequence(from , to)}**
+                                
+                                **${#numbers.sequence(from , to , step)}**
+                                
+                    
+                    ```html
+                    <!DOCTYPE html>
+                    <html xmlns:th="http://www.thymeleaf.org">
+                    <head>
+                    <meta charset="UTF-8">
+                    <title>control statement</title>
+                    </head>
+                    <body>
+                    	 
+                        <h3>1. #numbers 객체</h3>
+                        <th:block th:each="var : ${#numbers.sequence(1,10)}">
+                        	<th:block th:text="${var}"> </th:block>
+                        </th:block>
+                        <br/>
+                        
+                        <th:block th:each="leapYear : ${#numbers.sequence(0 , 2024 , 400)}">
+                        	<th:block th:text="${leapYear}"></th:block>
+                        </th:block>
+                        
+                    </body>
+                    </html>
+                    ```
+                    
+                    - **객체 반복 th:each**
+                        - **[ 형식 ]**
+                            
+                            **th:each="변수 : ${반복가능자료형(array,list)}”**
+                            
+                    
+                    ```java
+                    @Controller
+                    @RequestMapping("/th/control")
+                    public class ControlStatementController {
+                    
+                    	@GetMapping("/ex03")
+                    	 public String ex03(Model model) {
+                    		
+                    		// 반복문 예시
+                    		List<ProductDTO> dtoList         = supposeDAO.getDTOList();
+                    		List<Map<String,Object>> mapList = supposeDAO.getMapList();
+                    		
+                    		model.addAttribute("dtoList" , dtoList);
+                    		model.addAttribute("mapList" , mapList);
+                    		
+                    		return "chapter01_thymeleaf/controlStatment/controlEx03";
+                    		
+                    			}
+                    	}
+                    ```
+                    
+                    ```html
+                    <!DOCTYPE html>
+                    <html xmlns:th="http://www.thymeleaf.org">
+                    <head>
+                    <meta charset="UTF-8">
+                    <title>control statement</title>
+                    </head>
+                    <body>
+                    
+                    	<h3>2-1) 객체반복(DTO List)</h3>
+                    		<table border="1">
+                    			<tr>
+                    				<th>상품ID</th>
+                    				<th>상품이름</th>
+                    				<th>가격</th>
+                    				<th>배송비</th>
+                    				<th>등록일자</th>
+                    				<th>브랜드ID</th>
+                    			</tr>
+                    			<tr th:each="dto : ${dtoList}">  <!-- model.addAttribute("dtoList" , dtoList); -->
+                    				<td th:text="${dto.productId}"></td>
+                    				<td th:text="${dto.productNm}"></td>
+                    				<td th:text="${dto.price}"></td>
+                    				<td th:text="${dto.deliveryPrice}"></td>
+                    				<td th:text="${dto.enrollDt}"></td>
+                    				<td th:text="${dto.brandId}"></td>
+                    			</tr>
+                    		</table>
+                    		<hr/>
+                    
+                    		<h3>2-2) 객체반복(Map List)</h3>
+                    		<table border="1">
+                    			<tr>
+                    				<th>상품ID</th>
+                    				<th>상품이름</th>
+                    				<th>브랜드ID</th>
+                    				<th>가격</th>
+                    				<th>배송비</th>
+                    				<th>등록일자</th>
+                    				<th>부가세</th>
+                    				<th>최종금액</th>
+                    				<th>브랜드명</th>
+                    				<th>활성화여부</th>
+                    			</tr>
+                    			<tr th:each="map : ${mapList}">  <!-- model.addAttribute("mapList" , mapList); -->
+                    				<td th:text="${map.productId}"></td>
+                    				<td th:text="${map.productNm}"></td>
+                    				<td th:text="${map.brandId}"></td>
+                    				<td th:text="${map.price}"></td>
+                    				<td th:text="${map.deliveryPrice}"></td>
+                    				<td th:text="${map.enrollDt}"></td>
+                    				<td th:text="${map.addTax}"></td>
+                    				<td th:text="${map.totalPrice}"></td>
+                    				<td th:text="${map.brandNm}"></td>
+                    				<td th:text="${map.activeYn}"></td>
+                    			</tr>
+                    		</table>
+                    
+                    </body>
+                    </html>
+                    ```
+                    
+                    - **status**
+                        - 반복문 내에서 현재 반복의 상태에 대한 다양한 정보를 제공한다.
+                        - 그러므로 반복문의 현재 상태에 대한 추가적인 제어와 정보 접근이 가능하다.
+                        - thymeleaf status는 **반복대상 변수명 + "Stat" 변수명**으로 접근 할 수 있다.
+                        - **[ 속성 ]**
+                            
+                            **current**	: 현재 엘리먼트
+                            
+                            **index**	: 현재 반복 인덱스  (0부터 시작)		
+                            
+                            **count**	: 현재 반복 인덱스  (1부터 시작)
+                            
+                            **size**	        : 모든 엘리먼트의 개수
+                            
+                            **first**	         : 현재 반복이 첫번째인지 여부 (boolean)
+                            
+                            **last**	         : 현재 반복이 마지막인지 여부 (boolean)
+                            
+                            **odd**	         : 현재 반복이 홀수인지 여부 (boolean)
+                            
+                            **even**	 : 현재 반복이 짝수인지 여부 (boolean)
+                            
+                        - **id , name 등 속성을 부여하려면 th:id , th:name** 형태로 사용한다.
+                    
+                    ```java
+                    @Controller
+                    @RequestMapping("/th/control")
+                    public class ControlStatementController {
+                    
+                    @GetMapping("/ex04")
+                    	public String ex04(Model model) {
+                    		
+                    		// 반복문 + Status 예시
+                    		List<ProductDTO> dtoList = supposeDAO.getDTOList();
+                    		
+                    		model.addAttribute("dtoList", dtoList);
+                    		
+                    		return "chapter01_thymeleaf/controlStatment/controlEx04";
+                    		
+                    	}
+                    		
+                    }
+                    ```
+                    
+                    ```html
+                    <!DOCTYPE html>
+                    <html xmlns:th="http://www.thymeleaf.org">
+                    <head>
+                    <meta charset="UTF-8">
+                    <title>control statement</title>
+                    </head>
+                    <body>
+                    
+                    	<h1>반복문 + Status</h1>
+                    	<table border="1">
+                    		<tr>
+                    			<th>현재 엘리먼트</th>
+                    			<th>현재 인덱스</th>
+                    			<th>현재 카운트</th>
+                    			<th>총 엘리먼트의 개수</th>
+                    			<th>첫번째 반복 여부</th>
+                    			<th>마지막 반복 여부</th>
+                    			<th>홀수 여부</th>
+                    			<th>짝수 여부</th>
+                    		</tr>
+                    		<tr th:each=" dto : ${dtoList}">
+                    			<td th:id = "|tr${dtoStat.index}|" th:text="${dtoStat.current}"></td>
+                    			<td th:id = "|tr${dtoStat.index}|" th:text="${dtoStat.index}"></td>
+                    			<td th:id = "|tr${dtoStat.index}|" th:text="${dtoStat.count}"></td>
+                    			<td th:id = "|tr${dtoStat.index}|" th:text="${dtoStat.size}"></td>
+                    			<td th:id = "|tr${dtoStat.index}|" th:text="${dtoStat.first}"></td>
+                    			<td th:id = "|tr${dtoStat.index}|" th:text="${dtoStat.last}"></td>
+                    			<td th:id = "|tr${dtoStat.index}|" th:text="${dtoStat.odd}"></td>
+                    			<td th:id = "|tr${dtoStat.index}|" th:text="${dtoStat.even}"></td>
+                    		</tr>
+                    	</table>
+                    
+                    </body>
+                    </html>
+                    ```
