@@ -3628,4 +3628,387 @@
                     </body>
                     </html>
                     ```
+
+                    - **status**
+                        - 반복문 내에서 현재 반복의 상태에 대한 다양한 정보를 제공한다.
+                        - 그러므로 반복문의 현재 상태에 대한 추가적인 제어와 정보 접근이 가능하다.
+                        - thymeleaf status는 **반복대상 변수명 + "Stat" 변수명**으로 접근 할 수 있다.
+                        - **[ 속성 ]**
+                            
+                            **current**	: 현재 엘리먼트
+                            
+                            **index**	: 현재 반복 인덱스  (0부터 시작)		
+                            
+                            **count**	: 현재 반복 인덱스  (1부터 시작)
+                            
+                            **size**	        : 모든 엘리먼트의 개수
+                            
+                            **first**	         : 현재 반복이 첫번째인지 여부 (boolean)
+                            
+                            **last**	         : 현재 반복이 마지막인지 여부 (boolean)
+                            
+                            **odd**	         : 현재 반복이 홀수인지 여부 (boolean)
+                            
+                            **even**	 : 현재 반복이 짝수인지 여부 (boolean)
+                            
+                        - **id , name 등 속성을 부여하려면 th:id , th:name** 형태로 사용한다.
                     
+                    ```java
+                    @Controller
+                    @RequestMapping("/th/control")
+                    public class ControlStatementController {
+                    
+                    @GetMapping("/ex04")
+                    	public String ex04(Model model) {
+                    		
+                    		// 반복문 + Status 예시
+                    		List<ProductDTO> dtoList = supposeDAO.getDTOList();
+                    		
+                    		model.addAttribute("dtoList", dtoList);
+                    		
+                    		return "chapter01_thymeleaf/controlStatment/controlEx04";
+                    		
+                    	}
+                    		
+                    }
+                    ```
+                    
+                    ```html
+                    <!DOCTYPE html>
+                    <html xmlns:th="http://www.thymeleaf.org">
+                    <head>
+                    <meta charset="UTF-8">
+                    <title>control statement</title>
+                    </head>
+                    <body>
+                    
+                    	<h1>반복문 + Status</h1>
+                    	<table border="1">
+                    		<tr>
+                    			<th>현재 엘리먼트</th>
+                    			<th>현재 인덱스</th>
+                    			<th>현재 카운트</th>
+                    			<th>총 엘리먼트의 개수</th>
+                    			<th>첫번째 반복 여부</th>
+                    			<th>마지막 반복 여부</th>
+                    			<th>홀수 여부</th>
+                    			<th>짝수 여부</th>
+                    		</tr>
+                    		<tr th:id = "|tr${dtoStat.index}|" 
+                    		th:name="|tr${dtoStat.index}|" th:each=" dto : ${dtoList}">
+                    			<td th:text="${dtoStat.current}"></td>
+                    			<td th:text="${dtoStat.index}"></td>
+                    			<td th:text="${dtoStat.count}"></td>
+                    			<td th:text="${dtoStat.size}"></td>
+                    			<td th:text="${dtoStat.first}"></td>
+                    			<td th:text="${dtoStat.last}"></td>
+                    			<td th:text="${dtoStat.odd}"></td>
+                    			<td th:text="${dtoStat.even}"></td>
+                    		</tr>
+                    	</table>
+                    
+                    </body>
+                    </html>
+                    ```
+                    
+                    - **Format (포맷)**
+                        
+                        ```java
+                        @Controller
+                        public class FormatController {
+                        
+                        	@GetMapping("/th/format/ex") // localhost/th/format/ex
+                        	public String format(Model model) {
+                        		
+                        		// 날짜 (Date)
+                        		model.addAttribute("date1" , new Date());
+                        		model.addAttribute("date2" , System.currentTimeMillis());
+                        		
+                        		// 정수 (Integer)
+                        		model.addAttribute("intVar" , 1000000000); // 1 , 10 , 100 , 1000000000
+                        		
+                        		// 소수점 (Decimal)
+                        		model.addAttribute("doubleVar" , 3.141592); // 3.141592 , 30000.141592
+                        		
+                        		return "chapter01_thymeleaf/format/formatEx";
+                        		
+                        	}
+                        ```
+                        
+                        - **DATE 포맷**
+                            - 날짜형식을 구현하기 위해 **#dates** 유틸리티 객체의 메서드를 사용한다.
+                            - format 메서드를 사용하여 날짜 객체를 원하는 형식의 문자열로 변환한다.
+                            - **[형식]**
+                                
+                                **${#dates.format(데이터, 표현식)}**
+                                
+                            - **표현식**
+                                
+                                **연도 : yyyy**
+                                
+                                **월   : MM**
+                                
+                                **일   : dd**
+                                
+                                **시   : HH**
+                                
+                                **분   : mm**
+                                
+                                **초   : ss**
+                                
+                        
+                        ```html
+                        <!DOCTYPE html>
+                        <html xmlns:th="http://www.thymeleaf.org">
+                        <head>
+                        <meta charset="UTF-8">
+                        <title>format</title>
+                        </head>
+                        <body>
+                        
+                        	<h3>Date Format</h3>
+                        	<p th:text="${date1}"></p>
+                        	<p th:text="${date2}"></p>
+                        	<br/>
+                        	<p th:text="${#dates.format(date1 , 'yyyy-MM-dd')}"></p>
+                        	<p th:text="${#dates.format(date2 , 'yyyy-MM-dd')}"></p>
+                        	<br/>
+                        	<p th:text="${#dates.format(date1 , 'yyyy년 MM월 dd일 hh시 mm분 ss초')}"></p>
+                        	<p th:text="${#dates.format(date2 , 'yyyy년 MM월 dd일 hh시 mm분 ss초')}"></p>
+                        	
+                        </body>
+                        </html>
+                        ```
+                        
+                        - **정수 format 포맷 >  formatInteger**
+                            - Integer는 소수점이 없는 숫자를 의미한다.
+                            - Integer Format을 구현하기 위해 **#numbers 유틸리티 객체의 formatInteger 메소드를 사용하여 구현**한다.
+                            - 이를 통해 숫자를 통화 , 백분율 , 표시자리수 , 구분자 등 다양한 정수 포맷기능을 구현할 수 있다.
+                            - **[ 형식 ]**
+                                
+                                **${﻿#numbers.formatInteger(데이터 , 최소 표시 자리수)**}
+                                
+                                **${﻿#numbers.formatInteger(데이터 , 최소 표시 자리수 , 구분자표현)**}
+                                
+                            - (참고)
+                                - **구분자** : 세자리마다 사이에 표시되는 구분자로서 **'COMMA', 'POINT', 'WHITESPACE', 'NONE', 'DEFAULT'가 있으며
+                                Default는 COMMA이다.**
+                        
+                        ```html
+                        <!DOCTYPE html>
+                        <html xmlns:th="http://www.thymeleaf.org">
+                        <head>
+                        <meta charset="UTF-8">
+                        <title>format</title>
+                        </head>
+                        <body>
+                        
+                        	<h3>formatInteger</h3>
+                        	<p th:text="${intVar}"></p>
+                        	<br/>
+                        	<p th:text="${#numbers.formatInteger(intVar , 1 ,'COMMA')}"></p>
+                        	<p th:text="${#numbers.formatInteger(intVar , 2 ,'COMMA')}"></p>
+                        	<p th:text="${#numbers.formatInteger(intVar , 3 ,'COMMA')}"></p>
+                        	
+                        </body>
+                        </html>
+                        ```
+                        
+                        - **소수점 format 포맷 > formatDecimal**
+                            - Decimal은 소수점을 포함하는 숫자를 말한다.
+                            - 소수점 제어는 **formatDecimal를 사용하여 구현**한다.
+                            - **[ 형식 ]**
+                                
+                                **${#numbers.formatDecimal(데이터 , 표시자리수, 구분자 , 소수점표시자리수 , 'POINT')}**
+                                
+                        
+                        ```html
+                        <!DOCTYPE html>
+                        <html xmlns:th="http://www.thymeleaf.org">
+                        <head>
+                        <meta charset="UTF-8">
+                        <title>format</title>
+                        </head>
+                        <body>
+                        	 
+                        	<h3>formatDecimal</h3>
+                        	<p th:text="${doubleVar}"></p>
+                        	<br/>
+                        	<p th:text="${#numbers.formatDecimal(doubleVar, 1 , 'COMMA' , 1 , 'POINT')}"></p>
+                        	<p th:text="${#numbers.formatDecimal(doubleVar, 1 , 'COMMA' , 2 , 'POINT')}"></p>
+                        	<p th:text="${#numbers.formatDecimal(doubleVar, 1 , 'COMMA' , 3 , 'POINT')}"></p>
+                        
+                        </body>
+                        </html>
+                        ```
+                        
+                    - **th:with**
+                        - th:with는 지역 변수를 선언하여 HTML 템플릿의 **특정 영역에서만 변수를 사용할 수 있게 해준다.**
+                        - 이를 통해 코드의 중복을 줄이고 템플릿의 가독성을 높일 수 있다.
+                        
+                        ```java
+                        @Controller
+                        public class WithController {
+                        
+                        	@GetMapping("/th/with/ex")  // localhost/th/with/ex
+                        	public String with(Model model) {
+                        		
+                        		model.addAttribute("price" , 10000);
+                        		model.addAttribute("orderQty" , 3);
+                        		model.addAttribute("deliveryPrice", 3000);
+                        		model.addAttribute("usePoint" , 5000);
+                        		
+                        		return "chapter01_thymeleaf/with/withEx";
+                        		
+                        	}
+                        	
+                        }
+                        ```
+                        
+                        ```html
+                        <!DOCTYPE html>
+                        <html xmlns:th="http://www.thymeleaf.org">
+                        <head>
+                        <meta charset="UTF-8">
+                        <title>with</title>
+                        </head>
+                        <body>
+                        
+                        	<h3>1. with</h3>
+                        	<!-- block 범위 안에서만 유효 -->
+                        	<th:block th:with="totalAmountDue=${price * orderQty + deliveryPrice - usePoint}">
+                        		<p th:text="|최종 결제 금액 : ${totalAmountDue}|"></p>
+                        	</th:block>
+                        	<p th:text="|최종 결제 금액 : ${totalAmountDue}|"></p> <!-- 유효 x -->
+                        	<hr/>
+                        	
+                        	<!-- 	
+                        	
+                        		- th:with를 사용하여 여러 변수를 한 번에 선언할 수 있다.
+                        		
+                        			[ 예시 ] 
+                        		 
+                        			- varName1과 varName2 두 개의 지역 변수를 선언하고 데이터를 각각 할당하여 사용한다.
+                        			
+                        			<div th:with="varName1=${data}, varName2=${data}">
+                        			
+                        			</div>
+                        			
+                        	-->
+                        	
+                        	<h3>2. with 동시 변수 선언</h3>
+                        	<th:block th:with="purchaseAmount=${price * orderQty + deliveryPrice} , 
+                        					   totalAmountDue=${price * orderQty + deliveryPrice - usePoint}" >
+                        	
+                        		<p th:text="|구매금액 : ${purchaseAmount}|"></p>
+                        		<p th:text="|최종 결제 금액 : ${totalAmountDue}|"></p>
+                        	
+                        	</th:block>
+                        	<hr/>
+                        	
+                        	<!-- 	
+                        	
+                        		- th:with는 중첩하여 사용할 수 있다. 내부에서 선언된 변수는 해당 범위 내에서만 유효하다.
+                        		
+                        		[ 예시 ]
+                        		
+                        		- 이 구조에서 innerVar는 안쪽 <div> 내부에서만 유효하고 outerVar는 두 <div> 태그 모두에서 유효하다.
+                        		
+                        		<div th:with="outerVar='First level'">
+                        		    
+                        		    <div th:with="innerVar='Second level'">
+                        		   		- innerVar는 이곳에서만 유효 
+                        		    </div>
+                        		    
+                        		</div>
+                        		
+                        	 -->
+                        	 
+                        	<h3>3. with 중첩사용</h3>
+                        	<th:block th:with="purchaseAmount=${price * orderQty + deliveryPrice}">
+                        	
+                        		<th:block th:with="totalAmountDue=${price * orderQty + deliveryPrice - usePoint}">
+                        			<p th:text="|구매금액 : ${purchaseAmount}|"></p>
+                        			<p th:text="|최종 결제 금액 : ${totalAmountDue}|"></p>
+                        		</th:block>
+                        		
+                        		<p th:text="|구매금액 : ${purchaseAmount}|"></p>
+                        		<p th:text="|최종 결제 금액 : ${totalAmountDue}|"></p> <!-- 유효 X -->
+                        		
+                        	</th:block>
+                        	
+                        	
+                        	
+                        	
+                        	
+                        </body>
+                        </html>
+                        ```
+                        
+                    - **th:object**
+                        - 'th:object'는 타임리프 **템플릿 내의 <form> 태그에 사용**되며 폼이 제출될 때 컨트롤러로 전송될 객체를 지정한다.
+                        - 'th:field'와 함께 사용되어 **폼 필드와 객체 필드 *{필드명}형태로 바인딩**한다. 여기에서 **id , name , value 속성이 동시에 지정**된다.
+                        - 이를 통해 폼 데이터를 객체에 바인딩하여 서버로 전송할 수 있으며
+                        컨트롤러에서는 이 객체를 통해 클라이언트로부터 받은 데이터를 처리할 수 있다.
+                        - **[ 사용법 ]**
+                            
+                            **step 1) 컨트롤러에서 모델 객체를 뷰로 전달해 주어야 한다.**
+                            예시 : model.addAttribute("dto" , DTO데이터);
+                            
+                            **step 2) 템플릿의 <form> 태그에서 전송된 객체를 'th:object'속성을 통해 지정한다.**
+                            예시 : th:object="${dto}"
+                            
+                            **step 3) 폼 내의 입력 필드는 th:field="*{필드명}"을 사용하여 th:object에 지정된 객체의 필드와 바인딩된다.**
+                            예시 : dto.필드명     > *{필드명}
+                            
+                        
+                        ```java
+                        @Controller
+                        @RequestMapping("/th/object")
+                        public class ObjectController {
+                        
+                        	@GetMapping("/ex01")  // localhost/th/object/ex01
+                        	public String ex01(Model model) {
+                        	
+                        		// th:object , th:value 예시
+                        		ProductDTO productDTO = new ProductDTO();
+                        		productDTO.setProductId(1);
+                        		productDTO.setProductNm("테스트 상품");
+                        		productDTO.setPrice(300000);
+                        		productDTO.setDeliveryPrice(3000);
+                        		productDTO.setEnrollDt(new Date());
+                        		productDTO.setBrandId(100);
+                        		
+                        		model.addAttribute("productDTO" , productDTO);
+                        		
+                        		return "chapter01_thymeleaf/object/objectEx01";
+                        	
+                        			}
+                        	}
+                        ```
+                        
+                        ```html
+                        <!DOCTYPE html>
+                        <html xmlns:th="http://www.thymeleaf.org">
+                        <head>
+                        <meta charset="UTF-8">
+                        <title>form</title>
+                        </head>
+                        <body>
+                        
+                        	<h3>th:object , th:field</h3>
+                        	<form action="#" method="post" th:object="${productDTO}"> <!-- model.addAttribute("productDTO" , productDTO); -->
+                        		<p>PRODUCT_ID : 	<input type="text" th:field="*{productId}" ></p>
+                        		<p>PRODUCT_NM : 	<input type="text" th:field="*{productNm}"></p>
+                        		<p>PRICE : 			<input type="text" th:field="*{price}"></p>
+                        		<p>DELIVERY_PRICE : <input type="text" th:field="*{deliveryPrice}"></p>
+                        		<p>ENROLL_DT : 		<input type="text" th:field="*{enrollDt}"></p>
+                        		<p>BRAND_ID : 		<input type="text" th:field="*{brandId}"></p>
+                        		<input type="submit">
+                        	</form>
+                        	<hr>
+                        		
+                        </body>
+                        </html>
+                        ```
+                        
