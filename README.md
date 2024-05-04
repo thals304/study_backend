@@ -4011,4 +4011,113 @@
                         </body>
                         </html>
                         ```
+                   - **th:path**
+                        - **th:href**
+                            - 타임리프의 URL 처리 기능은 **@{...} 구문을 사용하여 표현**된다.
+                            - 이 구문은 타임리프가 실행되는 서버의 컨텍스트를 자동으로 고려하여 절대 경로를 생성한다.
+                                - **url 이동 : <a th:href=”@{/URL}”></a>**
+                            - 파라미터를 URL에 추가할 수 있으며 **/URL(파라메타명=데이터)** 형태로 작성한다.
+                            - **복수의 파라메타를 전송**할경우 , 를 사용하여 **/URL(param1=value1 , param2=value2 , param3=value3)** 형태로 작성한다.
+                                - **url 이동(파라메타) : <a th:href=””@{/URL(param1=value1, param2=value2 , param3 = value3)}></a>**
+                            - **경로 변수(path variable)**를 사용하여 RESTful URL을 생성할 수 있으며 **/URL/{파라메타명}(파라메타명=데이터) 형태**로 작성한다.
+                            - **복수의 파라메타를 전송**할경우  **/URL/{param1}/{param2}/{param3}(param1=value1 , param2=value2 , param3=value3)** 형태로 작성한다.
+                                - **경로 변수 : <a th:href=”@{/URL/{param1}/{param2}/{param3}(param1=value1, param2=value2, param3=value3)}”></a>**
+                        - **th:src**
+                            - **static 디렉터리를 기준**으로 **@{/경로}형태**로 작성한다.
+                                - **<img th:src=”@{/경로}”>**
+                                - **<link th:href=*"@{/경로}"* rel=*"stylesheet"* type=*"text/css"*>**
+                                - **<script th:src=*"@{/경로}"*></script>**
+                                - **<script th:src=*"@{/jquery/jquery-3.7.1.min.js}"*></script>**
+                                - **<script th:src=*"@{/ckeditor/ckeditor.js}"*></script>**
+                        - **th:action**
+                            - form태그의 action속성은 **th:action="@{/경로}"** 형태로 작성한다.
+                                - **<form th:action=”@{/경로}”></form>**
                         
+                        ```html
+                        <!DOCTYPE html>
+                        <html xmlns:th="http://www.thymeleaf.org">
+                        <head>
+                        <meta charset="UTF-8">
+                        <title>path</title>
+                        <!-- static 디렉터리를 기준으로 @{/경로}형태로 작성한다. -->
+                        <link th:href="@{/style.css}" rel="stylesheet" type="text/css"> <!-- css import 예시 -->
+                        <script th:src="@{/script.js}"></script>                        <!-- js import 예시 -->
+                        <script th:src="@{/jquery/jquery-3.7.1.min.js}"></script>       <!-- jquery import 예시 -->
+                        <script th:src="@{/ckeditor/ckeditor.js}"></script>             <!-- ckeditor import 예시 -->
+                        
+                        <script>
+                            $().ready(function(){
+                                alert("jquery import success");
+                            });
+                        </script>
+                        
+                        </head>
+                        <body>
+                        
+                            <!--  
+                                
+                                - 타임리프의 URL 처리 기능은 @{...} 구문을 사용하여 표현된다.
+                                 
+                                - 이 구문은 타임리프가 실행되는 서버의 컨텍스트를 자동으로 고려하여 절대 경로를 생성한다. 
+                                
+                            -->
+                        
+                            <h1>1. URL 이동</h1>
+                            <!-- before : <p><a href="https://www.naver.com">네이버로 이동하기</a></p> -->
+                            <p><a th:href="@{https://www.naver.com}">네이버로 이동하기</a>
+                            <p><a th:href="@{/main}">메인화면으로 이동하기</a></p>
+                            <hr>
+                            
+                            
+                            
+                            <!--  
+                            
+                                - 파라미터를 URL에 추가할 수 있으며 /URL(파라메타명=데이터) 형태로 작성한다.
+                                
+                                - 복수의 파라메타를 전송할경우 , 를 사용하여 /URL(param1=value1 , param2=value2 , param3=value3) 형태로 작성한다.  
+                            
+                            -->
+                            <h1>2. URL 이동(파라메타 추가)</h1>
+                            <!-- before : <p><a th:href="/board/detail?boardId=10">상세정보 확인</a></p> -->
+                            <p><a th:href="@{/board/detail(boradId=10)}">상세정보확인</a></p>
+                            <!-- before : <p><a th:href="/webtoon/detail?titleId=1111&tab=fri&no=300">상세정보 확인</a></p> -->
+                            <p><a th:href="@{/webtoon/detail(titleId=1111, tab=fri , no = 300)}">상세정보확인</a></p>
+                            <hr>
+                        
+                            <!--
+                              
+                                - 경로 변수(path variable)를 사용하여 RESTful URL을 생성할 수 있으며 /URL/{파라메타명}(파라메타명=데이터) 형태로 작성한다.
+                                
+                                - 복수의 파라메타를 전송할경우  /URL/{param1}/{param2}/{param3}(param1=value1 , param2=value2 , param3=value3) 형태로 작성한다.
+                                 
+                            -->
+                            <h1>3. 경로 변수(Path Variable) > controller에서 좀 더 설명 필요</h1>
+                            <!-- before : <p><a href="/board/detail/10">상세정보확인</a></p> -->
+                            <p><a th:href="@{/board/detail/{boardId}(boardId=10)}">상세정보확인</a></p>
+                            <p><a th:href="@{/webtoon/detail/{titleId}/{tab}/{no}(titleId=1111, tab=fri, no=300)}">상세정보확인</a></p>
+                            <hr>
+                            
+                            
+                            
+                            <!-- static 디렉터리를 기준으로 @{/경로}형태로 작성한다. -->
+                            <h1>4. 정적 자원</h1>
+                            <!-- before : <img src="/thymeleaf.PNG"> -->
+                            <img th:src="@{/thymeleaf.PNG}">
+                            <br/><br/>
+                            
+                            <textarea rows="10" cols="10" name="test" ></textarea>
+                            <script>CKEDITOR.replace("test");</script>
+                            <hr/>
+                            
+                            
+                            <!-- form태그의 action속성은 th:action="@{/경로}" 형태로 작성한다. -->
+                            <h1>5. form</h1>
+                            <form th:action="@{/toController}" method="post">
+                                <p>ID : <input type="text" name="id"></p>
+                                <p>PASSWORD : <input type="password" name="passwd"></p>
+                                <input type="submit">
+                            </form>
+                            
+                        </body>
+                        </html>
+                        ```     
