@@ -6,10 +6,10 @@
 </head>
 <body>
 
-	<div th:if="${dbId == inputId || dbPasswd == inputPasswd}">
+	<div th:if="${dbId == inputId && dbPasswd == inputPasswd}">
 		<p>로그인 되었습니다.</p>
 	</div>
-	<div th:unless="${dbId == inputId || dbPasswd == inputPasswd}">
+	<div th:unless="${dbId == inputId && dbPasswd == inputPasswd}">
 		<p>로그인에 실패하였습니다.</p>
 	</div>
 

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>form</title>
+</head>
+<body>
+
+	<!--  
+	
+		# th:object
+	
+		- 'th:object'는 타임리프 템플릿 내의 <form> 태그에 사용되며 폼이 제출될 때 컨트롤러로 전송될 객체를 지정한다. 
+		
+		- 'th:field'와 함께 사용되어 폼 필드와 객체 필드 *{필드명}형태로 바인딩한다.
+		   여기에서 id , name , value 속성이 동시에 지정된다.	
+		
+		- 이를 통해 폼 데이터를 객체에 바인딩하여 서버로 전송할 수 있으며 
+		  컨트롤러에서는 이 객체를 통해 클라이언트로부터 받은 데이터를 처리할 수 있다.
+
+			[ 사용법 ] 
+		
+			step 1) 컨트롤러에서 모델 객체를 뷰로 전달해 주어야 한다. 
+			   예시 : model.addAttribute("dto" , DTO데이터);
+			
+			step 2) 템플릿의 <form> 태그에서 전송된 객체를 'th:object'속성을 통해 지정한다. 
+			   예시 : th:object="${dto}"
+			
+			step 3) 폼 내의 입력 필드는 th:field="*{필드명}"을 사용하여 th:object에 지정된 객체의 필드와 바인딩된다.
+				예시 : dto.필드명     > *{필드명}
+					   dto.productId  > *{productId}
+					   dto.productNm  > *{productNm}
+					   dto.price      > *{price}
+	
+	-->
+	<h3>th:object , th:field</h3>
+	<form action="#" method="post" th:object="${productDTO}"> <!-- model.addAttribute("productDTO" , productDTO); -->
+		<p>PRODUCT_ID : 	<input type="text" th:field="*{productId}" ></p>
+		<p>PRODUCT_NM : 	<input type="text" th:field="*{productNm}"></p>
+		<p>PRICE : 			<input type="text" th:field="*{price}"></p>
+		<p>DELIVERY_PRICE : <input type="text" th:field="*{deliveryPrice}"></p>
+		<p>ENROLL_DT : 		<input type="text" th:field="*{enrollDt}"></p>
+		<p>BRAND_ID : 		<input type="text" th:field="*{brandId}"></p>
+		<input type="submit">
+	</form>
+	<hr>
+		
+</body>
+</html>

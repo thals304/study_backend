@@ -1,7 +1,10 @@
 package com.application.mvc.chapter01_thymeleaf;
 /*
- * 24.05.02 time
+ * 24.05.03 tim
  * today 소감문
+ * 9  > #numbers.sequence(,) 사용 방법 익숙해지기 
+ * 10 > jsp 공부 다시 필요
+ * 
  * */
 import java.util.List;
 import java.util.Map;
@@ -23,7 +26,7 @@ public class ControlStatementPractice1Controller {
 	private SupposeDAO supposeDAO;
 	
 	@GetMapping("/ex05_practice1")
-	public String ex05_practice1() {
+	public String ex05_practice1(Model model) {
 		
 		/*
 		  
@@ -36,13 +39,14 @@ public class ControlStatementPractice1Controller {
 		*/
 		
 		String role = "admin"; // admin , user
+		model.addAttribute("role", role);
 
-		return "";
+		return "chapter01_thymeleaf/controlStatment/controlEx05_pracitce1";
 		
 	}
 	
 	@GetMapping("/ex06_practice1")
-	public String ex06_practice1() {
+	public String ex06_practice1(Model model) {
 		
 		/*
 			# 가위 바위 보
@@ -56,17 +60,20 @@ public class ControlStatementPractice1Controller {
 			
 		*/
 		
-		
+		// 나는 com은 고정되어 있다고 생각해서 html에서 me가 가위, 바위, 보 일 때만 조건을 썼는데 정답예시는 com의 조건도 같이 써줌 
 		String com = "바위";
 		String me = "바위"; // 가위 , 바위 , 보
-
-		return "";
+		
+		model.addAttribute("com" , com);
+		model.addAttribute("me" , me);
+		
+		return "chapter01_thymeleaf/controlStatment/controlEx06_pracitce1";
 		
 	}
 	
 	
 	@GetMapping("/ex07_practice1")
-	public String ex07_practice1() {
+	public String ex07_practice1(Model model) {
 		
 		/*
 		
@@ -83,14 +90,18 @@ public class ControlStatementPractice1Controller {
 		
 		int com = 77;
 		int me = 0;    // 50 ,77, 100
-
-		return "";
+		
+		model.addAttribute("com", com);
+		model.addAttribute("me", me);
+		
+		
+		return "chapter01_thymeleaf/controlStatment/controlEx07_pracitce1";
 		
 	}
 
 	
 	@GetMapping("/ex08_practice1")
-	public String ex08_practice1() {
+	public String ex08_practice1(Model model) {
 		
 		/*
 	
@@ -106,7 +117,13 @@ public class ControlStatementPractice1Controller {
 		String inputId     = "qwer1234"; // qwer1234 , qwer
 		String inputPasswd = "1234";     // 1234 , 1111
 		
-		return "";
+		// 정답예시에서는 아이디가 같거나 비밀번호가 같을 때 로그인 성공으로 조건식을 쓴 것일까? && 인 줄 알았는데 왜 ||인 것인가?
+		model.addAttribute("dbId", dbId);
+		model.addAttribute("dbPasswd", dbPasswd);
+		model.addAttribute("inputId", inputId);
+		model.addAttribute("inputPasswd", inputPasswd);
+		
+		return "chapter01_thymeleaf/controlStatment/controlEx08_pracitce1";
 		
 	}
 
@@ -123,7 +140,7 @@ public class ControlStatementPractice1Controller {
 	
 		*/
 		
-		return "";
+		return "chapter01_thymeleaf/controlStatment/controlEx09_pracitce1";
 		
 	}
 	
@@ -149,7 +166,7 @@ public class ControlStatementPractice1Controller {
 		*/
 		
 
-		return "";
+		return "chapter01_thymeleaf/controlStatment/controlEx10_pracitce1";
 		
 	}
 	
@@ -344,7 +361,6 @@ public class ControlStatementPractice1Controller {
 	
 	@GetMapping("/ex16_practice1")
 	public String ex16_practice1() {
-		
 		/*
 		  
 		  - controlEx16_practice.html파일에 productMapList 데이터를 전달하여 아래와같이 데이터를 출력하시오.
@@ -358,11 +374,11 @@ public class ControlStatementPractice1Controller {
 		   	  	<th>brandNm</th>
 		   	  </tr>
 		   	  <tr>
-		   	  	<td id="productId0">노트북1</td>
-		   	  	<td id="price0">10000</td>      
-		   	  	<td id="addTax0">1000.0</td>      
-		   	  	<td id="totalPrice0">11000.0</td>      
-		   	  	<td id="brandNm0">"브랜드1</td>      
+		   	  	<td id="productNm0" name="productNm0">노트북1</td>
+		   	  	<td id="price0" name="price0">10000</td>      
+		   	  	<td id="addTax0" name="addTax0">1000.0</td>      
+		   	  	<td id="totalPrice0" name="totalPrice0">11000.0</td>      
+		   	  	<td id="brandNm0" name="brandNm0">"브랜드1</td>      
 		   	  </tr>
 		   	  ...
 		   	  ...
@@ -371,6 +387,7 @@ public class ControlStatementPractice1Controller {
 			
 			
 		*/
+
 		
 		List<Map<String,Object>> productMapList = supposeDAO.getMapList();
 		

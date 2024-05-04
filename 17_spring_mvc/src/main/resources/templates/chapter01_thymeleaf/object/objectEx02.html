@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>form</title>
+</head>
+<body>
+	
+	<h3>다양한 Form Data 예시</h3>
+	<form action="#" method="post" th:object="${productDTO}">
+		<p> 1. checkbox : 
+			<input type="checkbox" th:field=*{price} th:value="1000000"> 1000000
+			<input type="checkbox" th:field=*{price} th:value="2000000"> 2000000
+			<input type="checkbox" th:field=*{price} th:value="3000000"> 3000000
+		</p>
+		<p> 2. radio : 
+			<input type="radio" th:field="*{deliveryPrice}" th:value="0"> 0 
+			<input type="radio" th:field="*{deliveryPrice}" th:value="2500"> 2500
+			<input type="radio" th:field="*{deliveryPrice}" th:value="3000"> 3000
+		</p>
+		<p> 3. select : <!-- option value 필수 -->
+			<select th:field=*{productId}>
+				<option th:value="0">없음</option>
+				<option th:value="1">노트북1</option>
+				<option th:value="2">노트북2</option>
+				<option th:value="3">노트북3</option>
+			</select>
+		</p>
+		<p> 4. date : <input type="date" th:field="*{enrollDt}" ></p>
+		<p> 5. textarea : <textarea rows="30" cols="30" th:field="*{productNm}"></textarea></p>
+	</form>
+	<hr>
+	
+	
+</body>
+</html>

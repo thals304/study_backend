@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>view to controller</title>
+</head>
+<body>
+
+	<h1>1) @ModelAttribute</h1>
+	<form th:action="@{/v2c/modelAttribute}" method="post"> 
+		<input type="hidden" name="isPC" value="true">
+		<input type="hidden" name="locationId" value="1">
+		<input type="hidden" name="lang" value="kor">
+		<fieldset>
+			<legend>상품등록</legend>
+			<p>상품코드(숫자) : <input type="text" name="productId" /></p>
+			<p>상품명   : <input type="text" name="productNm" /></p>
+			<p>가격(숫자)     : <input type="text" name="price" /></p>
+			<p>배송비(숫자)   : <input type="text" name="deliveryPrice" /></p>
+			<p>등록날짜 : <input type="date" name="enrollDt" /></p>
+			<p>브랜드 :  
+				<select name="brandId">
+					<option value="1">SAMSUNG</option>
+					<option value="2">LG</option>
+					<option value="3">APPLE</option>
+					<option value="4">LENOVO</option>
+					<option value="5">GIGABYTE</option>
+					<option value="6">HP</option>
+				</select>
+			</p>
+		    <p><input type="submit" value="상품등록" ></p>
+		</fieldset>	
+    </form>
+     
+</body>
+</html>

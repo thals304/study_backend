@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>format</title>
+</head>
+<body>
+
+	<!-- 
+	
+		# Date Format
+		
+		- 날짜형식을 구현하기 위해 #dates 유틸리티 객체의 메서드를 사용한다.
+		 
+		- format 메서드를 사용하여 날짜 객체를 원하는 형식의 문자열로 변환한다.
+		
+		[형식]
+		
+			${#dates.format(데이터, 표현식)}        
+			
+			- 표현식
+			
+				연도 : yyyy
+				월   : MM
+				일   : dd
+				시   : HH
+				분   : mm
+				초   : ss
+		
+	 -->
+	 
+	<h3>Date Format</h3>
+	<p th:text="${date1}"></p>
+	<p th:text="${date2}"></p>
+	<br/>
+	<p th:text="${#dates.format(date1 , 'yyyy-MM-dd')}"></p>
+	<p th:text="${#dates.format(date2 , 'yyyy-MM-dd')}"></p>
+	<br/>
+	<p th:text="${#dates.format(date1 , 'yyyy년 MM월 dd일 hh시 mm분 ss초')}"></p>
+	<p th:text="${#dates.format(date2 , 'yyyy년 MM월 dd일 hh시 mm분 ss초')}"></p>
+	<hr>
+	
+
+	<!--
+
+		# 정수 포맷 formatInteger
+	  
+	    - Integer는 소수점이 없는 숫자를 의미한다.
+	   
+	  	- Integer Format을 구현하기 위해 #numbers 유틸리티 객체의 formatInteger 메소드를 사용하여 구현한다.
+		
+	  	- 이를 통해 숫자를 통화 , 백분율 , 표시자리수 , 구분자 등 다양한 정수 포맷기능을 구현할 수 있다.
+	  
+	    [ 형식 ] 
+	    
+		${﻿#numbers.formatInteger(데이터 , 최소 표시 자리수)}
+		${﻿#numbers.formatInteger(데이터 , 최소 표시 자리수 , 구분자표현)}
+		
+		(참고)
+		구분자 : 세자리마다 사이에 표시되는 구분자로서 'COMMA', 'POINT', 'WHITESPACE', 'NONE', 'DEFAULT'가 있으며
+		          Default는 COMMA이다.
+		
+	-->
+	
+	<h3>formatInteger</h3>
+	<p th:text="${intVar}"></p>
+	<br/>
+	<p th:text="${#numbers.formatInteger(intVar , 1 ,'COMMA')}"></p>
+	<p th:text="${#numbers.formatInteger(intVar , 2 ,'COMMA')}"></p>
+	<p th:text="${#numbers.formatInteger(intVar , 3 ,'COMMA')}"></p>
+	<hr>
+	
+	
+	<!-- 
+	
+		# 소수점 포맷 formatDecimal
+	
+	    - Decimal은 소수점을 포함하는 숫자를 말한다.
+	    
+		- 소수점 제어는 formatDecimal를 사용하여 구현한다.
+		
+		
+		[ 형식 ]
+		
+			${#numbers.formatDecimal(데이터 , 표시자리수, 구분자 , 소수점표시자리수 , 'POINT')}
+	
+	 -->
+	 
+	<h3>formatDecimal</h3>
+	<p th:text="${doubleVar}"></p>
+	<br/>
+	<p th:text="${#numbers.formatDecimal(doubleVar, 1 , 'COMMA' , 1 , 'POINT')}"></p>
+	<p th:text="${#numbers.formatDecimal(doubleVar, 1 , 'COMMA' , 2 , 'POINT')}"></p>
+	<p th:text="${#numbers.formatDecimal(doubleVar, 1 , 'COMMA' , 3 , 'POINT')}"></p>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div th:if="${dbId == inputId && dbPasswd == inputPasswd}">
+		<p>로그인 되었습니다.</p>
+	</div>
+	<div th:unless="${dbId == inputId && dbPasswd == inputPasswd}}">
+		<p>로그인에 실패했습니다.</p>
+	</div>
+</body>
+</html>

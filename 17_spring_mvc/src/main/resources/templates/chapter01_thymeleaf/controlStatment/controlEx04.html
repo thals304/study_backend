@@ -47,15 +47,16 @@
 			<th>홀수 여부</th>
 			<th>짝수 여부</th>
 		</tr>
-		<tr th:each=" dto : ${dtoList}">
-			<td th:id = "|tr${dtoStat.index}|" th:text="${dtoStat.current}"></td>
-			<td th:id = "|tr${dtoStat.index}|" th:text="${dtoStat.index}"></td>
-			<td th:id = "|tr${dtoStat.index}|" th:text="${dtoStat.count}"></td>
-			<td th:id = "|tr${dtoStat.index}|" th:text="${dtoStat.size}"></td>
-			<td th:id = "|tr${dtoStat.index}|" th:text="${dtoStat.first}"></td>
-			<td th:id = "|tr${dtoStat.index}|" th:text="${dtoStat.last}"></td>
-			<td th:id = "|tr${dtoStat.index}|" th:text="${dtoStat.odd}"></td>
-			<td th:id = "|tr${dtoStat.index}|" th:text="${dtoStat.even}"></td>
+		<tr th:id = "|tr${dtoStat.index}|" 
+		th:name="|tr${dtoStat.index}|" th:each=" dto : ${dtoList}">
+			<td th:text="${dtoStat.current}"></td>
+			<td th:text="${dtoStat.index}"></td>
+			<td th:text="${dtoStat.count}"></td>
+			<td th:text="${dtoStat.size}"></td>
+			<td th:text="${dtoStat.first}"></td>
+			<td th:text="${dtoStat.last}"></td>
+			<td th:text="${dtoStat.odd}"></td>
+			<td th:text="${dtoStat.even}"></td>
 		</tr>
 	</table>
 
