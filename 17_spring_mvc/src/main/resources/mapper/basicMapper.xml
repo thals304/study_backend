@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Mapper 목적 파일로 사용하기 위한 선언문 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+
+	- SQL과 매핑할 자바객체를(path.object)형태로 namespace에 작성 
+	
+    - com.application.mvc.chapter03_mybatis.Basic 객체와 매핑(path까지 경로 작성 해야함)
+    
+-->
+<mapper namespace="com.application.mvc.chapter03_mybatis.Basic">
+	
+	<!-- 
+	<select id="ex01" resultType="select 결과의 타입">
+		SELECT *
+		FROM   테이블
+	</select>
+	
+	<select id="ex02" parameterType="전달되는 데이터의 타입" resultType="select 결과의 타입">
+		SELECT *
+		FROM   테이블
+		WHERE  PRIMARY KEY 조건절
+	</select>
+	
+	<insert id="ex03" parameterType="전달되는 데이터의 타입">
+		INSERT INTO 테이블
+		VALUES (데이터)
+	</insert>
+	
+	<update id="ex04" parameterType="전달되는 데이터의 타입">
+		UPDATE 테이블
+		SET    데이터
+		WHERE  PRIMARY KEY 조건절
+	</update>
+	
+	<delete id="ex05" parameterType="전달되는 데이터의 타입">
+		DELETE FROM 테이블
+		WHERE       PRIMARY KEY 조건절
+	</delete>
+	 -->
+	
+</mapper>
