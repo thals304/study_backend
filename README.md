@@ -4120,4 +4120,301 @@
                             
                         </body>
                         </html>
-                        ```     
+        
+                        ```
+        - **View → Controller**
+    - **@ModelAttribute**
+        - @ModelAttribute 어노테이션을 사용하여 HTML element name 과 DTO property가 일치된 경우(타입도 일치 해야함)에 DTO 형식으로 바인딩(매핑) 된 전달 받을 수 있다.
+        - @ModelAttribute 의 경우 내부적으로 검증(Validation) 작업을 진행하기 때문에 setter 메서드를 이용하여 값을 바인딩하려고 시도하다가
+        예외를 만날때(데이터 타입 불일치) 작업이 중단되면서 Http 400 Bad Request가 발생한다.
+        - **String to Date 데이터 형식의 바인딩은 DTO클래스 property위에 @DateTimeFormat(pattern = "yyyy-MM-dd")을 추가하여 매핑해야함**
+        
+        ```java
+        @Controller
+        @RequestMapping("/v2c")
+        public class V2C_binding {
+        
+        	@GetMapping("/view") // localhost/v2c/view
+        	public String view() {
+        		return "chapter02_modelAndView/v2c";
+        	}
+        
+        	@PostMapping("/modelAttribute")
+        	public String modelAttribute(@ModelAttribute ProductDTO productDTO) {
+        		
+        		System.out.println("\n - @ModelAttribute - \n");
+        		System.out.println(productDTO);
+        		
+        	    return "redirect:/v2c/view";
+        		
+        		}
+        	}
+        ```
+        
+        ```html
+        <!DOCTYPE html>
+        <html xmlns:th="http://www.thymeleaf.org">
+        <head>
+        <meta charset="UTF-8">
+        <title>view to controller</title>
+        </head>
+        <body>
+        
+        	<h1>1) @ModelAttribute</h1>
+        	<form th:action="@{/v2c/modelAttribute}" method="post"> 
+        		<input type="hidden" name="isPC" value="true">
+        		<input type="hidden" name="locationId" value="1">
+        		<input type="hidden" name="lang" value="kor">
+        		<fieldset>
+        			<legend>상품등록</legend>
+        			<p>상품코드(숫자) : <input type="text" name="productId" /></p>
+        			<p>상품명   : <input type="text" name="productNm" /></p>
+        			<p>가격(숫자)     : <input type="text" name="price" /></p>
+        			<p>배송비(숫자)   : <input type="text" name="deliveryPrice" /></p>
+        			<p>등록날짜 : <input type="date" name="enrollDt" /></p>
+        			<p>브랜드 :  
+        				<select name="brandId">
+        					<option value="1">SAMSUNG</option>
+        					<option value="2">LG</option>
+        					<option value="3">APPLE</option>
+        					<option value="4">LENOVO</option>
+        					<option value="5">GIGABYTE</option>
+        					<option value="6">HP</option>
+        				</select>
+        			</p>
+        		    <p><input type="submit" value="상품등록" ></p>
+        		</fieldset>	
+            </form>
+            
+        </body>
+        </html>
+        ```
+        
+        **+) 참고 : 오류 코드**
+        
+        **405 : get, post 방법 불일치**
+        
+        **404 : url 경로 불일치**
+        
+        **400 : 파라메타 불일치**
+        
+        **500 : 서버 코드 오류** 
+        
+        ```java
+          // (참고: 오류 코드)
+        	// 405(get, post 방법 불일치)
+        	@PostMapping("/url") // 404 (url 경로 불일치)
+        	public String debugMethod(@ModelAttribute ProductDTO productDTO) { // 400 (파라메타 불일치)
+        		
+        		// 이하 500 (서버 코드 오류)
+        		
+        		return "";
+        	}
+        ```
+        
+    - **@RequestParam Map<K,V>**
+        - 요청 HTML의 name속성이 Map 컬렉션 프레임워크의 "KEY"로 바인딩되며
+        요청 HTML의 name의 value속성이 Map 컬렉션 프레임워크의 "VALUE"로 바인딩된다.
+        - HashMap타입이 아닌 **HashMap의 인터페이스인 Map타입**으로 데이터를 받는다.
+        - Map으로 전달되는 데이터가 정수 , 실수 , 글자등 다양한 데이터일 경우 다형성을 이용하여 Object타입으로 처리할 수 있다.
+        - **Object 타입으로 전송받는 경우** 데이터를 전송 받은 이후 로직에 알맞게 **데이터 형변환을 따로 해주어야** 한다.
+        
+        ```java
+        @Controller
+        @RequestMapping("/v2c")
+        public class V2C_binding {
+        
+        	@GetMapping("/view") // localhost/v2c/view
+        	public String view() {
+        		return "chapter02_modelAndView/v2c";
+        	}
+        	
+        	@PostMapping("/map")
+        	public String map(@RequestParam Map<String,Object> productMap ) {
+        		
+        		System.out.println("\n - @RequestParam Map - \n");
+        		System.out.println(productMap);
+        		System.out.println();
+        		
+        	    return "redirect:/v2c/view";
+        	}
+        
+        }
+        
+        ```
+        
+        ```html
+        <!DOCTYPE html>
+        <html xmlns:th="http://www.thymeleaf.org">
+        <head>
+        <meta charset="UTF-8">
+        <title>view to controller</title>
+        </head>
+        <body>
+        
+          <h1>2) @RequestParam Map</h1>
+        	<form th:action="@{/v2c/map}" method="post"> 
+        		<input type="hidden" name="isPC" value="true">
+        		<input type="hidden" name="locationId" value="1">
+        		<input type="hidden" name="lang" value="kor">
+        		<fieldset>
+        			<legend>상품등록</legend>
+        			<p>상품코드(숫자) : <input type="text" name="productId" /></p>
+        			<p>상품명 : <input type="text" name="productNm" /></p>
+        			<p>가격(숫자) : <input type="text" name="price" /></p>
+        			<p>배송비(숫자) : <input type="text" name="deliveryPrice" /></p>
+        			<p>등록날짜 : <input type="date" name="enrollDt" /></p>
+        			<p>브랜드 :  
+        				<select name="brandId">
+        					<option value="1">SAMSUNG</option>
+        					<option value="2">LG</option>
+        					<option value="3">APPLE</option>
+        					<option value="4">LENOVO</option>
+        					<option value="5">GIGABYTE</option>
+        					<option value="6">HP</option>
+        				</select>
+        			</p>
+        		    <p><input type="submit" value="상품등록" ></p>
+        		</fieldset>	
+            </form>
+        </body>
+        </html>
+        ```
+        
+        → ModelAttribute와 달리 html에서 type이 hidden 것도 console에 출려됨
+        
+    - **HttpServletRequest**
+        - HttpServletRequest인터페이스에서 **getParameter메서드를 사용**하여 파라메타를 전달받을 수 있다.
+        - JSP HttpServletRequest과 사용방법이 같다.
+        
+        ```java
+        @Controller
+        @RequestMapping("/v2c")
+        public class V2C_param {
+        
+        	@GetMapping("/httpServletRequest")
+        	public String httpServletRequest(HttpServletRequest request) {
+        		
+        		System.out.println("\n - httpServletRequest -\n");
+        		
+        		System.out.println("titleId : " + Long.parseLong(request.getParameter("titleId")));
+        		System.out.println("tab : " + request.getParameter("tab"));
+        		System.out.println("no : " + Integer.parseInt(request.getParameter("no")));
+        		System.out.println();
+        		
+        		return "redirect:/v2c/view";
+        		
+        			}
+        	}
+        ```
+        
+        ```html
+        <!DOCTYPE html>
+        <html xmlns:th="http://www.thymeleaf.org">
+        <head>
+        <meta charset="UTF-8">
+        <title>view to controller</title>
+        </head>
+        <body>
+             
+          <h1>3) HttpServletRequest</h1>
+        	<p><a th:href="@{/v2c/httpServletRequest(titleId=11111, tab=tue, no=200)}">HttpServletRequest</a></p>
+          
+        </body>
+        </html>
+        ```
+        
+    - **@RequestParam (요즘 많이 사용)**
+        - @RequestParam 어노테이션을 사용하여 파라메타를 전달받을 수 있다.
+        - @RequestParam 어노테이션을 사용하여 데이터를 전달받는다.
+        - **[ @RequestParam 어노테이션의 속성 ]**
+            
+            **name**  : 파라메타의 이름을 지정한다. (다른 옵션을 사용하지 않을 경우 name 키워드생략가능)
+            
+            **required**	 : 필수 여부를 지정한다. 기본값은 true이며 요청값이 없으면 익셉션이 발생한다.
+            
+            **defaultValue** : 요청 파라메타의 값이 없을 때 사용할 값을 지정한다.
+            
+        
+        ```java
+        @Controller
+        @RequestMapping("/v2c")
+        public class V2C_param {
+        
+        	@GetMapping("/requestParam")
+        	public String requestParam(@RequestParam(name="titleId" , defaultValue="000") long titleId, 
+        			                       @RequestParam("tab") String tab,
+        			                       @RequestParam("no") int no) {
+        		System.out.println("\n - @RequestParam -\n");
+        		
+        		System.out.println("titleId : " + titleId);
+        		System.out.println("tab : " + tab);
+        		System.out.println("no : " + no);
+        		System.out.println();
+        		
+        		return "redirect:/v2c/view";
+        	}
+        		}
+        ```
+        
+        ```html
+        <!DOCTYPE html>
+        <html xmlns:th="http://www.thymeleaf.org">
+        <head>
+        <meta charset="UTF-8">
+        <title>view to controller</title>
+        </head>
+        <body>
+        
+          <h1>4) @RequestParam</h1>
+        	<!-- <p><a href="/v2c/requestParam?titleId=22222&tab=tue&no=301">@RequestParam</a></p> -->
+        	<p><a th:href="@{/v2c/requestParam(titleId=22222 , tab=tue , no=301)}">@RequestParam</a></p>
+             
+        </body>
+        </html>
+        ```
+        
+    - **@PathVariable**
+        - 요청 URL과 함께 파라메타를 같이 전달할 수 있다. REST API에서 사용하며 '명사'형태로 전송한다.
+        - @PathVariable 어노테이션을 사용하여 데이터를 전달받는다.
+        
+        ```java
+        @Controller
+        @RequestMapping("/v2c")
+        public class V2C_param {
+        
+        	@GetMapping("/pathVariable/{titleId}/{tab}/{no}")
+        	public String pathVariable(@PathVariable("titleId") long titleId ,
+        			                       @PathVariable("tab") String tab,
+        			                       @PathVariable("no") int no) {
+        		
+        		System.out.println("\n - @PathVariable -\n");
+        		
+        		System.out.println("titleId : " + titleId);
+        		System.out.println("tab : " + tab);
+        		System.out.println("no : " + no);
+        		System.out.println();
+        		
+        		return "redirect:/v2c/view";
+        	}
+        	
+        }
+        ```
+        
+        ```html
+        <!DOCTYPE html>
+        <html xmlns:th="http://www.thymeleaf.org">
+        <head>
+        <meta charset="UTF-8">
+        <title>view to controller</title>
+        </head>
+        <body>
+        
+          <h1>5) @PathVariable</h1>
+           <!-- thymeleaf가 아닐때 : <p><a href="/v2c/pathVariable/33333/tue/302">@PathVariable</a></p> -->
+        	<p><a th:href="@{/v2c/pathVariable/{titleId}/{tab}/{no}(titleId=33333, tab=tue, no=302)}">@PathVariable</a></p>
+             
+        </body>
+        </html>
+        ```
+        
