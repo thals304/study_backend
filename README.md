@@ -4122,299 +4122,653 @@
                         </html>
         
                         ```
-        - **View → Controller**
-    - **@ModelAttribute**
-        - @ModelAttribute 어노테이션을 사용하여 HTML element name 과 DTO property가 일치된 경우(타입도 일치 해야함)에 DTO 형식으로 바인딩(매핑) 된 전달 받을 수 있다.
-        - @ModelAttribute 의 경우 내부적으로 검증(Validation) 작업을 진행하기 때문에 setter 메서드를 이용하여 값을 바인딩하려고 시도하다가
-        예외를 만날때(데이터 타입 불일치) 작업이 중단되면서 Http 400 Bad Request가 발생한다.
-        - **String to Date 데이터 형식의 바인딩은 DTO클래스 property위에 @DateTimeFormat(pattern = "yyyy-MM-dd")을 추가하여 매핑해야함**
-        
-        ```java
-        @Controller
-        @RequestMapping("/v2c")
-        public class V2C_binding {
-        
-        	@GetMapping("/view") // localhost/v2c/view
-        	public String view() {
-        		return "chapter02_modelAndView/v2c";
-        	}
-        
-        	@PostMapping("/modelAttribute")
-        	public String modelAttribute(@ModelAttribute ProductDTO productDTO) {
-        		
-        		System.out.println("\n - @ModelAttribute - \n");
-        		System.out.println(productDTO);
-        		
-        	    return "redirect:/v2c/view";
-        		
-        		}
-        	}
-        ```
-        
-        ```html
-        <!DOCTYPE html>
-        <html xmlns:th="http://www.thymeleaf.org">
-        <head>
-        <meta charset="UTF-8">
-        <title>view to controller</title>
-        </head>
-        <body>
-        
-        	<h1>1) @ModelAttribute</h1>
-        	<form th:action="@{/v2c/modelAttribute}" method="post"> 
-        		<input type="hidden" name="isPC" value="true">
-        		<input type="hidden" name="locationId" value="1">
-        		<input type="hidden" name="lang" value="kor">
-        		<fieldset>
-        			<legend>상품등록</legend>
-        			<p>상품코드(숫자) : <input type="text" name="productId" /></p>
-        			<p>상품명   : <input type="text" name="productNm" /></p>
-        			<p>가격(숫자)     : <input type="text" name="price" /></p>
-        			<p>배송비(숫자)   : <input type="text" name="deliveryPrice" /></p>
-        			<p>등록날짜 : <input type="date" name="enrollDt" /></p>
-        			<p>브랜드 :  
-        				<select name="brandId">
-        					<option value="1">SAMSUNG</option>
-        					<option value="2">LG</option>
-        					<option value="3">APPLE</option>
-        					<option value="4">LENOVO</option>
-        					<option value="5">GIGABYTE</option>
-        					<option value="6">HP</option>
-        				</select>
-        			</p>
-        		    <p><input type="submit" value="상품등록" ></p>
-        		</fieldset>	
-            </form>
+    - **View → Controller**
+        - **@ModelAttribute**
+            - @ModelAttribute 어노테이션을 사용하여 HTML element name 과 DTO property가 일치된 경우(타입도 일치 해야함)에 DTO 형식으로 바인딩(매핑) 된 전달 받을 수 있다.
+            - @ModelAttribute 의 경우 내부적으로 검증(Validation) 작업을 진행하기 때문에 setter 메서드를 이용하여 값을 바인딩하려고 시도하다가
+            예외를 만날때(데이터 타입 불일치) 작업이 중단되면서 Http 400 Bad Request가 발생한다.
+            - **String to Date 데이터 형식의 바인딩은 DTO클래스 property위에 @DateTimeFormat(pattern = "yyyy-MM-dd")을 추가하여 매핑해야함**
             
-        </body>
-        </html>
-        ```
-        
-        **+) 참고 : 오류 코드**
-        
-        **405 : get, post 방법 불일치**
-        
-        **404 : url 경로 불일치**
-        
-        **400 : 파라메타 불일치**
-        
-        **500 : 서버 코드 오류** 
-        
-        ```java
-          // (참고: 오류 코드)
-        	// 405(get, post 방법 불일치)
-        	@PostMapping("/url") // 404 (url 경로 불일치)
-        	public String debugMethod(@ModelAttribute ProductDTO productDTO) { // 400 (파라메타 불일치)
-        		
-        		// 이하 500 (서버 코드 오류)
-        		
-        		return "";
-        	}
-        ```
-        
-    - **@RequestParam Map<K,V>**
-        - 요청 HTML의 name속성이 Map 컬렉션 프레임워크의 "KEY"로 바인딩되며
-        요청 HTML의 name의 value속성이 Map 컬렉션 프레임워크의 "VALUE"로 바인딩된다.
-        - HashMap타입이 아닌 **HashMap의 인터페이스인 Map타입**으로 데이터를 받는다.
-        - Map으로 전달되는 데이터가 정수 , 실수 , 글자등 다양한 데이터일 경우 다형성을 이용하여 Object타입으로 처리할 수 있다.
-        - **Object 타입으로 전송받는 경우** 데이터를 전송 받은 이후 로직에 알맞게 **데이터 형변환을 따로 해주어야** 한다.
-        
-        ```java
-        @Controller
-        @RequestMapping("/v2c")
-        public class V2C_binding {
-        
-        	@GetMapping("/view") // localhost/v2c/view
-        	public String view() {
-        		return "chapter02_modelAndView/v2c";
-        	}
-        	
-        	@PostMapping("/map")
-        	public String map(@RequestParam Map<String,Object> productMap ) {
-        		
-        		System.out.println("\n - @RequestParam Map - \n");
-        		System.out.println(productMap);
-        		System.out.println();
-        		
-        	    return "redirect:/v2c/view";
-        	}
-        
-        }
-        
-        ```
-        
-        ```html
-        <!DOCTYPE html>
-        <html xmlns:th="http://www.thymeleaf.org">
-        <head>
-        <meta charset="UTF-8">
-        <title>view to controller</title>
-        </head>
-        <body>
-        
-          <h1>2) @RequestParam Map</h1>
-        	<form th:action="@{/v2c/map}" method="post"> 
-        		<input type="hidden" name="isPC" value="true">
-        		<input type="hidden" name="locationId" value="1">
-        		<input type="hidden" name="lang" value="kor">
-        		<fieldset>
-        			<legend>상품등록</legend>
-        			<p>상품코드(숫자) : <input type="text" name="productId" /></p>
-        			<p>상품명 : <input type="text" name="productNm" /></p>
-        			<p>가격(숫자) : <input type="text" name="price" /></p>
-        			<p>배송비(숫자) : <input type="text" name="deliveryPrice" /></p>
-        			<p>등록날짜 : <input type="date" name="enrollDt" /></p>
-        			<p>브랜드 :  
-        				<select name="brandId">
-        					<option value="1">SAMSUNG</option>
-        					<option value="2">LG</option>
-        					<option value="3">APPLE</option>
-        					<option value="4">LENOVO</option>
-        					<option value="5">GIGABYTE</option>
-        					<option value="6">HP</option>
-        				</select>
-        			</p>
-        		    <p><input type="submit" value="상품등록" ></p>
-        		</fieldset>	
-            </form>
-        </body>
-        </html>
-        ```
-        
-        → ModelAttribute와 달리 html에서 type이 hidden 것도 console에 출려됨
-        
-    - **HttpServletRequest**
-        - HttpServletRequest인터페이스에서 **getParameter메서드를 사용**하여 파라메타를 전달받을 수 있다.
-        - JSP HttpServletRequest과 사용방법이 같다.
-        
-        ```java
-        @Controller
-        @RequestMapping("/v2c")
-        public class V2C_param {
-        
-        	@GetMapping("/httpServletRequest")
-        	public String httpServletRequest(HttpServletRequest request) {
-        		
-        		System.out.println("\n - httpServletRequest -\n");
-        		
-        		System.out.println("titleId : " + Long.parseLong(request.getParameter("titleId")));
-        		System.out.println("tab : " + request.getParameter("tab"));
-        		System.out.println("no : " + Integer.parseInt(request.getParameter("no")));
-        		System.out.println();
-        		
-        		return "redirect:/v2c/view";
-        		
-        			}
-        	}
-        ```
-        
-        ```html
-        <!DOCTYPE html>
-        <html xmlns:th="http://www.thymeleaf.org">
-        <head>
-        <meta charset="UTF-8">
-        <title>view to controller</title>
-        </head>
-        <body>
-             
-          <h1>3) HttpServletRequest</h1>
-        	<p><a th:href="@{/v2c/httpServletRequest(titleId=11111, tab=tue, no=200)}">HttpServletRequest</a></p>
-          
-        </body>
-        </html>
-        ```
-        
-    - **@RequestParam (요즘 많이 사용)**
-        - @RequestParam 어노테이션을 사용하여 파라메타를 전달받을 수 있다.
-        - @RequestParam 어노테이션을 사용하여 데이터를 전달받는다.
-        - **[ @RequestParam 어노테이션의 속성 ]**
+            ```java
+            @Controller
+            @RequestMapping("/v2c")
+            public class V2C_binding {
             
-            **name**  : 파라메타의 이름을 지정한다. (다른 옵션을 사용하지 않을 경우 name 키워드생략가능)
+            	@GetMapping("/view") // localhost/v2c/view
+            	public String view() {
+            		return "chapter02_modelAndView/v2c";
+            	}
             
-            **required**	 : 필수 여부를 지정한다. 기본값은 true이며 요청값이 없으면 익셉션이 발생한다.
+            	@PostMapping("/modelAttribute")
+            	public String modelAttribute(@ModelAttribute ProductDTO productDTO) {
+            		
+            		System.out.println("\n - @ModelAttribute - \n");
+            		System.out.println(productDTO);
+            		
+            	    return "redirect:/v2c/view";
+            		
+            		}
+            	}
+            ```
             
-            **defaultValue** : 요청 파라메타의 값이 없을 때 사용할 값을 지정한다.
+            ```html
+            <!DOCTYPE html>
+            <html xmlns:th="http://www.thymeleaf.org">
+            <head>
+            <meta charset="UTF-8">
+            <title>view to controller</title>
+            </head>
+            <body>
             
-        
-        ```java
-        @Controller
-        @RequestMapping("/v2c")
-        public class V2C_param {
-        
-        	@GetMapping("/requestParam")
-        	public String requestParam(@RequestParam(name="titleId" , defaultValue="000") long titleId, 
-        			                       @RequestParam("tab") String tab,
-        			                       @RequestParam("no") int no) {
-        		System.out.println("\n - @RequestParam -\n");
-        		
-        		System.out.println("titleId : " + titleId);
-        		System.out.println("tab : " + tab);
-        		System.out.println("no : " + no);
-        		System.out.println();
-        		
-        		return "redirect:/v2c/view";
-        	}
-        		}
-        ```
-        
-        ```html
-        <!DOCTYPE html>
-        <html xmlns:th="http://www.thymeleaf.org">
-        <head>
-        <meta charset="UTF-8">
-        <title>view to controller</title>
-        </head>
-        <body>
-        
-          <h1>4) @RequestParam</h1>
-        	<!-- <p><a href="/v2c/requestParam?titleId=22222&tab=tue&no=301">@RequestParam</a></p> -->
-        	<p><a th:href="@{/v2c/requestParam(titleId=22222 , tab=tue , no=301)}">@RequestParam</a></p>
-             
-        </body>
-        </html>
-        ```
-        
-    - **@PathVariable**
-        - 요청 URL과 함께 파라메타를 같이 전달할 수 있다. REST API에서 사용하며 '명사'형태로 전송한다.
-        - @PathVariable 어노테이션을 사용하여 데이터를 전달받는다.
-        
-        ```java
-        @Controller
-        @RequestMapping("/v2c")
-        public class V2C_param {
-        
-        	@GetMapping("/pathVariable/{titleId}/{tab}/{no}")
-        	public String pathVariable(@PathVariable("titleId") long titleId ,
-        			                       @PathVariable("tab") String tab,
-        			                       @PathVariable("no") int no) {
-        		
-        		System.out.println("\n - @PathVariable -\n");
-        		
-        		System.out.println("titleId : " + titleId);
-        		System.out.println("tab : " + tab);
-        		System.out.println("no : " + no);
-        		System.out.println();
-        		
-        		return "redirect:/v2c/view";
-        	}
-        	
-        }
-        ```
-        
-        ```html
-        <!DOCTYPE html>
-        <html xmlns:th="http://www.thymeleaf.org">
-        <head>
-        <meta charset="UTF-8">
-        <title>view to controller</title>
-        </head>
-        <body>
-        
-          <h1>5) @PathVariable</h1>
-           <!-- thymeleaf가 아닐때 : <p><a href="/v2c/pathVariable/33333/tue/302">@PathVariable</a></p> -->
-        	<p><a th:href="@{/v2c/pathVariable/{titleId}/{tab}/{no}(titleId=33333, tab=tue, no=302)}">@PathVariable</a></p>
-             
-        </body>
-        </html>
-        ```
-        
+            	<h1>1) @ModelAttribute</h1>
+            	<form th:action="@{/v2c/modelAttribute}" method="post"> 
+            		<input type="hidden" name="isPC" value="true">
+            		<input type="hidden" name="locationId" value="1">
+            		<input type="hidden" name="lang" value="kor">
+            		<fieldset>
+            			<legend>상품등록</legend>
+            			<p>상품코드(숫자) : <input type="text" name="productId" /></p>
+            			<p>상품명   : <input type="text" name="productNm" /></p>
+            			<p>가격(숫자)     : <input type="text" name="price" /></p>
+            			<p>배송비(숫자)   : <input type="text" name="deliveryPrice" /></p>
+            			<p>등록날짜 : <input type="date" name="enrollDt" /></p>
+            			<p>브랜드 :  
+            				<select name="brandId">
+            					<option value="1">SAMSUNG</option>
+            					<option value="2">LG</option>
+            					<option value="3">APPLE</option>
+            					<option value="4">LENOVO</option>
+            					<option value="5">GIGABYTE</option>
+            					<option value="6">HP</option>
+            				</select>
+            			</p>
+            		    <p><input type="submit" value="상품등록" ></p>
+            		</fieldset>	
+                </form>
+                
+            </body>
+            </html>
+            ```
+            
+            **+) 참고 : 오류 코드**
+            
+            **405 : get, post 방법 불일치**
+            
+            **404 : url 경로 불일치**
+            
+            **400 : 파라메타 불일치**
+            
+            **500 : 서버 코드 오류** 
+            
+            ```java
+              // (참고: 오류 코드)
+            	// 405(get, post 방법 불일치)
+            	@PostMapping("/url") // 404 (url 경로 불일치)
+            	public String debugMethod(@ModelAttribute ProductDTO productDTO) { // 400 (파라메타 불일치)
+            		
+            		// 이하 500 (서버 코드 오류)
+            		
+            		return "";
+            	}
+            ```
+            
+        - **@RequestParam Map<K,V>**
+            - 요청 HTML의 name속성이 Map 컬렉션 프레임워크의 "KEY"로 바인딩되며
+            요청 HTML의 name의 value속성이 Map 컬렉션 프레임워크의 "VALUE"로 바인딩된다.
+            - HashMap타입이 아닌 **HashMap의 인터페이스인 Map타입**으로 데이터를 받는다.
+            - Map으로 전달되는 데이터가 정수 , 실수 , 글자등 다양한 데이터일 경우 다형성을 이용하여 Object타입으로 처리할 수 있다.
+            - **Object 타입으로 전송받는 경우** 데이터를 전송 받은 이후 로직에 알맞게 **데이터 형변환을 따로 해주어야** 한다.
+            
+            ```java
+            @Controller
+            @RequestMapping("/v2c")
+            public class V2C_binding {
+            
+            	@GetMapping("/view") // localhost/v2c/view
+            	public String view() {
+            		return "chapter02_modelAndView/v2c";
+            	}
+            	
+            	@PostMapping("/map")
+            	public String map(@RequestParam Map<String,Object> productMap ) {
+            		
+            		System.out.println("\n - @RequestParam Map - \n");
+            		System.out.println(productMap);
+            		System.out.println();
+            		
+            	    return "redirect:/v2c/view";
+            	}
+            
+            }
+            
+            ```
+            
+            ```html
+            <!DOCTYPE html>
+            <html xmlns:th="http://www.thymeleaf.org">
+            <head>
+            <meta charset="UTF-8">
+            <title>view to controller</title>
+            </head>
+            <body>
+            
+              <h1>2) @RequestParam Map</h1>
+            	<form th:action="@{/v2c/map}" method="post"> 
+            		<input type="hidden" name="isPC" value="true">
+            		<input type="hidden" name="locationId" value="1">
+            		<input type="hidden" name="lang" value="kor">
+            		<fieldset>
+            			<legend>상품등록</legend>
+            			<p>상품코드(숫자) : <input type="text" name="productId" /></p>
+            			<p>상품명 : <input type="text" name="productNm" /></p>
+            			<p>가격(숫자) : <input type="text" name="price" /></p>
+            			<p>배송비(숫자) : <input type="text" name="deliveryPrice" /></p>
+            			<p>등록날짜 : <input type="date" name="enrollDt" /></p>
+            			<p>브랜드 :  
+            				<select name="brandId">
+            					<option value="1">SAMSUNG</option>
+            					<option value="2">LG</option>
+            					<option value="3">APPLE</option>
+            					<option value="4">LENOVO</option>
+            					<option value="5">GIGABYTE</option>
+            					<option value="6">HP</option>
+            				</select>
+            			</p>
+            		    <p><input type="submit" value="상품등록" ></p>
+            		</fieldset>	
+                </form>
+            </body>
+            </html>
+            ```
+            
+            → ModelAttribute와 달리 html에서 type이 hidden 것도 console에 출려됨
+            
+        - **HttpServletRequest**
+            - HttpServletRequest인터페이스에서 **getParameter메서드를 사용**하여 파라메타를 전달받을 수 있다.
+            - JSP HttpServletRequest과 사용방법이 같다.
+            
+            ```java
+            @Controller
+            @RequestMapping("/v2c")
+            public class V2C_param {
+            
+            	@GetMapping("/httpServletRequest")
+            	public String httpServletRequest(HttpServletRequest request) {
+            		
+            		System.out.println("\n - httpServletRequest -\n");
+            		
+            		System.out.println("titleId : " + Long.parseLong(request.getParameter("titleId")));
+            		System.out.println("tab : " + request.getParameter("tab"));
+            		System.out.println("no : " + Integer.parseInt(request.getParameter("no")));
+            		System.out.println();
+            		
+            		return "redirect:/v2c/view";
+            		
+            			}
+            	}
+            ```
+            
+            ```html
+            <!DOCTYPE html>
+            <html xmlns:th="http://www.thymeleaf.org">
+            <head>
+            <meta charset="UTF-8">
+            <title>view to controller</title>
+            </head>
+            <body>
+                 
+              <h1>3) HttpServletRequest</h1>
+            	<p><a th:href="@{/v2c/httpServletRequest(titleId=11111, tab=tue, no=200)}">HttpServletRequest</a></p>
+              
+            </body>
+            </html>
+            ```
+            
+        - **@RequestParam (요즘 많이 사용)**
+            - @RequestParam 어노테이션을 사용하여 파라메타를 전달받을 수 있다.
+            - @RequestParam 어노테이션을 사용하여 데이터를 전달받는다.
+            - **[ @RequestParam 어노테이션의 속성 ]**
+                
+                **name**  : 파라메타의 이름을 지정한다. (다른 옵션을 사용하지 않을 경우 name 키워드생략가능)
+                
+                **required**	 : 필수 여부를 지정한다. 기본값은 true이며 요청값이 없으면 익셉션이 발생한다.
+                
+                **defaultValue** : 요청 파라메타의 값이 없을 때 사용할 값을 지정한다.
+                
+            
+            ```java
+            @Controller
+            @RequestMapping("/v2c")
+            public class V2C_param {
+            
+            	@GetMapping("/requestParam")
+            	public String requestParam(@RequestParam(name="titleId" , defaultValue="000") long titleId, 
+            			                       @RequestParam("tab") String tab,
+            			                       @RequestParam("no") int no) {
+            		System.out.println("\n - @RequestParam -\n");
+            		
+            		System.out.println("titleId : " + titleId);
+            		System.out.println("tab : " + tab);
+            		System.out.println("no : " + no);
+            		System.out.println();
+            		
+            		return "redirect:/v2c/view";
+            	}
+            		}
+            ```
+            
+            ```html
+            <!DOCTYPE html>
+            <html xmlns:th="http://www.thymeleaf.org">
+            <head>
+            <meta charset="UTF-8">
+            <title>view to controller</title>
+            </head>
+            <body>
+            
+              <h1>4) @RequestParam</h1>
+            	<!-- <p><a href="/v2c/requestParam?titleId=22222&tab=tue&no=301">@RequestParam</a></p> -->
+            	<p><a th:href="@{/v2c/requestParam(titleId=22222 , tab=tue , no=301)}">@RequestParam</a></p>
+                 
+            </body>
+            </html>
+            ```
+            
+        - **@PathVariable**
+            - 요청 URL과 함께 파라메타를 같이 전달할 수 있다. REST API에서 사용하며 '명사'형태로 전송한다.
+            - @PathVariable 어노테이션을 사용하여 데이터를 전달받는다.
+            
+            ```java
+            @Controller
+            @RequestMapping("/v2c")
+            public class V2C_param {
+            
+            	@GetMapping("/pathVariable/{titleId}/{tab}/{no}")
+            	public String pathVariable(@PathVariable("titleId") long titleId ,
+            			                       @PathVariable("tab") String tab,
+            			                       @PathVariable("no") int no) {
+            		
+            		System.out.println("\n - @PathVariable -\n");
+            		
+            		System.out.println("titleId : " + titleId);
+            		System.out.println("tab : " + tab);
+            		System.out.println("no : " + no);
+            		System.out.println();
+            		
+            		return "redirect:/v2c/view";
+            	}
+            	
+            }
+            ```
+            
+            ```html
+            <!DOCTYPE html>
+            <html xmlns:th="http://www.thymeleaf.org">
+            <head>
+            <meta charset="UTF-8">
+            <title>view to controller</title>
+            </head>
+            <body>
+            
+              <h1>5) @PathVariable</h1>
+               <!-- thymeleaf가 아닐때 : <p><a href="/v2c/pathVariable/33333/tue/302">@PathVariable</a></p> -->
+            	<p><a th:href="@{/v2c/pathVariable/{titleId}/{tab}/{no}(titleId=33333, tab=tue, no=302)}">@PathVariable</a></p>
+                 
+            </body>
+            </html>
+            ```
+     - **mybatis (java와 db 를 매핑)**
+        - Mapper 목적 파일로 사용하기 위한 선언문(.xml)
+            - **<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">**
+        - **SQL과 매핑할 자바객체를 (패키지명.DAO)형태로 namespace에 작성 (.xml)**
+        - **Mapper → DAO**
+            - **id 속성** : query의 식별자이며 다른 id와 중복없이 고유해야 한다.
+            DAO의 추상메서드와 id속성을 연결시켜 SQL과 JAVA를 매핑한다.
+                
+                 [Mapper]				             [DAO]
+                
+                id="getProductList"    	 		getProductList();
+                
+                id="getProductDetail"    	        getProductDetail();
+                
+            - **parameterType속성** : DAO에서 Mapper으로 전달되는 파라미터의 타입을 명시하며 생략 가능하다.
+            - **resultType속성**
+                - 반환되는 데이터의 타입을 명시하며 반환 데이터가 있는 **select쿼리문에서 사용한다. (int , String , hashmap , map , Map , double , path.DTO , path.VO)**
+                path.DTO , path.VO 타입은 application.properteis파일에서 alias(별칭)지정을 하여 간략하게 사용할 수 있다.
+                    
+                    예시) mybatis.type-aliases-package=패키지명
+                    
+                - snake to camel매핑 설정도 application.properties파일에서 아래의 설정을 추가하여 사용할 수 있다.
+                mybatis.configuration.map-underscore-to-camel-case=true
+            - **resultMap속성  :** 주로 반환되는 데이터의 컬럼명을 DTO의 필드와 일치시키거나 map 컬렉션프레임워크의 키로 등록시켜서 SQL과 JAVA가 매핑된다.
+            - **<![CDATA[]]>**
+                - SQL 내부의 특정 연산자가 (ex '>' , '<') 마이바티스 태그와 중첩되기 때문에 <![CDATA[]]>로 쿼리문을 감싸고 쿼리문을 작성한다.
+            - **map (이 방식으로 사용 x)**
+                - COLUMN에서 AS키워드를 작성하여 자바 DTO의 property와 바인딩시키거나 맵의 key값으로 지정한다.
+                - resultType =” hashmap”
+            - **resultMap (요즘 많이 사용)**
+                - resultMap속성은 resultMap태그의 id와 매핑된다.
+                - <resultMap type=”hashmap” id=”” > <result column=”” property=”” ></resultMap>
+                - resultMap속성은 resultMap태그의 id와 매핑된다.
+            
+            ```xml
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!-- Mapper 목적 파일로 사용하기 위한 선언문 -->
+            <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+            
+            <!-- SQL과 매핑할 자바객체를 (패키지명.DAO)형태로 namespace에 작성 -->
+            <mapper namespace="com.application.mvc.chapter03_mybatis.M2D">
+            
+            	<!-- DTO List 반환 예시1 -->
+            	<!-- alias적용전 : com.application.mvc.data.ProductDTO -->
+            	<select id="ex01" resultType="ProductDTO"> 
+            		SELECT *
+            		FROM   PRODUCT
+            	</select>
+            	
+            	<!-- DTO List 반환 예시2 -->
+            	<select id="ex02" resultType="BrandDTO">
+            		SELECT *
+            		FROM   BRAND
+            	</select>
+            	
+            	
+            	<!-- DTO 반환 예시1 -->
+            	<select id="ex03" resultType="ProductDTO">
+            		SELECT *
+            		FROM   PRODUCT
+            		WHERE  PRODUCT_ID = 1
+            	</select>
+            	
+            	<!-- DTO 반환 예시2 -->
+            	<select id="ex04" resultType="BrandDTO">
+            		SELECT *
+            		FROM   BRAND
+            		WHERE  BRAND_ID = 1
+            	</select>
+            	
+            	
+            	<!-- 단일데이터 반환 예시1 -->
+            	<select id="ex05" resultType="int">
+            		SELECT COUNT(*)
+            		FROM   PRODUCT
+            	</select>
+            	
+            	<!-- 단일데이터 반환 예시2 -->
+            	<select id="ex06" resultType="double">
+            		SELECT AVG(PRICE)
+            		FROM   PRODUCT
+            	</select>
+            	
+            	<!-- 단일데이터 반환 예시3 -->
+            	<select id="ex07" resultType="String">
+            		SELECT PRODUCT_NM
+            		FROM   PRODUCT
+            		WHERE  PRODUCT_ID = 1
+            	</select>
+            
+            	<!--  
+            
+            		# <![CDATA[]]>
+            
+            	 	- SQL 내부의 특정 연산자가 (ex '>' , '<') 마이바티스 태그와 중첩되기 때문에
+            	 	<![CDATA[]]>로 쿼리문을 감싸고 쿼리문을 작성한다.
+            	 	     
+            	-->
+            	
+            	<!-- <![CDATA]]> 사용예시  -->	
+            	<select id="ex08" resultType="ProductDTO">
+            		<![CDATA[
+            			SELECT *
+            			FROM   PRODUCT
+            			WHERE  PRICE <= 1000000
+            		]]>
+            	</select>
+            	
+            	
+            	<!-- 
+            	
+            		# map 사용 예시
+            	
+            		- COLUMN에서 AS키워드를 작성하여 자바 DTO의 property와 바인딩시키거나 맵의 key값으로 지정한다.
+            			
+            		<select id = "" >
+            			SELECT
+            				컬럼1  AS DTO의 property 혹은 Map의 key
+            				컬럼2  AS DTO의 property 혹은 Map의 key
+            				컬럼3  DTO의 property 혹은 Map의 key    		< AS 키워드는 생략가능하다.
+            				컬럼4  DTO의 property 혹은 Map의 key   
+            			FROM
+            				테이블명		
+            		</select> 
+            	 
+            	-->
+            	
+            	<!-- AS명 > hashmap key로 매핑 -->
+            	<select id="ex09" resultType="hashmap">
+            		SELECT PRODUCT_ID 			AS productId,
+            			   PRICE 	  			AS price,
+            			   PRICE * 0.1 			AS tax,
+            			   PRICE + PRICE * 0.1  AS totalPrice
+            		FROM   PRODUCT
+            	</select>
+            	
+            	<!--  
+            	
+            		# resultMap 사용예시
+            		
+            		<resultMap id="getProduct" type="000.000.000.Product">  		<< 식별id , DTO클래스 전체 경로
+                   		<result property="productCode" column="PRODUCT_CODE"/>		<< 변수값 , 컬럼명
+                   		<result property="productName" column="PRODUCT_NAME"/>
+                	</resultMap>
+                	
+                	<select id = ""  resultMap="getProduct">						<< 식별id , resultMap의 id
+                		SELECT
+            				PRODUCT_CODE
+            				PRODUCT_NAME
+            			FROM
+            				PRODUCT		
+                	</select>
+            
+            		> resultMap속성은 resultMap태그의 id와 매핑된다.
+            		
+            	-->
+            	
+            	<!-- resultMap 사용 예시1 -->
+            	<resultMap type="hashmap" id="priceMap">
+            		<result column="PRODUCT_ID"  property="productId" />
+            		<result column="PRICE" 		 property="price" />
+            		<result column="TAX" 		 property="tax" />
+            		<result column="TOTAL_PRICE" property="totalPrice" />
+            	</resultMap>
+            	
+            	<select id="ex10" resultMap="priceMap">
+            		SELECT PRODUCT_ID 			AS PRODUCT_ID,
+            			   PRICE 	  			AS PRICE,
+            			   PRICE * 0.1 			AS TAX,
+            			   PRICE + PRICE * 0.1  AS TOTAL_PRICE
+            		FROM   PRODUCT
+            	</select>
+            	
+            	
+            	<!-- resultMap 사용 예시2 -->
+            	<resultMap type="hashmap" id="joinMap">
+            		<result column="PRODUCT_ID" property="productId"/>
+            		<result column="PRODUCT_NM" property="productNm"/>
+            		<result column="BRAND_ID"   property="brandId"/>
+            		<result column="BRAND_NM"   property="brandNm"/>
+            	</resultMap>
+            	
+            	<select id="ex11" resultMap="joinMap">
+            		SELECT P.PRODUCT_ID  AS PRODUCT_ID,
+            			   P.PRODUCT_NM  AS PRODUCT_NM,
+            			   B.BRAND_ID    AS BRAND_ID,
+            			   B.BRAND_NM    AS BRAND_NM
+            		FROM   PRODUCT P
+            		JOIN   BRAND B
+            		  ON   P.BRAND_ID = B.BRAND_ID
+            	</select>
+            
+            </mapper>
+            
+            ```
+            
+            ```java
+            @Mapper
+            public interface M2D {
+            
+            	// List<DTO> 반환예시1 > m2dMapper.xml파일의 <select id="ex01" resultType="ProductDTO">와 매핑
+            	public List<ProductDTO> ex01();
+            	// List<DTO> 반환예시2 > m2dMapper.xml파일의 <select id="ex02" resultType="BrandDTO">와 매핑
+            	public List<BrandDTO> ex02();
+            	
+            	// DTO 반환 예시1 > m2dMapper.xml파일의 <select id="ex03" resultType="ProductDTO">와 매핑
+            	public ProductDTO ex03();
+            	// DTO 반환 예시2 > m2dMapper.xml파일의 <select id="ex04" resultType="BrandDTO">와 매핑
+            	public BrandDTO ex04();
+            	
+            	// 단일 데이터 반환 예시1 > m2dMapper.xml파일의 <select id="ex05" resultType="int">와 매핑
+            	public int ex05();
+            	// 단일 데이터 반환 예시2 > m2dMapper.xml파일의 <select id="ex06" resultType="double">와 매핑
+            	public double ex06();
+            	// 단일 데이터 반환 예시3 > m2dMapper.xml파일의 <select id="ex07" resultType="String">와 매핑
+            	public String ex07();
+            	
+            	// <![CDATA[]]> 사용예시  > m2dMapper.xml파일의 <select id="ex08" resultType="ProductDTO">와 매핑
+            	public List<ProductDTO> ex08();
+            	
+            	// map사용 예시          > m2dMapper.xml파일의 <select id="ex09" resultType="hashmap">와 매핑
+            	public List<Map<String , Object>> ex09();
+            	
+            	// resultMap 사용 예시1  > m2dMapper.xml파일의 <resultMap type="hashmap" id="priceMap">와 매핑
+            	public List<Map<String , Object>> ex10();
+            	// resultMap 사용 예시1  > m2dMapper.xml파일의 <resultMap type="hashmap" id="joinMap">와 매핑
+            	public List<Map<String, Object>> ex11();
+            }
+            ```
+                
+            - **테스트 코드**
+                - 테스트 코드를 작성하는 것은 애플리케이션의 안정성을 보장하고,
+                기능이 예상대로 동작하는지 확인하기 위한 중요한 과정이다.
+                - 단위 테스트(Unit Test): 가장 작은 코드 단위의 기능을 테스트한다.
+                보통 메소드 레벨에서 이루어지며, 스프링 컨텍스트를 로드하지 않아 실행 속도가 빠르다.
+                - **@SpringBootTest 애너테이션을 클래스 레벨에 사용**하여 스프링 부트의 테스트 환경을 구성한다.
+                **@Test 애너테이션을 메서드 레벨에 사용**하여 테스트 케이스를 정의한다.
+            
+            ```java
+            @SpringBootTest
+            public class M2dMapperTest {
+            
+            	@Autowired
+            	private M2D m2d;
+            	
+            	@DisplayName("DTO List 반환 예시1")
+            	@Test
+            	public void ex01() {
+            		System.out.println("\n- ex01 - \n");
+            		
+            		for ( ProductDTO productDTO : m2d.ex01() ) {
+            			System.out.println(productDTO);
+            		}
+            		
+            	}
+            	
+            	@DisplayName("DTO List 반환 예시2")
+            	@Test
+            	public void ex02() {
+            		System.out.println("\n- ex02 - \n");
+            		
+            		for (BrandDTO brandDTO : m2d.ex02()) {
+            			System.out.println(brandDTO);
+            		}
+            	}
+            	
+            	@DisplayName("DTO 반환 예시1")
+            	@Test
+            	public void ex03() {
+            		System.out.println("\n- ex03 - \n");
+            		
+            		System.out.println(m2d.ex03());
+            		
+            	}
+            	
+            	@DisplayName("DTO 반환 예시2")
+            	@Test
+            	public void ex04() {
+            		System.out.println("\n- ex04 - \n");
+            		
+            		System.out.println(m2d.ex04());
+            		
+            	}
+            	
+            	@DisplayName("단일데이터 반환 예시1")
+            	@Test
+            	public void ex05() {
+            		System.out.println("\n- ex05 - \n");
+            		
+            		System.out.println(m2d.ex05());
+            		
+            	}
+            	
+            	@DisplayName("단일데이터 반환 예시2")
+            	@Test
+            	public void ex06() {
+            		System.out.println("\n- ex06 - \n");
+            		
+            		System.out.println(m2d.ex06());
+            		
+            	}
+            	
+            	@DisplayName("단일데이터 반환 예시3")
+            	@Test
+            	public void ex07() {
+            		System.out.println("\n- ex07 - \n");
+            		
+            		System.out.println(m2d.ex07());
+            		
+            	}
+            	
+            	@DisplayName("<![CDATA[]]> 사용예시")
+            	@Test
+            	public void ex08() {
+            		System.out.println("\n - ex08 - \n");
+            		
+            		for (ProductDTO productDTO : m2d.ex08()) {
+            			System.out.println(productDTO);
+            		}
+            	}
+            	
+            	@DisplayName("map 컬렉션 프레임워크 사용 예시")
+            	@Test
+            	public void ex09() {
+            		System.out.println("\n - ex09 - \n");
+            		
+            		for (Map<String,Object> map : m2d.ex09() ) {
+            			System.out.println(map);
+            		}
+            	}
+            	
+            	@DisplayName("resultMap 사용 예시1")
+            	@Test
+            	public void ex10() {
+            		System.out.println("\n - ex10 - \n");
+            		for (Map<String,Object> priceMap : m2d.ex10()) {
+            			System.out.println(priceMap);
+            		}
+            	}
+            	
+            	@DisplayName("resultMap 사용 예시2")
+            	@Test
+            	public void ex11() {
+            		System.out.println("\n - ex11 - \n");
+            		for (Map<String, Object> joinMap : m2d.ex11()) {
+            			System.out.println(joinMap);
+            		}
+            	}
+            
+            	
+            	
+            	
+            }
+            ```
+            
