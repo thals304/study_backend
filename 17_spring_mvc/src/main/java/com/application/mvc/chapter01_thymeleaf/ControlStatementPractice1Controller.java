@@ -1,10 +1,13 @@
 package com.application.mvc.chapter01_thymeleaf;
 /*
- * 24.05.03 tim
+ * 24.05.07 time 
+
  * today 소감문
  * 9  > #numbers.sequence(,) 사용 방법 익숙해지기 
  * 10 > jsp 공부 다시 필요
- * 
+ * 12 > th:id stat count 사용방법 
+ * 13 > list 객체를 html에 보내고 html에서 사용하는 방법 겍체명.필드명
+ * 14
  * */
 import java.util.List;
 import java.util.Map;
@@ -172,11 +175,11 @@ public class ControlStatementPractice1Controller {
 	
 	
 	@GetMapping("/ex11_practice1")
-	public String ex11_practice1() {
+	public String ex11_practice1(Model model) {
 		
 		/*
 		  
-			- controlEx11_practice.html파일에 productds 데이터를 전달하여 아래와같이 데이터를 출력하시오.
+			- controlEx11_practice.html파일에 productIds 데이터를 전달하여 아래와같이 데이터를 출력하시오.
 			
 			 <table border="1">
 		   	  <tr>
@@ -206,17 +209,19 @@ public class ControlStatementPractice1Controller {
 		*/
 		String[] productIds = {"0x001", "0x002", "0x003", "0x004", "0x005", "0x006", "0x007"};
 
-		return "";
+		model.addAttribute("productIds", productIds);
+		
+		return "chapter01_thymeleaf/controlStatment/controlEx11_pracitce1";
 		
 	}
 	
 	
 	@GetMapping("/ex12_practice1")
-	public String ex12_practice1() {
+	public String ex12_practice1(Model model) {
 		
 		/*
 		  
-			- controlEx12_practice.html파일에 productds 데이터를 전달하여 아래와같이 데이터를 출력하시오.
+			- controlEx12_practice.html파일에 productIds 데이터를 전달하여 아래와같이 데이터를 출력하시오.
 			
 			 <table border="1">
 		   	  <tr>
@@ -246,14 +251,15 @@ public class ControlStatementPractice1Controller {
 		*/
 		String[] productIds = {"0x001", "0x002", "0x003", "0x004", "0x005", "0x006", "0x007"};
 		
+		model.addAttribute("productIds", productIds);
 
-		return "";
+		return "chapter01_thymeleaf/controlStatment/controlEx12_pracitce1";
 		
 	}
 	
 	
 	@GetMapping("/ex13_practice1")
-	public String ex13_practice1() {
+	public String ex13_practice1(Model model) {
 		
 		/*
 		  
@@ -282,13 +288,15 @@ public class ControlStatementPractice1Controller {
 		
 		List<ProductDTO> productList = supposeDAO.getDTOList();
 		
-		return "";
+		model.addAttribute("productList", productList);
+		
+		return "chapter01_thymeleaf/controlStatment/controlEx13_pracitce1";
 		
 	}
 	
 	
 	@GetMapping("/ex14_practice1")
-	public String ex14_practice1() {
+	public String ex14_practice1(Model model) {
 		
 		/*
 		  
@@ -317,13 +325,15 @@ public class ControlStatementPractice1Controller {
 		
 		List<ProductDTO> productList = supposeDAO.getDTOList();
 
-		return "";
+		model.addAttribute("productList", productList);
+		
+		return "chapter01_thymeleaf/controlStatment/controlEx14_pracitce1";
 		
 	}
 	
 	
 	@GetMapping("/ex15_practice1")
-	public String ex15_practice1() {
+	public String ex15_practice1(Model model) {
 		
 		/*
 		  
@@ -354,13 +364,15 @@ public class ControlStatementPractice1Controller {
 		
 		List<Map<String,Object>> productMapList = supposeDAO.getMapList();
 		
-		return "";
+		model.addAttribute("productMapList", productMapList);
+		
+		return "chapter01_thymeleaf/controlStatment/controlEx15_pracitce1";
 		
 	}
 	
 	
 	@GetMapping("/ex16_practice1")
-	public String ex16_practice1() {
+	public String ex16_practice1(Model model) {
 		/*
 		  
 		  - controlEx16_practice.html파일에 productMapList 데이터를 전달하여 아래와같이 데이터를 출력하시오.
@@ -391,7 +403,9 @@ public class ControlStatementPractice1Controller {
 		
 		List<Map<String,Object>> productMapList = supposeDAO.getMapList();
 		
-		return "";
+		model.addAttribute("productMapList", productMapList);
+		
+		return "chapter01_thymeleaf/controlStatment/controlEx16_pracitce1";
 		
 	}
 	
