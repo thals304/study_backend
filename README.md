@@ -4771,4 +4771,293 @@
             	
             }
             ```
+
+
+       - **DAO → Mapper**
+            - 단위테스트를 통해 db에 insert, update 할 값들 보냄
             
+            ```java
+            @SpringBootTest
+            public class D2mMapperTest {
+            	
+            	@Autowired
+            	private D2M d2m;
+            	
+            	@DisplayName("단일 데이터 전송 예시 1")
+            	@Test
+            	public void ex01() {
+            		
+            		long productId = 1;
+            	    d2m.ex01(productId);
+            		
+            	}
+            	
+            	
+            	@DisplayName("단일 데이터 전송 예시 2")
+            	@Test
+            	public void ex02() {
+            		
+            		long brandId = 6;
+            		d2m.ex02(brandId);
+            		
+            	}
+            	
+            	
+            	@DisplayName("단일 데이터 전송 예시 3")
+            	@Test
+            	public void ex03() {
+            		
+            		String brandNm = "apple";
+            		
+            		for (BrandDTO brandDTO : d2m.ex03(brandNm)) {
+            			System.out.println(brandDTO);
+            		}
+            
+            	}
+            	
+            	
+            	@DisplayName("DTO 전송예시 1")
+            	@Test
+            	public void ex04() {
+            		
+            		/*
+            		
+            			(자주발생하는 오류 원인)
+            			Duplicate entry '~~~' for key 'PRIMARY' : primary key 중복 에러
+            			Data too long for column				: 데이터 길이 오버플로우 에러
+            		 
+            		 */
+            		
+            		BrandDTO brandDTO = new BrandDTO();
+            		// brandDTO.setBrandId(1); 키 중복 오류 
+            		brandDTO.setBrandId(100); 	
+            		brandDTO.setBrandNm("추가된브랜드100");
+            		brandDTO.setActiveYn("N");
+            		//brandDTO.setActiveYn("N하이헬로우"); char/varchar 정한 길이 넘어가면 에러
+            		
+            		d2m.ex04(brandDTO);
+            		
+            	}
+            	
+            	
+            	@DisplayName("DTO 전송예시 2")
+            	@Test
+            	public void ex05() {
+            		
+            		ProductDTO productDTO = new ProductDTO();
+            		productDTO.setProductNm("추가된 상품1");
+            		productDTO.setPrice(1);
+            		productDTO.setDeliveryPrice(1);
+            		productDTO.setBrandId(1);
+            		
+            		d2m.ex05(productDTO);
+            		
+            	}
+            	
+            	
+            	@DisplayName("DTO 전송예시 3")
+            	@Test
+            	public void ex06() {
+            		
+            		ProductDTO productDTO = new ProductDTO();
+            		productDTO.setPrice(1000000);
+            		productDTO.setDeliveryPrice(3000);
+            		
+            		for (ProductDTO dto : d2m.ex06(productDTO)) {
+            			System.out.println(dto);
+            		}
+            		
+            	}
+            	
+            	
+            	@DisplayName("Map 전송예시 1")
+            	@Test
+            	public void ex07() {
+            		
+            		Map<String, Integer> priceMap = new HashMap<String, Integer>();
+            		// DTO 에 포함되어 있지 않은 데이터
+            		priceMap.put("min", 500000);
+            		priceMap.put("max", 1000000);
+            		for (ProductDTO productDTO : d2m.ex07(priceMap)) {
+            			System.out.println(productDTO);
+            		}
+            		
+            	}
+            	
+            	
+            	@DisplayName("Map 전송예시 2")
+            	@Test
+            	public void ex08() {
+            		
+            		Map<String, String> dateMap = new HashMap<String, String>();
+            		// DTO 에 포함되어 있지 않은 데이터
+            		dateMap.put("startDate","2021-01-01");
+            		dateMap.put("endDate", "2021-03-31");
+            		
+            		for (BrandDTO brandDTO : d2m.ex08(dateMap)) {
+            			System.out.println(brandDTO);
+            		}
+            		
+            	}
+            	
+            	
+            	@DisplayName("Map 전송예시3")
+            	@Test
+            	public void ex09() {
+            		
+            		Map<String, Object> searchMap = new HashMap<String, Object>();
+            		// DTO 에 포함되어 있지만 , BrandDTO와 ProductDTO에 포함되어 있는 데이터
+            		searchMap.put("activeYn","N");
+            		searchMap.put("price", 1000000);
+            				
+            		for (Map<String, Object> map : d2m.ex09(searchMap)) {
+            			System.out.println(map);
+            		}
+            	}
+            
+            	
+            }
+            ```
+            
+            - 2개 이상의 파라미터를 Mapper로 전달할 수 없고 **오직 1개의 파라미터만 전송이 가능**하다.
+            - 2개 이상의 데이터는 DTO , Map , List , Array 타입으로 전송한다.
+            - 전송되는 복수의 데이터가 DTO의 멤버로 포함되어 있으면 일반적으로 DTO , List<DTO> 전송 방식을 사용하고
+            전송되는 복수의 데이터가 DTO의 멤버에 포함되어 있지 않은 경우 Map , List<Map> 전송 방식을 사용한다.
+            
+            ```java
+            @Mapper
+            public interface D2M {
+            
+            	// 단일 데이터 전송예시1 > d2mMapper.xml파일의 <update id="ex01" parameterType="long">와 매핑
+            	public void ex01(long productId);
+            	// 단일 데이터 전송예시2 > d2mMapper.xml파일의 <update id="ex02" parameterType="long">와 매핑
+            	public void ex02(long brandId);
+            	// 단일 데이터 전송예시3 > d2mMapper.xml파일의 <select id="ex03" parameterType="String" resultType="BrandDTO">와 매핑
+            	public List<BrandDTO> ex03(String brandNm);
+            	
+            	// DTO 전송예시1 > d2mMapper.xml파일의 <insert id="ex04" parameterType="BrandDTO">와 매핑
+            	public void ex04(BrandDTO brandDTO); 
+            	// DTO 전송예시2 > d2mMapper.xml파일의 <insert id="ex05" parameterType="ProductDTO">와 매핑
+            	public void ex05(ProductDTO productDTO);
+            	
+            	// DTO 전송예시3 > d2mMapper.xml파일의 <select id="ex06" parameterType="ProductDTO" resultType="ProductDTO">와 매핑
+            	public List<ProductDTO> ex06(ProductDTO productDTO);
+            	
+            	// Map 전송예시1 > d2mMapper.xml파일의 <select id="ex07" parameterType="hashmap" resultType="ProductDTO">와 매핑
+            	public List<ProductDTO> ex07(Map<String, Integer> priceMap);
+            	// Map 전송예시2 > d2mMapper.xml파일의 <select id="ex08" parameterType="hashmap" resultType="BrandDTO">와 매핑
+            	public List<BrandDTO> ex08(Map<String, String> dateMap);
+            	// Map 전송예시3 > d2mMapper.xml파일의 <select id="ex09" parameterType="hashmap" resultType="hashmap">와 매핑
+            	public List<Map<String, Object>> ex09(Map<String, Object> searchMap);
+            
+            }
+            ```
+            
+            - DAO에서 Mapper XML파일로 파라메타 전송은 1개만 가능하다.
+            - 단일 데이터를 전송할 경우 단일 데이터 전송
+            - 2개 이상의 데이터를 전송할 경우 데이터가 DTO안에 포함되면 DTO , List<DTO>타입으로 전송
+            - 2개 이상의 데이터를 전송할 경우 데이터가 DTO안에 포함되지 않으면 Map , List<Map>타입으로 전송
+            - **DAO에서 전달 받은 데이터는 쿼리문에서 #{변수} 형태**로 사용한다.
+                - **단일 데이터  : #{변수명}**
+                - **DTO               : #{property}**
+                - **Map	              : #{key}**
+            - '대소문자가 정확하게 구분' 되므로 오타에 주의한다.
+                - DTO는 정확하게 property를 입력
+                - Map은 정확하게 key를 입력
+            - parameterType 속성은 생략해도 Mybatis가 파라메타의 타입을 인식하여 쿼리문은 수행하지만 가독성 향상을 위해 작성하는 것을 권장한다.
+            
+            ```java
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!-- Mapper 목적 파일로 사용하기 위한 선언문 -->
+            <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+            
+            <!-- SQL과 매핑할 자바객체를(path.object)형태로 namespace에 작성 -->
+            <mapper namespace="com.application.mvc.chapter03_mybatis.D2M">
+            
+            	<!-- 단일 데이터 전송예시1 -->
+            	<update id="ex01" parameterType="long"> <!-- parameterType은 생략 가능 -->
+            		UPDATE PRODUCT
+            		SET    DELIVERY_PRICE = DELIVERY_PRICE + 1
+            		WHERE  PRODUCT_ID = #{productId}
+            	</update>
+            	<!-- 단일 데이터 전송예시2 -->
+            	<update id="ex02" parameterType="long">
+            		UPDATE PRODUCT
+            		SET    PRICE = PRICE + 1
+            		WHERE  BRAND_ID = #{brandId}
+            	</update>
+            	<!-- 단일 데이터 전송예시3 -->
+            	<select id="ex03" parameterType="String" resultType="BrandDTO">
+            		SELECT *
+            		FROM   BRAND
+            		WHERE  BRAND_NM = #{brandNm}
+            	</select>
+            
+            	<!-- DTO 전송예시1 -->
+            	<insert id="ex04" parameterType="BrandDTO">
+            		INSERT INTO BRAND
+            		VALUES      (
+            			#{brandId} ,
+            			#{brandNm} ,
+            			NOW() ,
+            			#{activeYn}
+            		)
+            	</insert>
+            	<!-- 문법 오류
+            	     VALUES      (#{brandDTO.brandId},#{brandDTO.brandNm},NOW(),#{brandDTO.activeYn}) 
+            		-> 변수명만 작성해야함
+            		-->
+            	<!-- DTO 전송예시2 -->
+            	<insert id="ex05" parameterType="ProductDTO">
+            		INSERT INTO PRODUCT (
+            			PRODUCT_NM , 
+            			PRICE , 
+            			DELIVERY_PRICE , 
+            			ENROLL_DT ,
+            			BRAND_ID
+            		)
+            		VALUES      (
+            			#{productNm} , 
+            			#{price} , 
+            			#{deliveryPrice} ,
+            			NOW() , 
+            			#{brandId}
+            		)
+            	</insert>
+            	
+            	<!-- DTO 전송예시3 -->
+            	<select id="ex06" parameterType="ProductDTO" resultType="ProductDTO" >
+            			SELECT *
+            			FROM   PRODUCT
+            			WHERE  PRICE >= #{price}
+            			AND    DELIVERY_PRICE = #{deliveryPrice}
+            	</select>
+            	
+            	<!-- Map 전송예시1 -->
+            	<select id="ex07" parameterType="hashmap" resultType="ProductDTO">
+            		SELECT *
+            		FROM   PRODUCT
+            		WHERE  PRICE BETWEEN #{min} AND #{max}
+            	</select>
+            	<!-- 
+            		문법 오류 -> 변수명으로만 적어주면 됨
+            		WHERE  PRODUCT BETWEEN #{priceMap.min} AND #{priceMap.max}
+            	 -->
+            	<!-- Map 전송예시2 -->
+            	<select id="ex08" parameterType="hashmap" resultType="BrandDTO">
+            		SELECT *
+            		FROM   BRAND
+            		WHERE  ENTERED_DT BETWEEN #{startDate} AND #{endDate}
+            	</select>
+            	<!-- Map 전송예시3 -->
+            	<select id="ex09" parameterType="hashmap" resultType="hashmap">
+            		SELECT *
+            		FROM    PRODUCT P
+                    JOIN    BRAND B
+                    ON      P.BRAND_ID = B.BRAND_ID
+                    AND     P.PRICE >= #{price}
+                    AND     B.ACTIVE_YN != #{activeYn}
+            	</select>
+            
+            </mapper>
+            ```  
