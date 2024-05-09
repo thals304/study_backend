@@ -78,9 +78,13 @@ public class D2mMapperTest {
 		 */
 		
 		BrandDTO brandDTO = new BrandDTO();
-		brandDTO.setBrandId(1); 	
-		brandDTO.setBrandNm("추가된브랜드");
+		// brandDTO.setBrandId(1); 키 중복 오류 
+		brandDTO.setBrandId(100); 	
+		brandDTO.setBrandNm("추가된브랜드100");
 		brandDTO.setActiveYn("N");
+		//brandDTO.setActiveYn("N하이헬로우"); char/varchar 정한 길이 넘어가면 에러
+		
+		d2m.ex04(brandDTO);
 		
 	}
 	
@@ -95,6 +99,8 @@ public class D2mMapperTest {
 		productDTO.setDeliveryPrice(1);
 		productDTO.setBrandId(1);
 		
+		d2m.ex05(productDTO);
+		
 	}
 	
 	
@@ -106,6 +112,10 @@ public class D2mMapperTest {
 		productDTO.setPrice(1000000);
 		productDTO.setDeliveryPrice(3000);
 		
+		for (ProductDTO dto : d2m.ex06(productDTO)) {
+			System.out.println(dto);
+		}
+		
 	}
 	
 	
@@ -114,8 +124,13 @@ public class D2mMapperTest {
 	public void ex07() {
 		
 		Map<String, Integer> priceMap = new HashMap<String, Integer>();
+		// ProductDTO 에 포함되어 있지 않은 데이터
 		priceMap.put("min", 500000);
 		priceMap.put("max", 1000000);
+		
+		for (ProductDTO productDTO : d2m.ex07(priceMap)) {
+			System.out.println(productDTO);
+		}
 		
 	}
 	
@@ -125,8 +140,13 @@ public class D2mMapperTest {
 	public void ex08() {
 		
 		Map<String, String> dateMap = new HashMap<String, String>();
+		// BrandDTO 에 포함되어 있지 않은 데이터
 		dateMap.put("startDate","2021-01-01");
 		dateMap.put("endDate", "2021-03-31");
+		
+		for (BrandDTO brandDTO : d2m.ex08(dateMap)) {
+			System.out.println(brandDTO);
+		}
 		
 	}
 	
@@ -136,10 +156,13 @@ public class D2mMapperTest {
 	public void ex09() {
 		
 		Map<String, Object> searchMap = new HashMap<String, Object>();
+		// DTO 에 포함되어 있지만 , BrandDTO와 ProductDTO에 포함되어 있는 데이터
 		searchMap.put("activeYn","N");
 		searchMap.put("price", 1000000);
-		
-		
+				
+		for (Map<String, Object> map : d2m.ex09(searchMap)) {
+			System.out.println(map);
+		}
 	}
 
 	

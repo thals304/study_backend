@@ -1,10 +1,12 @@
 package com.application.mvc.chapter03_mybatis;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
 import com.application.mvc.data.BrandDTO;
+import com.application.mvc.data.ProductDTO;
 
 @Mapper
 public interface D2M {
@@ -29,12 +31,18 @@ public interface D2M {
 	public List<BrandDTO> ex03(String brandNm);
 	
 	// DTO 전송예시1 > d2mMapper.xml파일의 <insert id="ex04" parameterType="BrandDTO">와 매핑
+	public void ex04(BrandDTO brandDTO); 
 	// DTO 전송예시2 > d2mMapper.xml파일의 <insert id="ex05" parameterType="ProductDTO">와 매핑
+	public void ex05(ProductDTO productDTO);
+	
 	// DTO 전송예시3 > d2mMapper.xml파일의 <select id="ex06" parameterType="ProductDTO" resultType="ProductDTO">와 매핑
+	public List<ProductDTO> ex06(ProductDTO productDTO);
 	
 	// Map 전송예시1 > d2mMapper.xml파일의 <select id="ex07" parameterType="hashmap" resultType="ProductDTO">와 매핑
+	public List<ProductDTO> ex07(Map<String, Integer> priceMap);
 	// Map 전송예시2 > d2mMapper.xml파일의 <select id="ex08" parameterType="hashmap" resultType="BrandDTO">와 매핑
+	public List<BrandDTO> ex08(Map<String, String> dateMap);
 	// Map 전송예시3 > d2mMapper.xml파일의 <select id="ex09" parameterType="hashmap" resultType="hashmap">와 매핑
-
+	public List<Map<String, Object>> ex09(Map<String, Object> searchMap);
 
 }

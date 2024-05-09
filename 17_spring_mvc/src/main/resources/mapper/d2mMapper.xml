@@ -51,19 +51,86 @@
 		WHERE  BRAND_NM = #{brandNm}
 	</select>
 
+
 	<!-- DTO 전송예시1 -->
-	
+	<insert id="ex04" parameterType="BrandDTO">
+		INSERT INTO BRAND
+		VALUES      (
+			#{brandId} ,
+			#{brandNm} ,
+			NOW() ,
+			#{activeYn}
+		)
+	</insert>
+	<!-- 문법 오류
+	     VALUES      (#{brandDTO.brandId},#{brandDTO.brandNm},NOW(),#{brandDTO.activeYn}) 
+		-> property만 작성해야함
+		-->
 	<!-- DTO 전송예시2 -->
+	<insert id="ex05" parameterType="ProductDTO">
+		INSERT INTO PRODUCT (
+			PRODUCT_NM , 
+			PRICE , 
+			DELIVERY_PRICE , 
+			ENROLL_DT ,
+			BRAND_ID
+		)
+		VALUES      (
+			#{productNm} , 
+			#{price} , 
+			#{deliveryPrice} ,
+			NOW() , 
+			#{brandId}
+		)
+	</insert>
 	
 	<!-- DTO 전송예시3 -->
-	
+	<select id="ex06" parameterType="ProductDTO" resultType="ProductDTO" >
+			SELECT *
+			FROM   PRODUCT
+			WHERE  PRICE >= #{price}
+			AND    DELIVERY_PRICE = #{deliveryPrice}
+	</select>
 	
 	<!-- Map 전송예시1 -->
-	
+	<select id="ex07" parameterType="hashmap" resultType="ProductDTO">
+		SELECT *
+		FROM   PRODUCT
+		WHERE  PRICE BETWEEN #{min} AND #{max}
+	</select>
+	<!-- 
+		문법 오류 -> 변수명으로만 적어주면 됨
+		WHERE  PRODUCT BETWEEN #{priceMap.min} AND #{priceMap.max}
+	 -->
 	<!-- Map 전송예시2 -->
-	
+	<select id="ex08" parameterType="hashmap" resultType="BrandDTO">
+		SELECT *
+		FROM   BRAND
+		WHERE  ENTERED_DT BETWEEN #{startDate} AND #{endDate}
+	</select>
 	<!-- Map 전송예시3 -->
+	<select id="ex09" parameterType="hashmap" resultType="hashmap">
+		SELECT *
+		FROM    PRODUCT P
+        JOIN    BRAND B
+        ON      P.BRAND_ID = B.BRAND_ID
+        AND     P.PRICE >= #{price}
+        AND     B.ACTIVE_YN != #{activeYn}
+	</select>
 	
-
+	<!-- resultMap을 사용하려면?
+	<resultMap type="hashmap" id="searchMap">
+		<result column="" property="price"/>
+		<result column="" property="activeYn"/>
+	</resultMap>
+	<select id="ex09" parameterType="hashmap" resultMap="searchMap">
+		SELECT *
+		FROM    PRODUCT P
+        JOIN    BRAND B
+        ON      P.BRAND_ID = B.BRAND_ID
+        AND     P.PRICE >= 
+        AND     B.ACTIVE_YN != 
+	</select>
+	 -->
 
 </mapper>
