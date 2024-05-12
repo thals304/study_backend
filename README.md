@@ -5061,3 +5061,66 @@
             
             </mapper>
             ```  
+
+### MVC2_ver1 (by Spring Boot)
+
+**[순서]**
+
+**db 연결**
+
+```java
+# 1. Database Connection
+
+# 1-1) Connection URL
+spring.datasource.url=jdbc:mysql://localhost:3306/DB이름?serverTimeZone=Asia/Seoul
+
+# 1-2) Connection Username
+spring.datasource.username=root
+
+# 1-3) Connection Password
+spring.datasource.password=db비밀번호
+
+# 1-4) Connection Driver
+spring.datasource.driverClassName=com.mysql.cj.jdbc.Driver
+
+# 2. MyBatis Configuration
+
+# 2-1) 매퍼(.xml) 파일위치 지정 (src/main/resources/mapper 하위 폴더 만들어야함)
+mybatis.mapper-locations=classpath:/mapper/*.xml
+
+# 2-2) 데이터 타입 alias가 매핑되는 패키지 지정
+# 매핑 예시 1) com.application.mvc.data.ProductDTO > ProductDTO
+# 매핑 예시 2) com.application.mvc.data.BrandDTO > BrandDTO
+mybatis.type-aliases-package=com.application.src/main/java에 기본으로 있는 패키지 이름
+
+# 2-3) underscore 와 camel case 매핑 설정
+# 매핑 예시 (DB Table) MEMBER_ID <> (java Object) memberId
+#           (DT Table) USER_ROLE <> (java Object) userRole
+mybatis.configuration.map-underscore-to-camel-case=true
+
+# 3. Thymeleaf Configuration (이미 적용되어있다.)
+# 3-1) view 파일 위치지정 (src/main/resources/templates 하위 폴더)
+# spring.thymeleaf.prefix=classpath:/templates/
+
+# 3-2) view 파일 확장자지정
+#spring.thymeleaf.suffix=.html
+
+# 4) 웹어플리케이션 서비스의 Port 지정
+server.port=80
+```
+
+**+) DBeaver에 db랑 테이블 만들기**
+
+**DTO**
+
+db 테이블의 컬럼과 같은 내용의 private 필드를 만들고 
+클래스 맨 위에 **lombok으로 @data를 작성**해서 getter, setter, toString 기능을 할 수 있도록 함
+
+
+**중요한 구조!**
+
+**html <> Controller → @Controller <> ServiceImple → @Service <> DAO → @Mapper <> mapper**
+
+**Controller에서는 Service 객체를 ServiceImpl에서는 DAO 객체를 injection 해야함 
+→ @Autowired**
+
