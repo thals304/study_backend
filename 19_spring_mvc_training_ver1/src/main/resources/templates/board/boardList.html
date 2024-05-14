@@ -17,7 +17,7 @@
 				<th>조회수</th>
 			</tr>
 			<tr th:each="boardDTO : ${boardList}">
-				<td th:text=${boardDTO.boardId}></td>
+				<td th:text=${boardDTOStat.count}></td>
 				<td><a th:href="@{/board/boardDetail(boardId=${boardDTO.boardId})}" th:text=${boardDTO.subject}></a></td>
 				<td th:text=${boardDTO.writer}></td>
 				<td th:text=${#dates.format(boardDTO.enrollAt,'yyyy-MM-dd')}></td>

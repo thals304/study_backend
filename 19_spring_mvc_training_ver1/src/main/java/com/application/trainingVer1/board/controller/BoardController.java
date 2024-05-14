@@ -158,7 +158,7 @@ public class BoardController {
 	public String deleteBoard(@RequestParam("boardId") long boardId , Model model) {  // authentication에서 전송된 데이터 boardId를 받는다.
 		
 		model.addAttribute("boardId", boardId); // authentication에서 전송된 데이터를 Model 객체에 저장한다.
-		// 질문!! model.addAttribute("boardDTO" , boardService.getBoardDetail(boardId, false));가 아닌 이유?
+		// model.addAttribute("boardDTO" , boardService.getBoardDetail(boardId, false));가 아닌 이유? deleteBoard.html에서 boardId만 필요하므로?
 		return "board/deleteBoard";  // templates/board/deleteBoard.html(boardId 데이터포함)로 이동
 		
 	}
