@@ -5061,6 +5061,183 @@
             
             </mapper>
             ```  
+- **AOP ( Aspect-Oriented Programming ) 관점 지향 프로그래밍**
+    - 프로젝트 개발 과정에서 핵심 기능 외에 추가적이고 다양한 부가(공통) 기능이 필요로 한다. (로깅 , 보안 , 트랜잭션 , 테스트 , 등등)
+    - 이 부가(공통)기능들은 프로젝트에 중요한 역할을 하며 이 부가(공통)기능이 코드마다 반복적(중복)으로 나타나는 부분이 존재한다.
+    - 코드에서 비즈니스 핵심 로직과 부가기능을 분리하여 부가 로직을 따로 관리(모듈화)한다.
+    - 종단(비즈니스 로직) 기능 , 횡단(관심,Aspect) 기능
+    - 부가 기능이 비즈니스 로직(핵심 기능)을 담은 클래스의 코드에 전혀 영향을 주지 않으면서 부가기능의 구현을 용이하게 할 수 있는 구조를 제공한다.
+    - AOP는 OOP를 대체하는 새로운 개념이 아니라 OOP를 돕는 보조적 기술 중에 하나이다.
+    - 스프링 DI  : 의존성(new)주입 , 스프링 AOP  : 로직(code) 주입
+    - **[ 용어 정리 ]**
+        - **Aspect** : 관점
+        - **Advice** : 핵심기능에 부여되는 부가기능 ( 타겟 메서드에 적용될 부가 기능 )
+            - **Around (Advice)** : 대상 객체의 메서드 실행 전,후 및 예외 발생 모두 실행한다.
+            - **Before (Advice)** : 대상 객체의 메서드 메서드 호출전에 수행한다.
+            - **After (Advice)** : 대상 객체의 메서드 실행도중 예외 발생 여부와 상관없이 메서드 실행 후 실행한다.
+            - **AfterReturning (Advice)** : 대상 객체의 메서드가 실행 도중 예외 없이 실행 성공한 경우에 실행한다.
+            - **AfterThrowing (Advice)**  : 대상 객체의 메서드가 실행 도중 예외가 발생한 경우에 실행한다.
+        - **Pointcut**   : Aspect 적용 위치 지정자      ( Advice를 어디에 적용할지를 결정  )
+        - **Advisor**    : Advice + Pointcut
+        - **Joinpoint**  : Aspect가 적용한 지점
+    - **AOP 구현**
+        - **build.gradle 파일에 AOP 의존성 추가**
+            
+            **// AOP
+            implementation 'org.springframework.boot:spring-boot-starter-aop'**
+            
+        - **Application 클래스에 어노테이션 추가**
+            
+            **@EnableAspectJAutoProxy**
+            
+            설명 → proxy (대변인,대변자) 
+            
+            Spring Framework에게 AOP Proxy를 사용 시키도록 하는 어노테이션
+            
+        - **Advice 클래스에 @Component 및 @Aspect 어노테이션 지정**
+            
+            **@Component
+            @Aspect**
+            
+        - **Advice 적용**
+    - **execution 명시자**
+        - **execution(수식어(접근제어자)패턴 리턴타입패턴 패키지이름패턴.클래스이름패턴.메서드이름패턴(파라미터패턴))**
+        Ex)        public           void          com.application.aop.board.dto.boardDetail(long)
+        - 각 패턴은 ***을 이용하여 모든 값을 표현**할 수 있습니다.
+        - **패키지**
+            - com.spring.aop	 > com.spring.aop패키지를 타겟
+            - com.spring.aop..  > com.spring.aop로 시작하는 하위의 모든 패키지를 타겟
+        - **리턴 타입**
+            - *****	 > 모든 리턴 타입 타겟
+            - **void**	 > 리턴 타입이 void인 메서드만 타겟
+            - **!void** > 리턴 타입이 void가 아닌 메서드만 타겟
+        - **매개 변수 지정**
+        - **(..)**			> 0개 이상의 모든 파라미터 타겟
+        - **(*)**			> 1개의 파라미터만 타겟
+        - **( * , * )**		> 2개의 파라미터만 타겟
+        - **(String,*)**	> 2개의 파라미터중 첫번째 파라미터가 String타입만 타겟
+        
+        ```java
+        // 테스트 클래스
+        @Component
+        public class Boss {
+        
+        	public void work() {
+        		System.out.println("사장의 일을 한다.");
+        	}
+        	
+        	public void getWorkingTime() {
+        		try {
+        			Thread.sleep(300); // 0.3초
+        		} catch (InterruptedException e) {
+        			e.printStackTrace();
+        		} 
+        	}
+        }
+        ```
+        
+        ```java
+        // 테스트 클래스
+        @Component
+        public class Manager {
+        
+        	public void work() {
+        		System.out.println("매니저의 일을 한다.");
+        	}
+        	
+        	public void getWorkingTime() {
+        		try {
+        			Thread.sleep(700); // 0.7초
+        		} catch (InterruptedException e) {
+        			e.printStackTrace();
+        		} 
+        	}
+        }
+        ```
+        
+        ```java
+        // 테스트 클래스
+        @Component
+        public class Employee {
+        
+        	public void work() {
+        		System.out.println("직원의 일을 한다.");
+        	}
+        	
+        	public void getWorkingTime() {
+        		try {
+        			Thread.sleep(1000); // 1초
+        		} catch (InterruptedException e) {
+        			e.printStackTrace();
+        		} 
+        	}
+        }
+        ```
+        
+        ```java
+        @Aspect
+        @Component
+        public class AopAdvice {
+        
+        	// 메서드 호출 전
+        	@Before("execution(public void com.application.aop.chapter01_aop.*.work())")
+        	public void beforeWork() {
+        		System.out.println("(공통기능 , Before)출근한다.");
+        	}
+        	
+        	// 메서드 호출 후
+        	@After("execution(public void com.application.aop.chapter01_aop.*.work())")
+        	public void afterWork() {
+        		System.out.println("(공통기능 , After)퇴근한다.\n");
+        	}
+        	
+        	// 메서드 호출 전 후
+        	@Around("execution(public * com.application.aop.chapter01_aop.*.getWorkingTime())")
+        	public void aroundGetWorkingTime(ProceedingJoinPoint pjp) throws Throwable {
+        		
+        		// 메서드 호출 전
+        		long startTime = System.currentTimeMillis();
+        		
+        		// ProceedingJoinPoint 객체의 proceed(); 메서드를 사용하여 타겟팅 메서드를 실행한다.
+        		pjp.proceed();
+        		
+        		// 메서드 호출 후
+        		long endTime = System.currentTimeMillis();
+        		
+        		System.out.println("메서드 실행 시간 : " + (endTime - startTime)/1000.0 +"초");
+        	}	
+        }
+        ```
+        
+        테스트 코드로 확인 가능
+        
+        ```java
+        @SpringBootTest
+        public class AopTest {
+        
+        	@Autowired
+        	private Boss boss;
+        	
+        	@Autowired
+        	private Manager manager;
+        	
+        	@Autowired
+        	private Employee employee;
+        	
+        	@Test
+        	void testMethod() {
+        		boss.work();
+        		manager.work();
+        		employee.work();
+        		
+        		System.out.println("\n\n");
+        		
+        		boss.getWorkingTime();
+        		manager.getWorkingTime();
+        		employee.getWorkingTime();
+        	}
+        }
+        ```
 
 ### MVC2_ver1 (by Spring Boot)
 
