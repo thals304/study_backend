@@ -146,7 +146,7 @@ public class BoardController {
 		String jsScript = """
 				<script>
 			 	   alert('수정 되었습니다.');
-			 	   location.href = 'boardList';
+			 	   location.href = 'board/boardList';
 		   	    </script>""";
 		
 		return jsScript;	 

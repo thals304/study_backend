@@ -48,7 +48,7 @@
 	</select>
 	
 	<!-- DAO에서 전달받은 BoardDTO객체로 BOARD 테이블을 update 한다. -->
-	<update id="updateBoard" parameterType="boardDTO">
+	<update id="updateBoard" parameterType="BoardDTO">
 		UPDATE BOARD
 		SET    SUBJECT  = #{subject},
 		       CONTENT  = #{content}

@@ -17,4 +17,15 @@ public class Manager {
 			e.printStackTrace();
 		} 
 	}
+	
+	public String getInfo(String title , int salary) {
+		return "(return) title : " + title + " / salary : " + salary;
+	}
+	
+	public void getException() {
+		
+		throw new NullPointerException();
+		// System.out.println(0/0);
+	}
+
 }

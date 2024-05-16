@@ -21,15 +21,35 @@ public class AopTest {
 	private Employee employee;
 	
 	@Test
-	void testMethod() {
+	void workTest() {
 		boss.work();
 		manager.work();
 		employee.work();
 		
 		System.out.println("\n\n");
-		
+	}	
+	
+	@Test
+	void getWorkingTimeTest() {
 		boss.getWorkingTime();
 		manager.getWorkingTime();
 		employee.getWorkingTime();
+	}
+	
+	@Test
+	void getInfoTest() {
+		
+		boss.getInfo("사장" , 1000);
+		manager.getInfo("관리자" , 700);
+		employee.getInfo("직원" , 300);
+		
+	}
+	
+	@Test
+	void getExceptionTest() {
+		
+		boss.getException();
+		manager.getException();
+		employee.getException();
 	}
 }

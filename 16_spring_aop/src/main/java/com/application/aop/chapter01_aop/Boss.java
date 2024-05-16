@@ -17,4 +17,16 @@ public class Boss {
 			e.printStackTrace();
 		} 
 	}
+	
+	public String getInfo(String title , int salary) {
+		return "(return) title : " + title + " / salary : " + salary;
+	}
+	
+	public void getException() {
+		
+		//throw new ArithmeticException();
+		//System.out.println("코드 잘 돌아감");
+		// System.out.println(0/0);
+	}
+
 }

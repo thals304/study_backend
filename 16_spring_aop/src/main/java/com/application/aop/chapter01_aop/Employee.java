@@ -17,4 +17,15 @@ public class Employee {
 			e.printStackTrace();
 		} 
 	}
+	
+	public String getInfo(String title , int salary) {
+		return "(return) title : " + title + " / salary : " + salary;
+	}
+	
+	public void getException() {
+		
+		throw new ArrayIndexOutOfBoundsException();
+		// System.out.println(0/0);
+	}
+
 }
