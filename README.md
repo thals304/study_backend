@@ -5062,6 +5062,7 @@
             </mapper>
             ```  
 - **AOP ( Aspect-Oriented Programming ) 관점 지향 프로그래밍**
+    
     - 프로젝트 개발 과정에서 핵심 기능 외에 추가적이고 다양한 부가(공통) 기능이 필요로 한다. (로깅 , 보안 , 트랜잭션 , 테스트 , 등등)
     - 이 부가(공통)기능들은 프로젝트에 중요한 역할을 하며 이 부가(공통)기능이 코드마다 반복적(중복)으로 나타나는 부분이 존재한다.
     - 코드에서 비즈니스 핵심 로직과 부가기능을 분리하여 부가 로직을 따로 관리(모듈화)한다.
@@ -5116,6 +5117,14 @@
         - **(*)**			> 1개의 파라미터만 타겟
         - **( * , * )**		> 2개의 파라미터만 타겟
         - **(String,*)**	> 2개의 파라미터중 첫번째 파라미터가 String타입만 타겟
+    - **jp & pjp의 기능 설명**
+        - **value**: com.application.aop.chapter01_aop 패키지 내의 getInfo 메소드가 실행된 후에 이 어드바이스가 적용된다.
+        - **returning**: returnObj라는 이름으로 리턴 값을 참조한다.
+        어드바이스 메소드의 파라미터로 지정된 returnObj를 통해 리턴 값을 참조할 수 있다.
+        - **JoinPoint** : 메소드의 파라미터에 접근할 수 있다.
+        - **jp.getArgs()** : 메소드의 인수 배열을 반환한다.
+        - **jp.getSignature().getName()** : 메소드의 이름을 가져온다.
+        - **jp.getTarget()**: 메소드를 실행한 대상 객체를 가져온다.
         
         ```java
         // 테스트 클래스
@@ -5133,6 +5142,18 @@
         			e.printStackTrace();
         		} 
         	}
+        	
+        	public String getInfo(String title , int salary) {
+        		return "(return) title : " + title + " / salary : " + salary;
+        	}
+        	
+        	public void getException() {
+        		
+        		//throw new ArithmeticException();
+        		//System.out.println("코드 잘 돌아감");
+        		// System.out.println(0/0);
+        	}
+        	
         }
         ```
         
@@ -5152,6 +5173,17 @@
         			e.printStackTrace();
         		} 
         	}
+        	
+        	public String getInfo(String title , int salary) {
+        		return "(return) title : " + title + " / salary : " + salary;
+        	}
+        	
+        	public void getException() {
+        		
+        		throw new NullPointerException();
+        		// System.out.println(0/0);
+        	}
+        	
         }
         ```
         
@@ -5171,6 +5203,17 @@
         			e.printStackTrace();
         		} 
         	}
+        	
+        	public String getInfo(String title , int salary) {
+        		return "(return) title : " + title + " / salary : " + salary;
+        	}
+        	
+        	public void getException() {
+        		
+        		throw new ArrayIndexOutOfBoundsException();
+        		// System.out.println(0/0);
+        	}
+        	
         }
         ```
         
@@ -5179,14 +5222,21 @@
         @Component
         public class AopAdvice {
         
+        	@Pointcut("execution(public void com.application.aop.chapter01_aop.*.work())")
+        	public void abcde() { // 해당 메서드 이름으로 포인트컷을 적용한다.
+        		// 특정 의미 없음
+        	}
+        	
         	// 메서드 호출 전
-        	@Before("execution(public void com.application.aop.chapter01_aop.*.work())")
+        	//@Before("execution(public void com.application.aop.chapter01_aop.*.work())")
+        	@Before("abcde()")
         	public void beforeWork() {
         		System.out.println("(공통기능 , Before)출근한다.");
         	}
         	
         	// 메서드 호출 후
-        	@After("execution(public void com.application.aop.chapter01_aop.*.work())")
+        	//@After("execution(public void com.application.aop.chapter01_aop.*.work())")
+        	@After("abcde()")
         	public void afterWork() {
         		System.out.println("(공통기능 , After)퇴근한다.\n");
         	}
@@ -5205,8 +5255,26 @@
         		long endTime = System.currentTimeMillis();
         		
         		System.out.println("메서드 실행 시간 : " + (endTime - startTime)/1000.0 +"초");
-        	}	
+        	}
+        	                                                                             // getInfo(..)
+        	// 메서드 호출 후(예외없이 정상적으로 실행된 후)                                            // getInfo(* , *)
+        	@AfterReturning(value="execution(public String com.application.aop.chapter01_aop.*.getInfo(String , int))",
+        			returning="returnObj")
+        	public void afterReturning(JoinPoint jp , Object returnObj) {  // JoinPoint를 통하여 메서드의 파라메타를 전달받을 수 있다.
+        		
+        		System.out.println("\n - get info - \n");
+        		System.out.println("target object : " + jp.getTarget()); 
+        		System.out.println("method name : " + jp.getSignature().getName());
+        		System.out.println("paramter : " + Arrays.toString(jp.getArgs()));
+        		System.out.println("return : " + returnObj);
+        	}
+        	
+        	@AfterThrowing("execution(public void com.application.aop.chapter01_aop.*.getException())")
+        	public void afterThrowingGetException() {
+        		System.out.println("(공통기능, afterThrowing) 로깅 및 트랜잭션 롤백 로직");
+        	}
         }
+        
         ```
         
         테스트 코드로 확인 가능
@@ -5225,19 +5293,175 @@
         	private Employee employee;
         	
         	@Test
-        	void testMethod() {
+        	void workTest() {
         		boss.work();
         		manager.work();
         		employee.work();
         		
         		System.out.println("\n\n");
-        		
+        	}	
+        	
+        	@Test
+        	void getWorkingTimeTest() {
         		boss.getWorkingTime();
         		manager.getWorkingTime();
         		employee.getWorkingTime();
         	}
+        	
+        	@Test
+        	void getInfoTest() {
+        		
+        		boss.getInfo("사장" , 1000);
+        		manager.getInfo("관리자" , 700);
+        		employee.getInfo("직원" , 300);
+        		
+        	}
+        	
+        	@Test
+        	void getExceptionTest() {
+        		
+        		boss.getException();
+        		manager.getException();
+        		employee.getException();
+        	}
         }
         ```
+        
+- **logger**
+    
+    - **스프링부트 로깅 구현방법**
+        - build.gradle 파일에서 관련 의존성 확인
+            
+             스프링부트에 이미 logback,log4j,slf4j관련 모듈이 포함되어 있다.
+            
+        - src/main/resources경로 아래 logback.xml 파일을 생성하고 로그 관련 설정을 지정한다.
+        - 로그를 사용하고 싶은 클래스 안에 Logger 객체를 생성하고 사용한다.
+            
+            **import org.slf4j.Logger;**
+            
+            **import org.slf4j.LoggerFactory;**
+            
+            **private static final Logger logger = LoggerFactory.getLogger(클래스이름.class);**
+            
+        
+    
+    ```java
+    @Component
+    public class LoggerTestClass {
+    	
+    	public void testMethod1() {
+    		try {Thread.sleep(100);} catch (InterruptedException e) {e.printStackTrace();}
+    	}
+    	
+    	public void testMethod2() {
+    		try {Thread.sleep(200);} catch (InterruptedException e) {e.printStackTrace();}
+    	}
+    	
+    	public void testMethod3() {
+    		try {Thread.sleep(300);} catch (InterruptedException e) {e.printStackTrace();}
+    	}
+    	
+    	public void testMethod4() {
+    		try {Thread.sleep(400);} catch (InterruptedException e) {e.printStackTrace();}
+    	}
+    	
+    	public void testMethod5() {
+    		try {Thread.sleep(500);} catch (InterruptedException e) {e.printStackTrace();}
+    	}
+    	
+    }
+    
+    ```
+    
+    ```java
+    @Aspect
+    @Component
+    public class LoggerAdvice {
+    
+    	private static final Logger logger = LoggerFactory.getLogger(LoggerAdvice.class);
+    	
+    	@Around("execution(public void com.application.aop.chapter02_logger.LoggerTestClass.*())")
+    	public void aroundTestMethod(ProceedingJoinPoint pjp) throws Throwable{
+    		
+    		long startTime = System.currentTimeMillis();
+    		pjp.proceed();
+    		long endTime = System.currentTimeMillis();
+    		
+    		//System.out.println(pjp.getSignature().getName() + " 메서드의 실행시간 : " + (endTime - startTime)/1000.0 + "초");
+    		logger.trace(pjp.getSignature().getName() + " 메서드의 실행시간 : " + (endTime - startTime)/1000.0 + "초");
+    		logger.debug(pjp.getSignature().getName() + " 메서드의 실행시간 : " + (endTime - startTime)/1000.0 + "초");
+    		logger.info(pjp.getSignature().getName() + " 메서드의 실행시간 : " + (endTime - startTime)/1000.0 + "초");
+    		logger.warn(pjp.getSignature().getName() + " 메서드의 실행시간 : " + (endTime - startTime)/1000.0 + "초");
+    		logger.error(pjp.getSignature().getName() + " 메서드의 실행시간 : " + (endTime - startTime)/1000.0 + "초");
+    	}
+    ```
+    
+    테스트 코드
+    
+    ```java
+    @SpringBootTest
+    public class LoggerTest {
+    
+    	@Autowired
+    	private LoggerTestClass loggerTestClass;
+    	
+    	@Test
+    	public void testMethod() {
+    		
+    		loggerTestClass.testMethod1();
+    		loggerTestClass.testMethod2();
+    		loggerTestClass.testMethod3();
+    		loggerTestClass.testMethod4();
+    		loggerTestClass.testMethod5();
+    		
+    	}
+    		
+    	
+    }
+    ```
+    
+    - **[로깅 출력 패턴]**
+        - 로깅 출력 패턴을 변경하여 적용 가능하다.
+        - %d{yyyy-MM-dd HH:mm:ss}: 로그 이벤트의 발생 시간을 날짜 및 시간 형식으로 출력한다.
+        - [%thread]: 현재 스레드의 이름을 출력한다.
+        - %-5level: 로그 레벨을 5자리로 출력하며, 왼쪽 정렬된다.
+        - %logger{36}: 로그 이벤트를 발생시킨 로거의 이름을 36자로 제한하여 출력한다.
+        - %msg%n: 로그 메시지와 개행 문자를 출력한다.
+    
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <configuration>
+        
+        <!--로그를 콘솔에 출력하는 appender -->
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+    
+    	 <!--(추가) 로그 파일 경로 -->
+        <property name="LOG_PATH" value="${user.home}/logs/test.log"/> <!-- ${user.home}/logs/test.log -->
+        
+        <!-- (추가) 파일 로깅 appender (DailyRollingFileAppender )-->
+        <appender name="DAILY_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}</file>													  <!-- 로그파일 경로 및 이름 설정 -->
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>app.log.%d{yyyy-MM-dd}.log</fileNamePattern>             <!-- 파일 이름 패턴 설정 -->
+            </rollingPolicy>
+            <encoder>
+                <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>  <!-- 로깅 패턴 -->
+            </encoder>
+        </appender>
+    
+        <!-- 로거 설정 -->
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+            <appender-ref ref="DAILY_FILE" />
+        </root>
+        
+    </configuration>
+    ```
+
 
 ### MVC2_ver1 (by Spring Boot)
 
