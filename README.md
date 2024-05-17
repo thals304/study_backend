@@ -5462,6 +5462,228 @@
     </configuration>
     ```
 
+ - **interceptor**
+    
+    - **intercept > implements HandlerInterceptor**
+        - **preHandle() : 요청 전처리 / 컨트롤러가 호출되기 전에 실행**
+        - **postHandle() : 요청 후처리 / 컨트롤러가 호출된 후, 뷰가 렌더링되기 전에 실행**
+        - **afterHandel() : 요청 완료후 처리 /  모든 요청 처리가 완료된 후 실행**
+    
+    ```xml
+    @Component
+    public class InterceptorEx implements HandlerInterceptor { // HandlerInterceptor인터페이스를 구현하여 Interceptor 클래스로 사용한다. 
+    	
+    	@Override
+        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+            System.out.println("preHandle: 요청을 처리하기 전에 실행됩니다. 요청 URL: " + request.getRequestURI());
+            // 인증, 권한 체크 등을 수행할 수 있음
+            //return false; // 요청을 중단하고 싶을 경우
+            return true; // 계속 진행하고 싶을 경우
+        }
+    	
+    	@Override
+        public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+            System.out.println("postHandle: 요청을 처리한 후 실행됩니다.");
+            // 컨트롤러에서 반환한 모델과 뷰를 조작할 수 있음
+        }
+    
+        @Override
+        public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+            System.out.println("afterCompletion: 모든 요청 처리가 완료된 후 실행됩니다.");
+            // 리소스 정리 등의 작업을 수행할 수 있음
+        }
+    	
+    }
+    
+    ```
+    
+    - **interceptConfig > implements WebMvcConfigurer & @Autowired 필수**
+    
+    ```xml
+    @Configuration // 스프링 애플리케이션 설정 클래스로 등록한다.
+    public class InterceptorExConfig implements WebMvcConfigurer{
+    	
+    	@Autowired
+    	private InterceptorEx interceptorEx;
+    	
+    	@Override
+        public void addInterceptors(InterceptorRegistry registry) { // addInterceptors 메서드로 Interceptor 설정 지정
+            registry.addInterceptor(interceptorEx)			 	          // Interceptor로직을 사용할 객체를 지정
+            		    .order(1)                                    	  // Interceptor 우선순위를 지정
+                    .addPathPatterns("/**"); 					 	            // Interceptor를 적용할 URL 패턴을 지정
+                    .excludePathPatterns("/login", "/register"); 	  // Interceptor를 제외할 URL 패턴을 지정
+        }
+    	
+    }
+    ```
+    
+    - **ex) 로그인(user , admin) > 권한 부여 및 제한**
+        - **user가 아닌 사람이 들어오면 user만 들어갈 수 있는 post url 못 들어감**
+        - **admin이 아닌사람이 들어오면 admin만 들어갈 수 있는 management url 못들어감**
+    
+    **Controller (권한 role 부여)**
+    
+    ```xml
+    @Controller
+    @RequestMapping("/auth")
+    public class AuthInterceptorController {
+    	
+    	@GetMapping("/login") // localhost/auth/login으로 요청시 매핑
+    	public String login() {
+    		return "login";
+    	}
+    	
+    	@PostMapping("/login") // login.html파일에서 submit실행시 매핑
+    	public String login(@RequestParam("role") String role , HttpServletRequest request) {
+    		
+    		HttpSession session = request.getSession(); // session객체를 생성
+    		
+    		if (role.equals("user")) {				  // 전달된 데이터가 user이면
+    			session.setAttribute("role", "user"); // session객체의 권한 속성에 user데이터 저장
+    		}
+    		else if (role.equals("admin")) {		   // 전달된 데이터가 admin이면
+    			session.setAttribute("role", "admin"); // session객체의 권한 속성에 admin데이터 저장
+    		}
+    		
+    		System.out.println("(session role)" + (String)session.getAttribute("role"));
+    		
+    		return "redirect:/auth/main"; // /auth/main으로 이동
+    	}
+    	
+    	@GetMapping("/logout") // localhost/auth/logout으로 요청시 매핑
+    	public String logout(HttpServletRequest request) {
+    		
+    		HttpSession session = request.getSession(); // session객체를 생성
+    		session.invalidate();						// session객체의 권한 속성 삭제
+    		
+    		return "redirect:/auth/login";  // 로그인페이지로 이동
+    	
+    	}
+    	
+    	@GetMapping("/main")
+    	public String main() {
+    		   return "main";
+    	}
+    	
+    }
+    
+    ```
+    
+    **Admin 권한 (로그인 안하고 url로 바로 들어오거나 user로 로그인 해 들어올 경우 제한)** 
+    
+    ```xml
+    @Component
+    public class AuthInterceptorAdmin implements HandlerInterceptor {
+    
+    	@Override
+        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+            
+    		HttpSession session = request.getSession();
+    		String role = (String)session.getAttribute("role");
+    		
+    		if (role == null || !role.equals("admin")) { // 로그인을 안했거나 admin권한이 아닐경우
+    			
+    			// 1) 다른 화면으로 이동
+    			//response.sendRedirect("/auth/login");	
+    			
+    			// 2) PrintWriter 사용
+    			/*
+    			    String jsScript = """
+    	 				   <script>
+    	 					   alert('접근 불가능합니다.');
+    	 					   location.href = '/auth/login';
+    	 				   </script>"""; 
+    	        	
+    	        	response.setContentType("text/html; charset=utf-8");
+    	        	PrintWriter out = response.getWriter();	
+    	        	out.print(jsScript); 
+    	        	*/
+    	        	
+    	        // 3) 403 Forbidden 오류	
+    	        response.sendError(HttpServletResponse.SC_FORBIDDEN);	
+    			    return false;
+    		
+    		}
+    		
+    		return true;
+            
+        }
+    	
+    }
+    
+    ```
+    
+    **User 권한 (로그인 안하고 url로 바로 들어오거나 admin로 로그인 해 들어올 경우 제한)** 
+    
+    ```xml
+    @Component
+    public class AuthInterceptorUser implements HandlerInterceptor{
+    	@Override
+        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+            
+    		HttpSession session = request.getSession();
+    		String role = (String)session.getAttribute("role");
+    		
+    		if (role == null || !role.equals("user")) { // 로그인을 안했거나 user 권한이 아닐경우
+    			
+    			// 1) 다른 화면으로 이동
+    			//response.sendRedirect("/auth/login");	
+    			
+    			// 2) PrintWriter 사용
+    			/*
+    			    String jsScript = """
+    	 				   <script>
+    	 					   alert('접근 불가능합니다.');
+    	 					   location.href = '/auth/login';
+    	 				   </script>"""; 
+    	        	
+    	        	response.setContentType("text/html; charset=utf-8");
+    	        	PrintWriter out = response.getWriter();	
+    	        	out.print(jsScript); 
+    	       */
+    	        	
+    	        // 3) 403 Forbidden 오류	
+    	        response.sendError(HttpServletResponse.SC_FORBIDDEN);	
+    			    return false;
+    		
+    		}
+    		
+    		      return true;
+            
+        }
+    }
+    
+    ```
+    
+    **Config (위에 Admin, User interceptor 적용)**
+    
+    ```xml
+    @Configuration
+    public class AuthInterceptorConfig implements WebMvcConfigurer {
+    
+    	@Autowired
+    	private AuthInterceptorAdmin authInterceptorAdmin;
+    	
+    	@Autowired
+    	private AuthInterceptorUser authInterceptorUser;
+    	
+    	String[] adminAccessModifierList = {"/admin/*" , "/management/*"};
+    	String[] userAccessModifierList = {"/user/*" , "/post/*"};
+    	
+    	@Override
+        public void addInterceptors(InterceptorRegistry registry) { 	// addInterceptors 메서드로 Interceptor 설정 지정
+            registry.addInterceptor(authInterceptorAdmin)				// Interceptor로직을 사용할 객체를 지정
+            		    .order(1)                                  // Interceptor 우선순위를 지정
+                    .addPathPatterns(adminAccessModifierList); // Interceptor를 적용할 URL 패턴을 지정
+            
+            registry.addInterceptor(authInterceptorUser)	    // Interceptor로직을 사용할 객체를 지정
+    				        .order(2)                                    		// Interceptor 우선순위를 지정
+    		            .addPathPatterns(userAccessModifierList);
+    	}
+    	
+    }
+    ```
+
 
 ### MVC2_ver1 (by Spring Boot)
 
