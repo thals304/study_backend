@@ -5684,7 +5684,65 @@
     }
     ```
 
-
+- **유틸리티(utility)**
+    - **SQL Logging**
+        
+        - **setting**
+            - **dbeaver** > db 생성
+            - **application.properties** > db connection(이전과 다른 부분 존재) , mybatis configuration, thymeleaf configuration, port
+            - **build.gradle** > implementation 추가
+            - **src/main/resources 위치에 log4jdbc log4j2 properties파일 생성** > 설정 추가
+            - **logback.xml 파일 생성** > 설정 변경
+            
+            **+) SQL Logger**
+            
+            **[ 설정 ]**
+            
+            <logger name="jdbc.sqlonly" level="off" />     **SQL 쿼리문을 로그로 출력한다.** 	
+            
+            <logger name="jdbc.sqltiming" level="off" />  **SQL문과 해당 SQL을 실행시키는데 수행**된 시간 정보(milliseconds)를 출력한다.
+            
+            <logger name="jdbc.audit" level="off" />  **ResultSet을 제외한 모든 JDBC 호출 정보를 출력한다.**
+            
+            <logger name="jdbc.resultset" level="off" />  **ResultSet을 포함한 모든 JDBC 호출 정보를 출력한다.**
+            
+            <logger name="jdbc.resultsettable" level="off"/>  **SQL결과 조회된 테이블을 로그로 출력한다.**
+            
+            <logger name="jdbc.connection" level="off" />  **JDBC 연결 정보를 로그로 출력한다.**
+            
+            **[사용법]**
+            
+            **기록하고 싶은 로그의 level을 지정하여 로그를 남긴다.**
+            
+            **<appender-ref="appender name"/>을 추가하여 부가적인 형태의 로깅 환경을 구축할 수 있다.**
+            
+            ```xml
+            <?xml version="1.0" encoding="UTF-8"?>
+            
+            <configuration>
+            
+            	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            		<encoder>
+            			<pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            		</encoder>
+            	</appender>
+            	
+            	<logger name="jdbc.sqlonly" 	   level="off"/>
+            	<logger name="jdbc.sqltiming" 	   level="off" />
+            	<logger name="jdbc.audit" 		   level="off" />
+            	<logger name="jdbc.resultset" 	   level="off" />
+            	<logger name="jdbc.resultsettable" level="off"/>
+            	<logger name="jdbc.connection" 	   level="off" />
+            	
+            	<root level="INFO">
+            		<appender-ref ref="CONSOLE" />
+            	</root>
+            	
+            </configuration>
+            ```
+            
+            - **DAO & Mapper & Test 파일 만들어 확인해주면 됨**
+   
 ### MVC_ver1 (by Spring Boot)
 
 **[순서]**
