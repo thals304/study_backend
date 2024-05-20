@@ -5685,7 +5685,7 @@
     ```
 
 
-### MVC2_ver1 (by Spring Boot)
+### MVC_ver1 (by Spring Boot)
 
 **[순서]**
 
