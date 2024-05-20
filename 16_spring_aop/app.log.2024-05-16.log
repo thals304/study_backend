@@ -1,0 +1,42 @@
+2024-05-16 14:08:26.879 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.application.aop.LoggerTest]: LoggerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-16 14:08:27.064 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.application.aop.Application for test class com.application.aop.LoggerTest
+2024-05-16 14:08:27.339 [main] INFO  o.s.b.d.r.RestartApplicationListener - Restart disabled due to context in which it is running
+2024-05-16 14:08:27.659 [main] INFO  com.application.aop.LoggerTest - Starting LoggerTest using Java 17.0.9 with PID 19296 (started by somin in C:\Users\somin\git\study_backend\16_spring_aop)
+2024-05-16 14:08:27.672 [main] INFO  com.application.aop.LoggerTest - No active profile set, falling back to 1 default profile: "default"
+2024-05-16 14:08:30.297 [main] INFO  com.application.aop.LoggerTest - Started LoggerTest in 2.939 seconds (process running for 4.614)
+2024-05-16 14:08:31.820 [main] INFO  c.a.a.chapter02_logger.LoggerAdvice - testMethod1 메서드의 실행시간 : 0.107초
+2024-05-16 14:08:31.823 [main] WARN  c.a.a.chapter02_logger.LoggerAdvice - testMethod1 메서드의 실행시간 : 0.107초
+2024-05-16 14:08:31.823 [main] ERROR c.a.a.chapter02_logger.LoggerAdvice - testMethod1 메서드의 실행시간 : 0.107초
+2024-05-16 14:08:32.038 [main] INFO  c.a.a.chapter02_logger.LoggerAdvice - testMethod2 메서드의 실행시간 : 0.214초
+2024-05-16 14:08:32.042 [main] WARN  c.a.a.chapter02_logger.LoggerAdvice - testMethod2 메서드의 실행시간 : 0.214초
+2024-05-16 14:08:32.045 [main] ERROR c.a.a.chapter02_logger.LoggerAdvice - testMethod2 메서드의 실행시간 : 0.214초
+2024-05-16 14:08:32.352 [main] INFO  c.a.a.chapter02_logger.LoggerAdvice - testMethod3 메서드의 실행시간 : 0.303초
+2024-05-16 14:08:32.354 [main] WARN  c.a.a.chapter02_logger.LoggerAdvice - testMethod3 메서드의 실행시간 : 0.303초
+2024-05-16 14:08:32.354 [main] ERROR c.a.a.chapter02_logger.LoggerAdvice - testMethod3 메서드의 실행시간 : 0.303초
+2024-05-16 14:08:32.761 [main] INFO  c.a.a.chapter02_logger.LoggerAdvice - testMethod4 메서드의 실행시간 : 0.406초
+2024-05-16 14:08:32.777 [main] WARN  c.a.a.chapter02_logger.LoggerAdvice - testMethod4 메서드의 실행시간 : 0.406초
+2024-05-16 14:08:32.777 [main] ERROR c.a.a.chapter02_logger.LoggerAdvice - testMethod4 메서드의 실행시간 : 0.406초
+2024-05-16 14:08:33.295 [main] INFO  c.a.a.chapter02_logger.LoggerAdvice - testMethod5 메서드의 실행시간 : 0.514초
+2024-05-16 14:08:33.298 [main] WARN  c.a.a.chapter02_logger.LoggerAdvice - testMethod5 메서드의 실행시간 : 0.514초
+2024-05-16 14:08:33.305 [main] ERROR c.a.a.chapter02_logger.LoggerAdvice - testMethod5 메서드의 실행시간 : 0.514초
+아무말대자잔치 - Could not detect default configuration classes for test class [com.application.aop.LoggerTest]: LoggerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+아무말대자잔치 - Found @SpringBootConfiguration com.application.aop.Application for test class com.application.aop.LoggerTest
+아무말대자잔치 - Restart disabled due to context in which it is running
+아무말대자잔치 - Starting LoggerTest using Java 17.0.9 with PID 10612 (started by somin in C:\Users\somin\git\study_backend\16_spring_aop)
+아무말대자잔치 - No active profile set, falling back to 1 default profile: "default"
+아무말대자잔치 - Started LoggerTest in 2.47 seconds (process running for 3.951)
+아무말대자잔치 - testMethod1 메서드의 실행시간 : 0.101초
+아무말대자잔치 - testMethod1 메서드의 실행시간 : 0.101초
+아무말대자잔치 - testMethod1 메서드의 실행시간 : 0.101초
+아무말대자잔치 - testMethod2 메서드의 실행시간 : 0.215초
+아무말대자잔치 - testMethod2 메서드의 실행시간 : 0.215초
+아무말대자잔치 - testMethod2 메서드의 실행시간 : 0.215초
+아무말대자잔치 - testMethod3 메서드의 실행시간 : 0.313초
+아무말대자잔치 - testMethod3 메서드의 실행시간 : 0.313초
+아무말대자잔치 - testMethod3 메서드의 실행시간 : 0.313초
+아무말대자잔치 - testMethod4 메서드의 실행시간 : 0.413초
+아무말대자잔치 - testMethod4 메서드의 실행시간 : 0.413초
+아무말대자잔치 - testMethod4 메서드의 실행시간 : 0.413초
+아무말대자잔치 - testMethod5 메서드의 실행시간 : 0.526초
+아무말대자잔치 - testMethod5 메서드의 실행시간 : 0.526초
+아무말대자잔치 - testMethod5 메서드의 실행시간 : 0.526초
