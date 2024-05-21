@@ -5743,7 +5743,7 @@
             
             - **DAO & Mapper & Test 파일 만들어 확인해주면 됨**
          
-      - **file**
+   - **file**
         
         - **Spring 파일라이브러리 'MultipartFile’**
             - Spring MVC에서는 **MultipartFile객체**를 사용하여 클라이언트로부터 전송된 파일을 받아서 처리할 수 있다.
