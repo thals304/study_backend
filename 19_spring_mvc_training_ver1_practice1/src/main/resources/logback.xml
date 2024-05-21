@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<!--(추가) 로그 파일 경로 -->
+    <property name="LOG_PATH" value="${user.home}/logs/test.log"/> <!-- ${user.home}/logs/test.log -->
+    
+    <!-- (추가) 파일 로깅 appender (DailyRollingFileAppender )-->
+    <appender name="DAILY_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}</file>													  <!-- 로그파일 경로 및 이름 설정 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>app.log.%d{yyyy-MM-dd}.log</fileNamePattern>             <!-- 파일 이름 패턴 설정 -->
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>  <!-- 로깅 패턴 -->
+        </encoder>
+    </appender>
+    
+	<logger name="jdbc.sqlonly" 	   level="info">
+		<appender-ref ref="DAILY_FILE" />
+	</logger>
+	<logger name="jdbc.sqltiming" 	   level="off" />
+	<logger name="jdbc.audit" 		   level="off" />
+	<logger name="jdbc.resultset" 	   level="off" />
+	<logger name="jdbc.resultsettable" level="info">
+		<appender-ref ref="DAILY_FILE" />
+	</logger>
+	<logger name="jdbc.connection" 	   level="off" />
+	
+	<root level="INFO">
+		<appender-ref ref="CONSOLE" />
+	</root>
+	
+</configuration>

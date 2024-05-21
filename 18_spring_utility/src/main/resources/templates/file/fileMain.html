@@ -20,7 +20,7 @@
 	</form>	
 	<br><hr><br>
 	
-	<form >
+	<form th:action="@{/file/upload2}" method="post" enctype="multipart/form-data">
 		<h3>다중 파일 업로드 메뉴얼1</h3>
 		<table border="1" >			
 			<tr>
@@ -43,7 +43,7 @@
 	<br><hr><br>	
 	
 	
-	<form>
+	<form th:action="@{/file/upload2}" method="post" enctype="multipart/form-data">
 		<h3>다중파일 업로드 메뉴얼2 (멀티플)</h3>
 		<table border="1" >			
 			<tr>
@@ -66,20 +66,21 @@
 			<th>다운로드</th>
 		</tr>
 		<tr>
-			<td><img  width="200" height="120"/></td>
+			<!-- <img th:src="@{/file/thumbnails(변수명=${memberDTO.profile})}"/> -->
+			<td><img th:src="@{/file/thumbnails(fileName=404.PNG)}" width="200" height="120"/></td>
 			<td>404 이미지</td>
-			<td><a>다운로드</a></td>
+			<td><a th:href="@{/file/download(fileName=404.PNG)}">다운로드</a></td>
 		</tr>
 		<tr>
-			<td><img width="200" height="120"/></td>
+			<td><img th:src="@{/file/thumbnails(fileName=500.PNG)}" width="200" height="120"/></td>
 			<td>500 이미지</td>
-			<td><a>다운로드</a></td>
+			<td><a th:href="@{/file/download(fileName=500.PNG)}">다운로드</a></td>
 		</tr>
 	</table>
 	<br><hr><br>
 	
 	
-	<form>
+	<form th:action="@{/file/delete}" method="post">
 		<h3>파일 삭제 메뉴얼</h3>
 		<table>			
 			<tr>
@@ -94,7 +95,7 @@
 	<br><hr><br>
 	
 	
-	<form >
+	<form th:action="@{/file/update}" method="post" enctype="multipart/form-data">
 		<h3>파일 수정 메뉴얼</h3>
 		<table border="1" >			
 			<tr>
