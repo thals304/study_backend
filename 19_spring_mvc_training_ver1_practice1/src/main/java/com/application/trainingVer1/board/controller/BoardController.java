@@ -32,7 +32,7 @@ import com.application.trainingVer1.board.service.BoardService;
  * 404 에러 발생 > 아직 updateBoard를 만들지 않아서 생긴 문제
  * 게시글 수정하기 : (authentication) Controller -> (updateBoard) Controller -> updateBoard.html -> Controller
  * -> Service & ServiceImpl -> DAO -> mapper
- * 500 에러 발생 > Column 'CONTENT' cannot be null 해결 못함 (선생님과 같이한 프로젝트에서도 발생한 문제)
+ * 500 에러 발생 > Column 'CONTENT' cannot be null 해결 못함
  *                  updateBoard.html에서 dates 형식 yyyy인데 yy라고 작성 & hidden boardId에서 name을 작성함 
  *                  th:utext=*{content}는 th:field가 아니기 때문에 반드시 name을 써줘야 함
  *                  Controller(PostMapping)에서 location

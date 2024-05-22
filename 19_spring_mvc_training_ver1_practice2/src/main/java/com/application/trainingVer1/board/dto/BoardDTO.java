@@ -3,17 +3,19 @@ package com.application.trainingVer1.board.dto;
 import java.util.Date;
 
 public class BoardDTO {
-	private int boardId;
+
+	private long boardId;
 	private String passwd;
 	private String writer;
 	private String subject;
 	private String content;
-	private int readCnt;
+	private long readCnt;
 	private Date enrollAt;
-	public int getBoardId() {
+	
+	public long getBoardId() {
 		return boardId;
 	}
-	public void setBoardId(int boardId) {
+	public void setBoardId(long boardId) {
 		this.boardId = boardId;
 	}
 	public String getPasswd() {
@@ -40,10 +42,10 @@ public class BoardDTO {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public int getReadCnt() {
+	public long getReadCnt() {
 		return readCnt;
 	}
-	public void setReadCnt(int readCnt) {
+	public void setReadCnt(long readCnt) {
 		this.readCnt = readCnt;
 	}
 	public Date getEnrollAt() {
@@ -52,10 +54,10 @@ public class BoardDTO {
 	public void setEnrollAt(Date enrollAt) {
 		this.enrollAt = enrollAt;
 	}
+	
 	@Override
 	public String toString() {
 		return "BoardDTO [boardId=" + boardId + ", passwd=" + passwd + ", writer=" + writer + ", subject=" + subject
 				+ ", content=" + content + ", readCnt=" + readCnt + ", enrollAt=" + enrollAt + "]";
 	}
-	
 }
