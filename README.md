@@ -6224,6 +6224,255 @@
             
         </mapper> 
         ```
+     - **스케쥴러 (Scheduler)**
+        
+        - **[ 스케쥴링 구현 방법 ]**
+            - **설정**
+                
+                Application Class에 @EnableScheduling 어노테이션을 추가한다.
+                
+            - **기능 구현**
+                
+                주기적으로 실행되어야 하는 메서드(Service Layer)위에 **@Scheduled(cron="초 분 시 일 월 요일 (연도)") 어노테이션**을 사용한 뒤에 스케쥴링을 사용한다.
+                
+                **스케쥴링에서는 return과 parameter를 사용할 수 없다.**
+            
+        - Service에서 Scheduled 을 해줌
+        
+        ```java
+        @Service
+        public class SchedulerService {
+        	
+        	@Autowired
+        	private SchedulerDAO schedulerDAO;
+        	
+        	@Scheduled(cron="0 10-15 12 * * *")
+        	public void schedulerEx() {
+        		System.out.println("scheduler test");
+        	}
+        	
+        	// 초 분 시 일 월 요일 (컴퓨터시간에 의존)
+        	@Scheduled(cron="0 0 15 * * *") 
+        	public void getProductList() {
+        		
+        		System.out.println("ex) 15시 스케쥴러");
+        		schedulerDAO.getProductList();
+        	}
+        	
+        	@Scheduled(cron="0 0 17 * * *")
+        	public void getBrandList() {
+        		System.out.println("ex) 17시 스케쥴러");
+        		schedulerDAO.getBrandList();
+        	}
+        	
+        }
+        
+        ```
+        
+    - **export**
+        - 엑셀을 만들어 주는 것 (db에서 받은 자료로 엑셀 만드는 것도 가능)
+        
+        ```html
+        <!DOCTYPE html>
+        <html xmlns:th="http://www.thymeleaf.org">
+        <head>
+        <meta charset="UTF-8">
+        <title>export</title>
+        </head>
+        <body>
+        
+        	<h3>excel export 참조 메뉴얼</h3>
+        	<p>
+        		<!-- 아래 버튼 클릭시 export 컨트롤러로 이동 -->
+        		<input type="button" value="예시" th:onclick="|location.href='@{/export/ex}'|"			 /> 				
+        		<input type="button" value="Product Export"  th:onclick="|location.href='@{/export/productExport}'|"/>
+        		<input type="button" value="Brand Export" 	 th:onclick="|location.href='@{/export/brandExport}'|" />
+        	</p>
+        	
+        </body>
+        </html>
+        ```
+        
+        ```java
+        @Controller
+        @RequestMapping("/export")
+        public class ExportController {
+        	
+        	@Autowired
+        	private SchedulerDAO schedulerDAO; // 단순 실습을 위한 DAO 재사용
+        	
+        	@GetMapping("/main")
+        	public String main() {
+        		return "export/main";
+        	}
+        	
+        	@GetMapping("/ex")
+        	public void exportSample(HttpServletResponse response) {
+          
+        		try {
+        			 
+        			// Excel 파일명
+        			String fileName = "export_ex";
+        			
+        			// Excel Sheet
+        			Workbook workbook = new XSSFWorkbook();
+        			Sheet sheet = workbook.createSheet("test sheet");
+        			
+        			// Excel 헤더
+        			String[] header = {"제목1", "제목2", "제목3", "제목4", "제목5"};
+        			Row row = sheet.createRow(0);                 // 1row를 생성한다.
+        			for (int i = 0; i < header.length; i++) {
+        			    Cell cell = row.createCell(i);			  // 1cell을 생성한다.
+        			    cell.setCellValue(header[i]);			  // 데이터를 대입한다.
+        			}
+        	
+        			// Excel 본문
+        			for (int i = 1; i < 10; i++) {
+        				
+        				row = sheet.createRow(i); 
+        				
+        				Cell cell = row.createCell(0);
+        				cell.setCellValue("제목1 데이터");
+        				
+        				cell = row.createCell(1);
+        				cell.setCellValue("제목2 데이터");
+        				
+        				cell = row.createCell(2);
+        				cell.setCellValue("제목3 데이터");
+        				
+        				cell = row.createCell(3);
+        				cell.setCellValue("제목4 데이터");
+        				
+        				cell = row.createCell(4);
+        				cell.setCellValue("제목5 데이터");
+        				
+        			}
+        
+        			// 엑셀 파일 생성 및 다운로드
+        			response.setContentType("application/vnd.ms-excel");
+        			response.setHeader("Content-Disposition", "attachment;filename="+ URLEncoder.encode(fileName, "UTF-8") + ".xlsx");
+        			workbook.write(response.getOutputStream());
+        			workbook.close();
+        	
+        		} catch(IOException e) {
+        		    e.printStackTrace();
+        		}
+        		
+        	}
+        	
+        	@GetMapping("/productExport")
+        	public void productExport(HttpServletResponse response) {
+          
+        		try {
+        			 
+        			// Excel 파일명
+        			String fileName = "productList";
+        			
+        			// Excel Sheet
+        			Workbook workbook = new XSSFWorkbook();
+        			Sheet sheet = workbook.createSheet("상품리스트");
+        			
+        			// Excel 헤더
+        			String[] header = {"상품아이디", "상품이름", "가격", "배송비", "등록일자", "브랜드아이디"};
+        			Row row = sheet.createRow(0);                 // 1row를 생성한다.
+        			for (int i = 0; i < header.length; i++) {
+        			    Cell cell = row.createCell(i);			  // 1cell을 생성한다.
+        			    cell.setCellValue(header[i]);			  // 데이터를 대입한다.
+        			}
+        	
+        			// Excel 본문
+        			List<Map<String,Object>> productList = schedulerDAO.getProductList();
+        			int i = 0;
+        			for (Map<String,Object> product : productList ) {
+        				
+        				row = sheet.createRow(i);
+        				
+        				Cell cell = row.createCell(0);
+        				cell.setCellValue((String)product.get("PRODUCT_ID").toString());
+        				
+        				cell = row.createCell(1);
+        				cell.setCellValue((String)product.get("PRODUCT_NM").toString());
+        				
+        				cell = row.createCell(2);
+        				cell.setCellValue((String)product.get("PRICE").toString().toString());
+        				
+        				cell = row.createCell(3);
+        				cell.setCellValue((String)product.get("DELIVERY_PRICE").toString());
+        				
+        				cell = row.createCell(4);
+        				cell.setCellValue((String)product.get("ENROLL_AT").toString());
+        				
+        				cell = row.createCell(5);
+        				cell.setCellValue((String)product.get("BRAND_ID").toString());
+        				
+        				i++;
+        			}
+        	
+        				
+        			// 엑셀 파일 생성 및 다운로드
+        			response.setContentType("application/vnd.ms-excel");
+        			response.setHeader("Content-Disposition", "attachment;filename="+ URLEncoder.encode(fileName, "UTF-8") + ".xlsx");
+        			workbook.write(response.getOutputStream());
+        			workbook.close();
+        	
+        		} catch(IOException e) {
+        		    e.printStackTrace();
+        		}
+        		
+        	}
+        	
+        	@GetMapping("/brandExport")
+        	public void brandExport(HttpServletResponse response) {
+          
+        		try {
+        			 
+        			// Excel 파일명
+        			String fileName = "brandList";
+        			
+        			// Excel Sheet
+        			Workbook workbook = new XSSFWorkbook();
+        			Sheet sheet = workbook.createSheet("브랜드리스트");
+        			
+        			// Excel 헤더
+        			String[] header = {"브랜드아이디", "브랜드이름"};
+        			Row row = sheet.createRow(0);                 // 1row를 생성한다.
+        			for (int i = 0; i < header.length; i++) {
+        			    Cell cell = row.createCell(i);			  // 1cell을 생성한다.
+        			    cell.setCellValue(header[i]);			  // 데이터를 대입한다.
+        			}
+        	
+        			// Excel 본문
+        			List<Map<String,Object>> brandList = schedulerDAO.getBrandList();
+        			int i = 0;
+        			for (Map<String,Object> brand : brandList ) {
+        				
+        				row = sheet.createRow(i);
+        				
+        				Cell cell = row.createCell(0);
+        				cell.setCellValue((String)brand.get("BRAND_ID").toString());
+        				
+        				cell = row.createCell(1);
+        				cell.setCellValue((String)brand.get("BRAND_NM").toString());
+        				
+        				i++;
+        			}
+        	
+        				
+        			// 엑셀 파일 생성 및 다운로드
+        			response.setContentType("application/vnd.ms-excel");
+        			response.setHeader("Content-Disposition", "attachment;filename="+ URLEncoder.encode(fileName, "UTF-8") + ".xlsx");
+        			workbook.write(response.getOutputStream());
+        			workbook.close();
+        	
+        		} catch(IOException e) {
+        		    e.printStackTrace();
+        		}
+        		
+        	}
+        }
+        
+        ```
+
    
 ### MVC_ver1 (by Spring Boot)
 
