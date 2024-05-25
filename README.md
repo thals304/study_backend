@@ -5060,7 +5060,620 @@
             	</select>
             
             </mapper>
-            ```  
+            ```
+
+    - **AJAX**
+        - **Controller TO AJAX 데이터 전송**
+            - 과거에는 jackson , gson등 JSON과 자바의 매핑관련 기능 의존성을 추가하여 사용하였으나
+            (예시 : implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1')
+            - 현재는 스프링 부트에서 컨버터 기능을 자동으로 적용시켜주어 **@ResponseBody 어노테이션**을 사용하여
+            다양한 데이터 타입을 간편하게 전송할 수 있다.
+        
+        ```java
+        @Controller
+        @RequestMapping("/c2a")
+        public class C2A {
+        
+        	@Autowired
+        	private SupposeDAO supposeDAO;
+        	
+        	@GetMapping("/main")
+        	public String main() {
+        		return "chapter05_AJAX/ajaxEx01_c2a";
+        	}
+        
+        	// 1) 단일데이터 return
+        	@PostMapping("/ex01")
+        	@ResponseBody
+        	public String ex01() {
+        		return supposeDAO.getString();
+        	}
+        
+        	
+        	// 2) DTO return
+        	@PostMapping("/ex02")
+        	@ResponseBody
+        	public ProductDTO ex02() {
+        		return supposeDAO.getDTO();
+        	}
+        	
+        	
+        	// 3) List<DTO> return
+        	@PostMapping("/ex03")
+        	@ResponseBody
+        	public List<ProductDTO> ex03() {
+        		return supposeDAO.getDTOList();
+        	}
+        	
+        	
+        	// 4) Map return 
+        	@PostMapping("/ex04")
+        	@ResponseBody
+        	public Map<String, Object> ex04() {
+        		return supposeDAO.getMap();
+        	}
+        
+        	
+        	// 5) List<Map> return
+        	@PostMapping("/ex05")
+        	@ResponseBody
+        	public List<Map<String, Object>> ex05() {
+        		return supposeDAO.getMapList();
+        	}
+        	
+        	
+        }
+        
+        ```
+        
+        ```html
+        <!DOCTYPE html>
+        <html xmlns:th="http://www.thymeleaf.org">
+        <head>
+        <meta charset="UTF-8">
+        <title>controllerToAjax</title>
+        <script th:src="@{/jquery/jquery-3.7.1.min.js}"></script>
+        <script>
+        
+        	$().ready(function(){
+        		
+        		// 1) 단일데이터 return
+        		$("#btn1").click(function(){
+        			
+        			/*
+        				
+        				[형식]
+        			
+        				파라메타
+        				
+        			*/
+        			
+        			$.ajax({
+        				
+        				url : "/c2a/ex01" ,
+        				type : "post",
+        				success : function(data) {
+        					$("#printData").html(data);
+        				}
+        				
+        			});
+        			
+        			
+        		});
+        		
+        		
+        	
+        		// 2) DTO return
+        		$("#btn2").click(function(){
+        			
+        			/*
+        			
+        				 [DTO 사용형식 ]
+        
+        				파라메타.필드
+        				
+        			*/
+        			
+        			$.ajax({
+        				
+        				url : "/c2a/ex02",
+        				type : "post",
+        				success : function(data) {
+        					//console.log(data);
+        					//console.log(data.productId);
+        					//console.log(data.productNm);
+        					//console.log(data.price);
+        					
+        					// ver1
+        					let dataView = "<table border='1'>";
+        					dataView += "<tr>";
+        					dataView += "<th>productId</th>";
+        					dataView += "<th>productNm</th>";
+        					dataView += "<th>price</th>";
+        					dataView += "<th>deliveryPrice</th>";
+        					dataView += "<th>enrollDt</th>";
+        					dataView += "<th>brandId</th>";
+        					dataView += "</tr>";
+        					
+        					dataView += "<tr>";
+        					dataView += "<td>" + data.productId + "</td>";
+        					dataView += "<td>" + data.productNm + "</td>";
+        					dataView += "<td>" + data.price + "</td>";
+        					dataView += "<td>" + data.deliveryPrice + "</td>";
+        					dataView += "<td>" + data.enrollDt + "</td>";
+        					dataView += "<td>" + data.brandId + "</td>";
+        					dataView += "</tr>";
+        					
+        					dataView += "</table>";
+        					
+        					// ver2 (블록문자열 사용) > 데이터 표현식은 ${} 사용
+        					let viewData = `
+        						<table border='1'>
+        							<tr>
+        								<th>productId</th>
+        								<th>productNm</th>
+        								<th>price</th>
+        								<th>deliveryPrice</th>
+        								<th>enrollDt</th>
+        								<th>brandId</th>
+        							</tr>
+        							<tr>
+        								<td>${data.productId}</td>
+        								<td>${data.productNm}</td>
+        								<td>${data.price}</td>
+        								<td>${data.deliveryPrice}</td>
+        								<td>${data.enrollDt}</td>
+        								<td>${data.brandId}</td>
+        							</tr>
+        						</table>`;
+        					
+        					//$("#printData").html(dataView); // ver1
+        					$("#printData").html(viewData);   // ver2
+        					
+        				}
+        				
+        			});
+        			
+        			
+        			
+        		});
+        		
+        		
+        		
+        		// 3) List<DTO> return
+        		$("#btn3").click(function(){
+        					
+        			/*
+        			
+        				[ List<DTO> 사용형식 ]	
+        			
+        				$(파라메타).each(function{
+        					${this.필드}
+        				});
+        				
+        			*/
+        			
+        			$.ajax({
+        				
+        				url : "/c2a/ex03" ,
+        				type : "post" ,
+        				success : function(dataList) {
+        					//console.log(dataList);
+        					let viewData = `
+        						<table border='1'>
+        							<tr>
+        								<th>productId</th>
+        								<th>productNm</th>
+        								<th>price</th>
+        								<th>deliveryPrice</th>
+        								<th>enrollDt</th>
+        								<th>brandId</th>
+        							</tr>`;
+        							$(dataList).each(function(){                 
+        								viewData += `
+        									<tr>
+        										<td>${this.productId}</td>
+        										<td>${this.productNm}</td>
+        										<td>${this.price}</td>
+        										<td>${this.deliveryPrice}</td>       
+        										<td>${this.enrollDt}</td>
+        										<td>${this.brandId}</td>
+        									</tr>
+        								`;
+        							});
+        							viewData += `</table>`;
+        							$("#printData").html(viewData);
+        							
+        				}
+        				
+        			});
+        			
+        					
+        		});
+        		
+        		
+        		
+        		// 4) Map return
+        		$("#btn4").click(function(){
+        			
+        			/*
+        			
+        				[ Map 사용형식 ]	
+        
+        				파라메타.키
+        				
+        			*/
+        			
+        			$.ajax({
+        				url  : "/c2a/ex04", // before : action
+        				type : "post", // before : method
+        				success : function(data){
+        					//console.log(data);
+        					let viewData = `
+        						<table border='1'>
+        								<tr>
+        								<th>productId</th>
+        								<th>productNm</th>
+        								<th>price</th>
+        								<th>deliveryPrice</th>
+        								<th>enrollDt</th>
+        								<th>brandId</th>
+        								<th>addTax</th>
+        								<th>totalPrice</th>
+        								<th>brandNm</th>
+        								<th>enteredDt</th>
+        								<th>activeYn</th>
+        							</tr>
+        							<tr>
+        								<td>${data.productId}</td>
+        								<td>${data.productNm}</td>
+        								<td>${data.brandId}</td>
+        								<td>${data.price}</td>
+        								<td>${data.deliveryPrice}</td>
+        								<td>${data.enrollDt}</td>
+        								<td>${data.addTax}</td>
+        								<td>${data.totalPrice}</td>
+        								<td>${data.brandNm}</td>
+        								<td>${data.enterdDt}</td>
+        								<td>${data.activeYn}</td>
+        							</tr>
+        					    </table>
+        					`;
+        					$("#printData").html(viewData);
+        				}
+        			});
+        			
+        		});
+        		
+        	
+        		
+        		// 5) List<Map> return
+        		$("#btn5").click(function(){
+        			
+        			/*
+        			
+        				[ List<Map> 사용형식 ]	
+        			
+        				$(파라메타).each(function{
+        					${this.키}
+        				});
+        			
+        			*/
+        			
+        			$.ajax({
+        				url : "/c2a/ex05",
+        				type : "post",
+        				success : function(data){
+        					//console.log(data);
+        					let viewData = `
+        						<table border='1'>
+        							<tr>
+        								<th>productId</th>
+        								<th>productNm</th>
+        								<th>price</th>
+        								<th>deliveryPrice</th>
+        								<th>enrollDt</th>
+        								<th>brandId</th>
+        								<th>addTax</th>
+        								<th>totalPrice</th>
+        								<th>brandNm</th>
+        								<th>enteredDt</th>
+        								<th>activeYn</th>
+        							</tr>`;
+        							
+        							$(dataList).each(function(){
+        								viewData += `<tr>
+        									<td>${this.productId}</td>
+        									<td>${this.productNm}</td>
+        									<td>${this.brandId}</td>
+        									<td>${this.price}</td>
+        									<td>${this.deliveryPrice}</td>
+        									<td>${this.enrollDt}</td>
+        									<td>${this.addTax}</td>
+        									<td>${this.totalPrice}</td>
+        									<td>${this.brandNm}</td>
+        									<td>${this.enteredDt}</td>
+        									<td>${this.activeYn}</td>
+        								</tr>`;
+        							});
+        						viewData += `</table>`;
+        						
+        						$("#printData").html(viewData);
+        				}
+        			});
+        		});
+        		
+        	});
+        	
+        </script>
+        </head>
+        <body>
+        
+        	<fieldset>
+        		<legend>ControllerToAjax</legend>
+        	    <input type="button" id="btn1" value="1) 단일데이터" >
+        	    <input type="button" id="btn2" value="2) DTO" >
+        	    <input type="button" id="btn3" value="3) List(DTO)" >
+        	    <input type="button" id="btn4" value="4) map" >
+        	    <input type="button" id="btn5" value="5) List(map)" >
+        	</fieldset>
+        	
+        	<fieldset>
+        	    <div id="printData" >
+        	    
+        	    </div>
+        	</fieldset>
+        	
+        </body>
+        </html>
+        ```
+        
+        - **AJAX TO Controller 데이터 전송**
+            - 과거에는 jackson , gson등 JSON과 자바의 매핑관련 기능 의존성을 추가하여 사용하였으나
+            (예시 : implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1')
+            - 현재는 스프링 부트에서 컨버터 기능을 자동으로 적용시켜주어 **@RequestBody 어노테이션**을 사용하여 간편하게 구현할 수 있다.
+            - **@RequestBody**는 Spring Framework에서 사용하는 어노테이션으로
+            HTTP 요청의 본문(body)에 있는 데이터(JSON,XML, 등)를 Java 객체로 변환해주는 역할을 한다.
+            - 주로 RESTful 웹 서비스에서 클라이언트가 서버에 데이터를 전송할 때 사용된다.
+        
+        ```java
+        @Controller
+        @RequestMapping("/a2c")
+        public class A2C {
+        	
+        	
+        	@GetMapping("/main")
+        	public String main() {
+        		return "chapter05_AJAX/ajaxEx02_a2c";
+        	}
+        
+        	// 1) 단일 데이터 전송
+        	@PostMapping("/ex01")
+        	@ResponseBody
+        	public String ex01(@RequestParam("productId") long productId) { // @RequestParam 어노테이션으로 데이터를 전송받는다.
+        		
+        		System.out.println("\n --- single data --- \n");
+        		System.out.println("productId : " + productId);
+        		
+        		return "";
+        		
+        	}
+        		
+        	
+        	// 2) DTO 전송
+        	@PostMapping("/ex02")
+        	@ResponseBody
+        	public String ex02(@RequestBody ProductDTO productDTO )  { // @RequestBody 애너테이션을 사용하여 JSON 데이터를 자바 객체로 변환하여 전송받는다.
+        		
+        		System.out.println("\n --- DTO --- \n");
+        		System.out.println(productDTO);
+        		
+        		return "";
+        	
+        	}
+        
+        	
+        	// 3) List<DTO> 전송
+        	@PostMapping("/ex03")
+        	@ResponseBody
+        	public String ex03(@RequestBody List<ProductDTO> productList) { // @RequestBody 애너테이션을 사용하여 JSON 데이터를 자바 객체로 변환하여 전송받는다.
+        		
+        		System.out.println("\n --- DTO List --- \n");
+        		
+        		for (ProductDTO productDTO : productList) {
+        			System.out.println(productDTO);
+        		}
+        		
+        		return "";
+        		
+        	}
+        	
+        	
+        	// 4) map 전송
+        	@PostMapping("/ex04")
+        	@ResponseBody 
+        	// 전송되는 데이터의 타입이 다양할 경우 Object 타입으로 받는다.
+        	public String ex04(@RequestBody Map<String, Object> map) { // @RequestBody 애너테이션을 사용하여 JSON 데이터를 자바 객체로 변환하여 전송받는다.
+        
+        		System.out.println("\n --- Map --- \n");
+        		System.out.println(map);
+        		
+        		/*
+        		 
+        	 	# Object로 데이터를 받은 이후 형변환하는 방법 예시
+        	 	
+        	 	1) String : map.get("key").toString() , 
+        	 			 map.get("key").toString() + ""
+        	 	2) int    : Integer.parseInt(map.get("key").toString);
+        	 	3) long   : Long.parseLong(map.get("key").toString);
+        	 	4) double : Double.parseDouble(map.get("key").toString);
+        	 
+        	 */
+        
+        		String orderId = map.get("orderId").toString();
+        		int orederQty = Integer.parseInt(map.get("orderQty").toString());
+        		String cartId = map.get("cartId") + "";
+        		long cartQty = Long.parseLong(map.get("cartQty")+ "");
+        		
+        		return "";
+        		
+        	}
+        	
+        
+        	// 5) List<Map> 전송
+        	@PostMapping("/ex05")
+        	@ResponseBody
+        	public String ex05(@RequestBody List<Map<String, Object>> mapList) { // @RequestBody 애너테이션을 사용하여 JSON 데이터를 자바 객체로 변환하여 전송받는다.
+        
+        		System.out.println("\n --- Map List --- \n");
+        		for (Map<String, Object> map : mapList) {
+        			System.out.println(map);
+        		}
+        		
+        		return "";
+        		
+        	}
+        	
+        }
+        
+        ```
+        
+        ```html
+        <!DOCTYPE html>
+        <html xmlns:th="http://www.thymeleaf.org">
+        <head>
+        <meta charset="UTF-8">
+        <title>ajaxToController</title>
+        <script th:src="@{/jquery/jquery-3.7.1.min.js}"></script>
+        <script>
+        
+        	$().ready(function(){
+        
+        		// 1) 단일 데이터 전송
+        		$("#btn1").click(function(){
+        			$.ajax({
+        				url : "/a2c/ex01",
+        				type : "post",
+        				contentType : "application/x-www-form-urlencoded", // 기본 데이터 타입(생략 가능)
+        				data : {"productId" : "1111"}
+        			});
+        			
+        		});
+        		
+        		
+        		
+        		// 2) DTO 전송
+        		$("#btn2").click(function(){
+        			
+        			// JSON 데이터의 키와 자바객체의 필드가 일치된 구조로 전송해야 한다.
+        			let param = {
+        				"productId" : 1,
+        				"productNm" : "기계식키보드",
+        				"price" : 45000,
+        				"deliveryPrice" : 2500,
+        				"enrollDt" : "2024-01-01",
+        				"brandId" : 1
+        			};
+        			
+        			$.ajax({
+        				url : "/a2c/ex02",
+        				type : "post",
+        				contentType : "application/json", //json 타입으로 데이터를 서버로 전송
+        				data : JSON.stringify(param) // JSON.stringify(JSON); 함수를 사용하여 JSON 데이터를 문자열로 직렬화하여 전송
+        			});
+        			
+        		});
+        		
+        		
+        		// 3) List<DTO> 전송
+        		$("#btn3").click(function(){
+        			
+        			let productList = []; // javascript 배열생성
+        			for (let i = 1; i < 11; i++) {
+        				// JSON 데이터의 키와 자바객체의 필드가 일치된 구조로 전송해야 한다.
+        				let param = {
+        					"productId" : i,
+        					"productNm" : "무소음마우스" + i,
+        					"price" : 10000 * i,
+        					"deliveryPrice" : i,
+        					"enrollDt" : "2023-01-01",
+        					"brandId" : i
+        				}
+        				productList.push(param);  // 배열.push(데이터); 함수를 사용하여 데이터를 배열에 추가
+        			}
+        			
+        			//console.log(productList);
+        			
+        			$.ajax({
+        				url : "/a2c/ex03",
+        				type : "post",
+        				contentType : "application/json",
+        				data : JSON.stringify(productList)
+        			});
+        			
+        		});
+        		
+        		
+        		// 4) Map 전송
+        		$("#btn4").click(function(){
+        			
+        			let param = {
+        				"orderId" : "order1",
+        				"orderQty" : 2,
+        				"cartId" : "cart3",
+        				"cartQty" : 4
+        			};
+        			
+        			$.ajax({
+        				url : "/a2c/ex04",
+        				type : "post",
+        				contentType : "application/json",
+        				data : JSON.stringify(param)
+        			});
+        					
+        		});
+        	
+        		
+        		
+        		// 5) List<Map> 전송
+        		$("#btn5").click(function(){
+        			
+        			let mapList = []; // javascript 배열생성
+        			for (let i = 1; i < 11; i++) {
+        				let param = {
+        						"orderId" : "order" + i,
+        						"orderQty" : i,
+        						"cartId" : "cart" + i,
+        						"cartQty" : i
+        					};
+        				mapList.push(param);  // 배열.push(데이터); 함수를 사용하여 데이터를 배열에 추가
+        			}
+        			
+        			$.ajax({
+        				url : "/a2c/ex05",
+        				type : "post",
+        				contentType : "application/json",
+        				data : JSON.stringify(mapList)
+        			});
+        			
+        		});
+        		
+        	});
+        </script>
+        </head>
+        <body>
+        	<fieldset>
+        		<legend>AjaxToController</legend>
+        	    <input type="button" id="btn1" value="1) 단일데이터" >
+        	    <input type="button" id="btn2" value="2) DTO" >
+        	    <input type="button" id="btn3" value="3) List(DTO)" >
+        	    <input type="button" id="btn4" value="4) map" >
+        	    <input type="button" id="btn5" value="5) List(map)" >
+        	</fieldset>
+        </body>
+        </html>
+        ```
+            
 - **AOP ( Aspect-Oriented Programming ) 관점 지향 프로그래밍**
     
     - 프로젝트 개발 과정에서 핵심 기능 외에 추가적이고 다양한 부가(공통) 기능이 필요로 한다. (로깅 , 보안 , 트랜잭션 , 테스트 , 등등)
