@@ -21,4 +21,6 @@ public interface BoardDAO {
 	
 	public void updateBoard(BoardDTO boardDTO);
 	
+	public void deleteBoard(long boardId);
+	
 }

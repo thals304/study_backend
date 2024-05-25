@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>연습예제</title>
+<script th:src="@{/jquery/jquery-3.7.1.min.js}"></script>
+<script>
+
+	$().ready(function(){
+
+		$("#answer").click(function(){
+			
+			let param = {
+					
+				"num1"   : $("[name='num1']").val(),
+				"num2"   : $("[name='num2']").val(),
+				"answer" : $("[name='answer']").val()
+				
+			}
+			
+			
+			$.ajax({
+				
+				url : "/ajax/ex06_answerSample",
+				type : "post",
+				contentType : "application/json",
+				data : JSON.stringify(param),
+				success : function(result) {
+					$("#result").text(result);
+				}
+			
+			});
+			
+		});
+		
+	});
+</script>
+</head>
+<body>
+
+	<!-- 
+	
+		# 구구단 게임
+		
+		1. 구구단 문제를 출제하기 위해, 숫자 2개를 지정한다.
+		2. 입력받은 숫자의 정답을 입력받는다. 
+		3. 숫자와 정답 데이터를 AJAX를 사용하여 /ajax/ex06_practice컨트롤러로 전송한다.
+		4. 컨트롤러에서 정답여부를 반환한후 '정답' 혹은 '땡(정답 : 실제정답)'을 반환한다.
+		5. 반환받은 데이터를 <p id="result"></p>에 표시한다.
+	
+	 -->
+
+	<div>
+		<fieldset>
+			<legend>숫자 1 * 숫자 2 = 정답</legend>
+			<p>
+				<input type="number" name="num1" value="2"/> &emsp; * &emsp;
+				<input type="number" name="num2" value="1"/>  &emsp; = &emsp;
+				<input type="text" name="answer">
+			</p>
+			<p><input type="button" id="answer" value="확인"></p>
+			<p id="result"></p>
+		</fieldset>		
+	</div>
+
+</body>
+</html>

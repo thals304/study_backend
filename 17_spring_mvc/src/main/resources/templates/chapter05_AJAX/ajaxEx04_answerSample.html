@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>연습예제</title>
+<script th:src="@{/jquery/jquery-3.7.1.min.js}"></script>
+<script>
+
+	$().ready(function(){
+
+		$("#answer").click(function(){
+			
+			let param = {
+					
+				"me" : $("#me").val(),
+				"com" : $("#com").val()
+				
+			}
+			
+			$.ajax({
+				
+				url : "/ajax/ex04_answerSample",
+				type : "post",
+				contentType : "application/json",
+				data : JSON.stringify(param),
+				success : function(result) {
+					$("#result").text(result);
+				}
+			
+			});
+			
+		});
+		
+	});
+</script>
+</head>
+<body>
+
+	<!-- 
+	
+		# Up! Down! 게임
+			
+			1. com은 77이다.
+			
+			2. me의 숫자 데이터를 AJAX를 사용하여 /ajax/ex04_practice컨트롤러로 전송한다.
+			
+			3. me의 데이터에 따라 
+				1) me < com	: Up!
+				2) me == com : Bingo!
+				3) me > com  : Down!
+				를 AJAX로 반환 한다.
+			
+			4. <div id="result"></div> 엘리먼트에 결과를 출력한다.
+	 -->
+
+	<div>
+	
+		UP! DOWN! 게임 : <input type="text" id="me" /> 
+		<input type="hidden" id="com" value="77" /> 
+		<input type="button" id="answer" value="확인" />
+		
+	</div>
+
+	<div id="result">
+		
+	</div>
+
+</body>
+</html>

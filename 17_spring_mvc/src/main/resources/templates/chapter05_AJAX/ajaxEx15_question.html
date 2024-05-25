@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>연습예제</title>
+</head>
+<body>
+
+	<!-- 
+	
+		# Get DTO List
+	
+		1. get DTO 버튼을 클릭할 경우 AJAX를 사용하여 supposeDAO.getDTOList()데이터를 받아온다. 
+		
+		2.반환된 데이터를 테이블 형태로 <div id="result"></div>에 출력한다.
+		
+		예시)
+		
+			<table border='1'>
+				<tr>
+					<th>productId</th>
+					<th>productNm</th>
+					<th>price</th>
+					<th>deliveryPrice</th>
+					<th>enrollDt</th>
+					<th>brandId</th>
+				</tr>
+				<tr>
+					<td>1</td>
+					<td>노트북1</td>
+					<td>1000000</td>
+					<td>2500</td>
+					<td>오늘일자</td>
+					<td>1</td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>노트북2</td>
+					<td>2000000</td>
+					<td>2500</td>
+					<td>오늘일자</td>
+					<td>2</td>
+				</tr>
+				...
+				...
+				...
+				
+			 </table>
+	 -->
+
+	<h3>Get DTO List</h3>
+	<input type="button" id="answer" value="get DTO List" />
+	
+	<div id="result">
+	
+	</div>
+
+</body>
+</html>

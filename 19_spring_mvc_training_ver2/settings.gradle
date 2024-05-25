@@ -1,0 +1,7 @@
+pluginManagement {
+	repositories {
+		maven { url 'https://repo.spring.io/snapshot' }
+		gradlePluginPortal()
+	}
+}
+rootProject.name = '19_spring_mvc_training_ver2'

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>연습예제</title>
+<script th:src="@{/jquery/jquery-3.7.1.min.js}"></script>
+<script>
+
+	$().ready(function(){
+
+		$("#answer").click(function(){
+			
+			$.ajax({
+				
+				url : "/ajax/ex17_answerSample",
+				type : "post",
+				success : function(data) {
+					
+					let result =  `
+						<table border='1'>
+							<tr>
+								<th>productId</th>
+								<th>productNm</th>
+								<th>brandId</th>
+								<th>price</th>
+								<th>deliveryPrice</th>
+								<th>enrollDt</th>
+								<th>addTax</th>
+								<th>totalPrice</th>
+								<th>brandNm</th>
+								<th>enteredDt</th>
+								<th>activeYn</th>
+							</tr>`;
+						$(data).each(function(){
+			
+							result += "<tr>";
+							result += "<td>" + this.productId +"</td>";
+							result += "<td>" + this.productNm +"</td>";
+							result += "<td>" + this.brandId +"</td>";
+							result += "<td>" + this.price +"</td>";
+							result += "<td>" + this.deliveryPrice +"</td>";
+							result += "<td>" + this.enrollDt +"</td>";
+							result += "<td>" + this.addTax +"</td>";
+							result += "<td>" + this.totalPrice +"</td>";
+							result += "<td>" + this.brandNm +"</td>";
+							result += "<td>" + this.enteredDt +"</td>";
+							result += "<td>" + this.activeYn +"</td>";
+							result += "</tr>";
+			
+						});
+						
+						result += "</table>";
+						
+						$("#result").html(result);
+				}
+			
+			});
+			
+		});
+		
+	});
+	
+</script>
+</head>
+<body>
+
+	<!-- 
+	
+		# Get Map List
+	
+		1. get Map List 버튼을 클릭할 경우 AJAX를 사용하여 supposeDAO.getMapList()데이터를 받아온다. 
+		
+		2.반환된 데이터를 테이블 형태로 <div id="result"></div>에 출력한다.
+		
+		예시)
+		
+			<table border='1'>
+				<tr>
+					<th>productId</th>
+					<th>productNm</th>
+					<th>brandId</th>
+					<th>price</th>
+					<th>deliveryPrice</th>
+					<th>enrollDt</th>
+					<th>addTax</th>
+					<th>totalPrice</th>
+					<th>brandNm</th>
+					<th>enteredDt</th>
+					<th>activeYn</th>
+				</tr>
+				<tr>
+					<td>productId1</td>
+					<td>노트북1</td>
+					<td>brandId1</td>
+					<td>10000</td>
+					<td>2500</td>
+					<td>오늘일자</td>
+					<td>1000</td>
+					<td>11000</td>
+					<td>브랜드1</td>
+					<td>오늘일자</td>
+					<td>Y</td>
+				</tr>
+				<tr>
+					<td>productId2</td>
+					<td>노트북2</td>
+					<td>brandId2</td>
+					<td>20000</td>
+					<td>2500</td>
+					<td>오늘일자</td>
+					<td>2000</td>
+					<td>12000</td>
+					<td>브랜드2</td>
+					<td>오늘일자</td>
+					<td>Y</td>
+				</tr>
+				...
+				...
+				...
+			</table>
+		
+	 -->
+
+	<h3>Get Map List</h3>
+	<input type="button" id="answer" value="get Map List" />
+	
+	<div id="result">
+	
+	</div>
+
+</body>
+</html>

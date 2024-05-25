@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>controllerToAjax</title>
+<script th:src="@{/jquery/jquery-3.7.1.min.js}"></script>
+<script>
+
+	$().ready(function(){
+		
+		// 1) 단일데이터 return
+		$("#btn1").click(function(){
+			
+			/*
+				
+				[형식]
+			
+				파라메타
+				
+			*/
+			
+			$.ajax({
+				
+				url : "/c2a/ex01" ,
+				type : "post",
+				success : function(data) {
+					$("#printData").html(data);
+				}
+				
+			});
+			
+			
+		});
+		
+		
+	
+		// 2) DTO return
+		$("#btn2").click(function(){
+			
+			/*
+			
+				 [DTO 사용형식 ]
+
+				파라메타.필드
+				
+			*/
+			
+			$.ajax({
+				
+				url : "/c2a/ex02",
+				type : "post",
+				success : function(data) {
+					//console.log(data);
+					//console.log(data.productId);
+					//console.log(data.productNm);
+					//console.log(data.price);
+					
+					// ver1
+					let dataView = "<table border='1'>";
+					dataView += "<tr>";
+					dataView += "<th>productId</th>";
+					dataView += "<th>productNm</th>";
+					dataView += "<th>price</th>";
+					dataView += "<th>deliveryPrice</th>";
+					dataView += "<th>enrollDt</th>";
+					dataView += "<th>brandId</th>";
+					dataView += "</tr>";
+					
+					dataView += "<tr>";
+					dataView += "<td>" + data.productId + "</td>";
+					dataView += "<td>" + data.productNm + "</td>";
+					dataView += "<td>" + data.price + "</td>";
+					dataView += "<td>" + data.deliveryPrice + "</td>";
+					dataView += "<td>" + data.enrollDt + "</td>";
+					dataView += "<td>" + data.brandId + "</td>";
+					dataView += "</tr>";
+					
+					dataView += "</table>";
+					
+					// ver2 (블록문자열 사용) > 데이터 표현식은 ${} 사용
+					let viewData = `
+						<table border='1'>
+							<tr>
+								<th>productId</th>
+								<th>productNm</th>
+								<th>price</th>
+								<th>deliveryPrice</th>
+								<th>enrollDt</th>
+								<th>brandId</th>
+							</tr>
+							<tr>
+								<td>${data.productId}</td>
+								<td>${data.productNm}</td>
+								<td>${data.price}</td>
+								<td>${data.deliveryPrice}</td>
+								<td>${data.enrollDt}</td>
+								<td>${data.brandId}</td>
+							</tr>
+						</table>`;
+					
+					//$("#printData").html(dataView); // ver1
+					$("#printData").html(viewData);   // ver2
+					
+				}
+				
+			});
+			
+			
+			
+		});
+		
+		
+		
+		// 3) List<DTO> return
+		$("#btn3").click(function(){
+					
+			/*
+			
+				[ List<DTO> 사용형식 ]	
+			
+				$(파라메타).each(function{
+					${this.필드}
+				});
+				
+			*/
+			
+			$.ajax({
+				
+				url : "/c2a/ex03" ,
+				type : "post" ,
+				success : function(dataList) {
+					//console.log(dataList);
+					let viewData = `
+						<table border='1'>
+							<tr>
+								<th>productId</th>
+								<th>productNm</th>
+								<th>price</th>
+								<th>deliveryPrice</th>
+								<th>enrollDt</th>
+								<th>brandId</th>
+							</tr>`;
+							$(dataList).each(function(){                 
+								viewData += `
+									<tr>
+										<td>${this.productId}</td>
+										<td>${this.productNm}</td>
+										<td>${this.price}</td>
+										<td>${this.deliveryPrice}</td>       
+										<td>${this.enrollDt}</td>
+										<td>${this.brandId}</td>
+									</tr>
+								`;
+							});
+							viewData += `</table>`;
+							$("#printData").html(viewData);
+							
+				}
+				
+			});
+			
+					
+		});
+		
+		
+		
+		// 4) Map return
+		$("#btn4").click(function(){
+			
+			/*
+			
+				[ Map 사용형식 ]	
+
+				파라메타.키
+				
+			*/
+			
+			$.ajax({
+				
+				url : "/c2a/ex04",  
+				type : "post",
+				success : function(data) {
+					//console.log(data);
+					
+					let viewData = `
+						<table border='1'>
+							<tr>
+								<th>productId</th>
+								<th>productNm</th>
+								<th>price</th>
+								<th>deliveryPrice</th>
+								<th>enrollDt</th>
+								<th>brandId</th>
+								<th>addTax</th>
+								<th>totalPrice</th>
+								<th>brandNm</th>
+								<th>enteredDt</th>
+								<th>activeYn</th>
+							</tr>
+							<tr>
+								<td>${data.productId}</td>
+								<td>${data.productNm}</td>
+								<td>${data.brandId}</td>
+								<td>${data.price}</td>
+								<td>${data.deliveryPrice}</td>
+								<td>${data.enrollDt}</td>
+								<td>${data.addTax}</td>
+								<td>${data.totalPrice}</td>
+								<td>${data.brandNm}</td>
+								<td>${data.enteredDt}</td>
+								<td>${data.activeYn}</td>
+							</tr>
+						</table>
+					`;
+					
+					$("#printData").html(viewData);
+					
+				}
+				
+			});
+			
+			
+			
+		});
+		
+	
+		
+		// 5) List<Map> return
+		$("#btn5").click(function(){
+			
+			/*
+			
+				[ List<Map> 사용형식 ]	
+			
+				$(파라메타).each(function{
+					${this.키}
+				});
+			
+			*/
+			$.ajax({
+				
+				url : "/c2a/ex05" , 
+				type : "post",
+				success : function(dataList) {
+					//console.log(dataList);
+					let viewData = `
+						<table border='1'>
+							<tr>
+								<th>productId</th>
+								<th>productNm</th>
+								<th>price</th>
+								<th>deliveryPrice</th>
+								<th>enrollDt</th>
+								<th>brandId</th>
+								<th>addTax</th>
+								<th>totalPrice</th>
+								<th>brandNm</th>
+								<th>enteredDt</th>
+								<th>activeYn</th>
+							</tr>`;
+							
+							$(dataList).each(function(){
+								viewData += `<tr>
+									<td>${this.productId}</td>
+									<td>${this.productNm}</td>
+									<td>${this.brandId}</td>
+									<td>${this.price}</td>
+									<td>${this.deliveryPrice}</td>
+									<td>${this.enrollDt}</td>
+									<td>${this.addTax}</td>
+									<td>${this.totalPrice}</td>
+									<td>${this.brandNm}</td>
+									<td>${this.enteredDt}</td>
+									<td>${this.activeYn}</td>
+								</tr>`;
+							});
+						viewData += `</table>`;
+						
+						$("#printData").html(viewData);
+						
+				}
+			
+			});
+			
+			
+			
+		});
+		
+	});
+	
+</script>
+</head>
+<body>
+
+	<fieldset>
+		<legend>ControllerToAjax</legend>
+	    <input type="button" id="btn1" value="1) 단일데이터" >
+	    <input type="button" id="btn2" value="2) DTO" >
+	    <input type="button" id="btn3" value="3) List(DTO)" >
+	    <input type="button" id="btn4" value="4) map" >
+	    <input type="button" id="btn5" value="5) List(map)" >
+	</fieldset>
+	
+	<fieldset>
+	    <div id="printData" >
+	    
+	    </div>
+	</fieldset>
+	
+</body>
+</html>

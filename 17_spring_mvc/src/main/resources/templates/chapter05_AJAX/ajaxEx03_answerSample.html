@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>연습예제</title>
+<script th:src="@{/jquery/jquery-3.7.1.min.js}"></script>
+<script>
+
+	$().ready(function(){
+
+		$("#answer").click(function(){
+			
+			let param = {
+					
+				"me" : $("[name='me']").val(),
+				"com" : $("[name='com']").val()
+			
+			}
+			
+			$.ajax({
+				
+				url : "/ajax/ex03_answerSample",
+				type : "post",
+				contentType : "application/json",
+				data : JSON.stringify(param),
+				success : function(result) {
+					$("#result").text(result);
+				}
+			
+			});
+			
+		});
+		
+	});
+</script>
+</head>
+<body>
+
+	<!-- 
+	
+		# 가위 바위 보
+			
+			1. com은 바위만 낼 수 있다.
+			
+			2. me는 가위 바위 보 중에 하나의 데이터를 AJAX를 사용하여 /ajax/ex03_practice컨트롤러로 전송한다.
+			
+			3. me의 데이터에 따라 
+				1) 비겼다.
+				2) 내가 이겼다.
+				3) 내가 졌다.	
+				4) 잘못된 입력값 입니다. '가위' 혹은 '바위' 혹은 '보'를 입력해주세요.			
+			   를 AJAX로 반환 한다.
+			
+			4. <div id="result"></div> 엘리먼트에 결과를 출력한다.
+	
+	 -->
+
+	<div>
+	
+		가위 바위 보 : <input type="text" name="me" /> 
+		<input type="hidden" name="com" value="바위" /> 
+		<input type="button" id="answer" value="확인" />
+		
+	</div>
+
+	<div id="result">
+		
+	</div>
+
+</body>
+</html>

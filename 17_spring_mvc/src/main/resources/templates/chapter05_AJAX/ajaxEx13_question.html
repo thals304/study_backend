@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>연습예제</title>
+</head>
+<body>
+
+	<!-- 
+	
+		# 좋아요 & 싫어요
+	
+		1. 좋아요 혹은 싫어요 버튼을 누를 때 productId와 likeCnt 혹은 dislikeCnt를 AJAX를 사용하여 /ajax/ex13_practice컨트롤러로 전송한다.
+		
+		2. /ajax/ex13_practice컨트롤러에서 likeCnt 혹은 dislikeCnt를 1증가시켜서 반환한다.
+		   
+		3. 증가된 숫자를 id가 likeCnt 혹은 dislikeCnt에 출력한다.
+	
+	 -->
+
+	<img th:src="@{/thymeleaf.PNG}" width="300" height="300"/>	
+	<input type="hidden" id="productId" th:value="product1" />
+	<p>좋아요 : <span id="likeCnt" style="color:red;">0</span> </p>
+	<p>싫어요 : <span id="dislikeCnt" style="color:green;">0</span></p>
+	<p>
+		<input type="button" id="like" value="좋아요"/>
+		<input type="button" id="dislike" value="싫어요"/>
+	</p>
+
+
+</body>
+</html>

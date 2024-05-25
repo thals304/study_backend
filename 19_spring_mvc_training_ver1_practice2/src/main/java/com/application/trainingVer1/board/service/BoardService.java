@@ -15,5 +15,7 @@ public interface BoardService {
 	public boolean checkAuthenticationUser(BoardDTO boardDTO);
 	
 	public void updateBoard(BoardDTO boardDTO);
+	
+	public void deleteBoard(long boardId);
 
 }

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>연습예제</title>
+</head>
+<body>
+
+	<!-- 
+	
+		# 카트리스트 수정하기2
+	
+		1. 주문수량이 달라질 때 각각의 productId와 orderQty를 AJAX를 사용하여 /ajax/ex11_practice컨트롤러로 전송한다.
+		
+		2. UPDATE SQL을 반환한다.
+		   UPDATE PRODUCT
+		   SET	  ORDER_QTY = 'orderQty'
+		   WHERE  PRODUCT_ID = 'productId'
+		
+		3. id가 msg인 엘리먼트에 SQL을 출력한다.
+	
+	
+	 -->
+
+	<h3>카트리스트</h3>
+	<table border="1">
+		<tr>
+			<th>상품 ID</th>
+			<th>주문수량</th>
+			<th>SQL</th>
+		</tr>
+		<tr>
+			<td>
+				productId1 <input type="hidden" id="productId1" value="product1">
+			</td>
+			<td>주문 수량
+				<select id="orderQty1">
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>개
+			</td>
+			<td>
+				<span id="msg1" style="color:green"></span>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				productId2 <input type="hidden" id="productId2" value="product2">
+			</td>
+			<td>주문 수량
+				<select id="orderQty2">
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>개
+			</td>
+			<td>
+				<span id="msg2" style="color:green"></span>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				productId3 <input type="hidden" id="productId3" value="product3">
+			</td>
+			<td>주문 수량
+				<select id="orderQty3">
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>개
+			</td>
+			<td>
+				<span id="msg3" style="color:green"></span>
+			</td>
+		</tr>
+	</table>
+
+</body>
+</html>

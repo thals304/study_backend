@@ -16,7 +16,7 @@ import com.application.trainingVer1.board.service.BoardService;
 /*
  * 24.05.20 time 13:43-13:58
  * 24.05.21 time 22:20-23:20
- * 24.05.22 time 6분
+ * 24.05.23 time 10:23-10:35
  * sql logging까지 포함해 MVC spring boot 게시판 만들기 시작
  * 5/20 - 설정, db 생성/연결 및 Controller , Service , DAO 의 injection까지 
  * 5/21 - 게시물 작성, 비밀번호 암호화, 전체 게시물 조회, 게시물 디테일 조회, 수정/삭제를 위한 비밀번호 검사까지 
@@ -34,6 +34,7 @@ import com.application.trainingVer1.board.service.BoardService;
  * > 실수하고 놓치는 부분 발생 
  *   updateBoard.html에서 PostMapping에 보낼 정보 중에서 object 사용 시에 filed만 쓰고 name value 안써도 됨 
  *   but, object를 사용 안 할 정보는 반드시 name 써줘야 제대로 Post에 전달 가능
+ *   PostMapping에서 @ResponseBody를 쓰지 않는 실수
  * */
 @Controller
 @RequestMapping("/board")
@@ -127,11 +128,41 @@ public class BoardController {
 	}
 	
 	@PostMapping("/updateBoard")
+	@ResponseBody
 	public String updateBoard(@ModelAttribute BoardDTO boardDTO) {
 		
 		boardService.updateBoard(boardDTO);
 		
-		return "";
+		String jsScript = """
+				<script>
+			 	   alert('수정 되었습니다.');
+			 	   location.href = '/board/boardList';
+		   	    </script>""";
+		
+		return jsScript;
+	}
+	
+	@GetMapping("/deleteBoard")
+	public String deleteboard(@RequestParam("boardId") long boardId, Model model) {
+		
+		model.addAttribute("boardId", boardId);
+		
+		return "board/deleteBoard";
+	}
+	
+	@PostMapping("/deleteBoard")
+	@ResponseBody
+	public String deleteBoard(@RequestParam("boardId") long boardId) {
+		
+		boardService.deleteBoard(boardId);
+		
+		String jsScript = """
+				<script>
+				alert('게시글이 삭제되었습니다.');
+				location.href='/board/boardList';
+				</script>
+				""";
+		return jsScript;
 	}
 	
 	}
