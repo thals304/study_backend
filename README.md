@@ -5062,6 +5062,491 @@
             </mapper>
             ```
 
+    - **dynamicQuery > mapper**
+        - Mapper에서 SQL을 동적(if , foreach)으로 제어할 수 있다.
+        - **[ 예시 ]**
+            - **표현식 		:   #{}**
+            - **if    		        :  <if>**
+            - **choose		:  <choose>**
+            - **when		:  <when>**
+            - **otherwise 	:  <otherwise>**
+            - **foreach		:  <foreach>**
+        - DAO에서 전송된 단일 데이터 , DTO의 field , Map의 key값을 조건절 속성에 **표현식 없이 그대로 사용**한다.
+            - [ 예시 ]
+                
+                <if test='productCode != null'>        : O
+                
+                <if test='#{productCode != null}'>     : X
+                
+                <if test='${productCode != null}'>     : X
+                
+        - **태그 속성구문에서 '' , "" 모두 사용 가능하다.**
+            - [예시]
+                - **<when test = '조건식'>**
+                - **<when test = "조건식" >**
+        - 조건절에서 && , || 연산자 대신에 **and , or 키워드**를 사용해야 한다.
+        - **테스트 코드**
+        
+        ```java
+        @SpringBootTest
+        public class DynamicQueryTest {
+        
+        	@Autowired
+        	private DynamicQueryDAO dynamicQueryDAO;
+        
+        	@Test
+        	@DisplayName("if 사용예시")
+        	public void ifEx() {
+        		
+        		System.out.println("\n --- ifEx --- \n");
+        		
+        		Map<String,Object> searchMap = new HashMap<String, Object>();
+        //		searchMap.put("searchKeyword", "enrollDt");
+        //		searchMap.put("searchWord" , "2022");
+        		searchMap.put("searchKeyword", "productNm");
+        		searchMap.put("searchWord" , "삼성전자");
+        		
+        		for ( ProductDTO productDTO : dynamicQueryDAO.ifEx(searchMap)) {
+        			System.out.println(productDTO);
+        		}
+        		
+        	}
+        
+        	
+        	// [ when ] 사용예시
+        	@Test
+        	@DisplayName("when 사용예시")
+        	public void whenEx() {
+        		
+        		System.out.println("\n --- whenEx --- \n");
+        		
+        		Map<String,Object> searchMap = new HashMap<String, Object>();
+        		searchMap.put("searchKeyword", "enrollDt");
+        		searchMap.put("searchWord" , "2022");
+        //		searchMap.put("searchKeyword", "productNm");
+        //		searchMap.put("searchWord" , "삼성전자");
+        		
+        		for ( ProductDTO productDTO : dynamicQueryDAO.whenEx(searchMap)) {
+        			System.out.println(productDTO);
+        		}
+        	}
+        
+        	
+        	@Test
+        	@DisplayName("otherwise 사용예시")
+        	public void otherwiseEx() {
+        		
+        		System.out.println("\n --- otherwiseEx --- \n");
+        		
+        		//int deliveryPrice = 0;
+        		int deliveryPrice = 3000;
+        		
+        		for ( ProductDTO productDTO : dynamicQueryDAO.otherwiseEx(deliveryPrice)) {
+        			System.out.println(productDTO);
+        		}
+        		
+        	}
+        
+        	
+        	@Test
+        	@DisplayName("[ foreach ] insert 사용예시")
+        	public void foreachEx01() {
+        		
+        		System.out.println("\n --- foreachEx01 --- \n");
+        		
+        		List<BrandDTO> brandList = new ArrayList<BrandDTO>();
+        		
+        		for (int i = 100; i <= 110; i++) { // 111 ~ 120 , 121 ~ 130으로 변경하며 테스트 
+        			
+        			BrandDTO brandDTO = new BrandDTO();
+        			brandDTO.setBrandId(i);
+        			brandDTO.setBrandNm("추가된브랜드" + i);
+        			brandDTO.setEnteredDt(new Date());
+        			brandDTO.setActiveYn("Y");
+        			
+        			brandList.add(brandDTO);
+        			
+        		}
+        		
+        		dynamicQueryDAO.foreachEx01(brandList);
+        		
+        	}
+        
+        	
+        	@Test
+        	@DisplayName("[ foreach ] select 사용예시")
+        	public void foreachEx02() {
+        		
+        		System.out.println("\n --- foreachEx02 --- \n");
+        		
+        		long[] brandIdList = {1 , 2 , 3};
+        		
+        		
+        		for (BrandDTO brandDTO : dynamicQueryDAO.foreachEx02(brandIdList)) {
+        			System.out.println(brandDTO);
+        		}
+        		
+        	}
+        
+        	
+        	@Test
+        	@DisplayName("[ foreach ] delete 사용예시")
+        	public void foreachEx03() {
+        		
+        		System.out.println("\n --- foreachEx03 --- \n");
+        		long[] brandIdList = {100 , 101 , 102 , 103 , 104 };
+        		
+        		dynamicQueryDAO.foreachEx03(brandIdList);
+        		
+        	}
+        
+        	
+        	@Test
+        	@DisplayName("[ foreach ] update 사용예시1")
+        	public void foreachEx04() {
+        		
+        		System.out.println("\n --- foreachEx04 --- \n");
+        		
+        		int[] productIdList = {1 , 2 , 3 , 4 , 5 , 6};
+        		
+        		dynamicQueryDAO.foreachEx04(productIdList);
+        		
+        	}
+        	
+        	
+        	@Test
+        	@DisplayName("[ foreach ] update 사용예시2")
+        	public void foreachEx05() {
+        		
+        		System.out.println("\n --- foreachEx05 --- \n");
+        		
+        		List<Map<String, Object>> mapList = new ArrayList<Map<String,Object>>(); 
+        		
+        		for (int i = 1; i < 11; i++) {
+        			Map<String, Object> map = new HashMap<String, Object>();
+        			map.put("productId" , i);
+        			map.put("addPrice" , 100 * i);
+        			mapList.add(map);
+        		}
+        		
+        		dynamicQueryDAO.foreachEx05(mapList);
+        		
+        	}
+        	
+        
+        	@Test
+        	@DisplayName("[ where ] 사용예시")
+        	public void whereEx() {
+        		
+        		System.out.println("\n --- whereEx --- \n");
+        		/*
+        		
+        			# 실습환경
+        			
+        			시나리오 1) productNm과 brandId가 모두 있을 경우   > success
+        			시나리오 2) productNm만 있을 경우 				  > success
+        			시나리오 3) brandId만 있을 경우 				  > error
+        		
+        		 */
+        
+        		ProductDTO productDTO = new ProductDTO();
+        		//productDTO.setProductNm("삼성");
+        		productDTO.setBrandId(1);
+        		
+        		for ( ProductDTO dto : dynamicQueryDAO.whereEx(productDTO)) {
+        				System.out.println(dto);
+        		}
+        
+        	}
+        
+        	@Test
+        	@DisplayName("[ set ] 사용예시")
+        	public void setEx() {
+        
+        		System.out.println("\n --- setEx --- \n");
+        		
+        		/*
+        		
+        			# 실습환경
+        			
+        			시나리오 1) price와 deliveryPrice가 모두 있을 경우  > success
+        			시나리오 2) price만 있을 경우 				  		> error
+        			시나리오 3) deliveryPrice만 있을 경우 				> success
+        	
+        		 */
+        		
+        		ProductDTO productDTO = new ProductDTO();
+        		productDTO.setPrice(1);
+        		productDTO.setDeliveryPrice(1);
+        		
+        		dynamicQueryDAO.setEx(productDTO);
+        	
+        	}
+        	
+        }
+        
+        ```
+        
+        - **<if> & <when> & <otherwise>**
+        
+        ```java
+        @Mapper
+        public interface DynamicQueryDAO {
+        
+        	public List<ProductDTO> ifEx(Map<String,Object> searchMap);   // [ if ] 사용예시
+        	public List<ProductDTO> whenEx(Map<String,Object> searchMap); // [ when ] 사용예시
+        	public List<ProductDTO> otherwiseEx(int deliveryPrice);       // [ otherwise ] 사용예시
+        	
+        }
+        
+        ```
+        
+        ```xml
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+        <mapper namespace="com.application.mvc.chapter04_dynamicQuery.DynamicQueryDAO">
+        	
+        	<!-- [ if ] 사용예시 -->
+        	<select id="ifEx" parameterType="hashmap" resultType="productDTO">
+        		SELECT *
+        		FROM   PRODUCT
+        		WHERE  <if test="searchKeyword == 'enrollDt'">
+        					ENROLL_DT LIKE CONCAT('%' , #{searchWord}, '%')
+        			   </if>
+        			   <if test="searchKeyword == 'productNm'">
+        			   		PRODUCT_NM LIKE CONCAT('%' , #{searchWord}, '%')
+        			   </if>
+        		       
+        	</select>
+        	
+        	<!-- [ when ] 사용예시 -->
+        	<select id="whenEx" parameterType="hashmap" resultType="productDTO">
+        		SELECT *
+        		FROM   PRODUCT
+        		WHERE  
+        				<choose>
+        					<when test="searchKeyword.equals('enrollDt')">
+        						ENROLL_DT LIKE CONCAT('%' , #{searchWord}, '%')
+        					</when>
+        					<when test="searchKeyword.equals('productNm')">
+        						PRODUCT_NM LIKE CONCAT('%' , #{searchWord}, '%')
+        					</when>
+        				</choose>
+        		       
+        	</select>
+        	
+        	<!-- [ otherwise ] 사용예시 -->
+        	<select id="otherwiseEx" parameterType="int" resultType="productDTO">
+        		SELECT *
+        		FROM   PRODUCT
+        		WHERE  
+        				<choose>
+        					<when test="deliveryPrice == 0">
+        						DELIVERY_PRICE = 0
+        					</when>
+        					<otherwise>
+        						DELIVERY_PRICE != 0
+        					</otherwise>
+        				</choose>
+        		       
+        	</select>
+        	
+        </mapper> 
+        ```
+        
+        - **<foreach>**
+            - foreach 태그를 사용하여 SQL에 반복구문을 적용할 수 있다.
+            - **[ foreach 속성 ]**
+                - **collection="반복객체”**
+                    
+                    DAO에서 전달받은 반복이 가능한 객체를 작성한다.(list , array= 배열)
+                    
+                - **item="변수”**
+                    
+                    반복문에서 사용되어지는 변수 이름을 작성한다.
+                    
+                - **separator="구분자”**
+                    
+                    반복 되는 쿼리문 사이의 구분자 문자열을 작성한다.
+                    
+                - **index="인덱스”**
+                    
+                    인덱스 값을 지정할 때 사용할 변수 이름을 작성한다. **(0부터 순차적으로 증가)**
+                    
+                - **open="시작문자열”**
+                    
+                    최종 반환값의 접두어를 작성한다.
+                    
+                - **close="종료문자열"**
+                    
+                    최종 반환값의 접미어를 작성한다.
+                    
+        
+        ```java
+        @Mapper
+        public interface DynamicQueryDAO {
+        
+        	public void foreachEx01(List<BrandDTO> brandList);			  // [ foreach ] insert 사용예시
+        	public List<BrandDTO> foreachEx02(long[] brandIdList);	  	  // [ foreach ] select 사용예시
+        	public void foreachEx03(long[] brandIdList);				  // [ foreach ] delete 사용예시
+        	public void foreachEx04(int[] productIdList) ;				  // [ foreach ] update 사용예시1
+        	public void foreachEx05(List<Map<String, Object>> mapList);   // [ foreach ] update 사용예시2
+        	
+        }
+        ```
+        
+        ```xml
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+        	<!-- before : var = "1개" items="뭉탱이" -->
+        	<!-- [ foreach ] insert 사용예시  -->
+        	<insert id="foreachEx01" parameterType="BrandDTO">
+        		INSERT INTO BRAND
+        				<!--    임시변수    반복 가능한 객체       구분자 -->
+        		VALUES <foreach item="brandDTO" collection="list" separator=",">
+        					(#{brandDTO.brandId} , #{brandDTO.brandNm} , #{brandDTO.enteredDt} , #{brandDTO.activeYn} )
+        			   </foreach>
+        			   <!-- 
+        				
+        					(101 , '추가된브랜드101' , new Date() , 'Y') ,
+        					(102 , '추가된브랜드102' , new Date() , 'Y') ,
+        					(103 , '추가된브랜드103' , new Date() , 'Y') ,
+        					...
+        					...
+        					...
+        					
+        				 -->
+        	</insert>
+        	
+        	<!-- [ foreach ] select 사용예시  -->
+        	<select id="foreachEx02" parameterType="long" resultType="BrandDTO">
+        		SELECT *
+        		FROM   BRAND       <!--     임시변수        반복가능한 객체    접두어   접미어     구분자 -->
+        		WHERE  BRAND_ID IN <foreach item="brandId" collection="array" open="(" close=")" separator=",">
+        								#{brandId}
+        			   			   </foreach>
+        		<!-- 
+        				WHERE BRAND_ID IN (1 , 2 , 3)
+        		-->
+        	</select>
+        	
+        	<!-- [ foreach ] delete 사용예시 -->
+        	<delete id="foreachEx03" parameterType="long">
+        		DELETE FROM BRAND
+        		WHERE  BRAND_ID IN <foreach item="brandId" collection="array" open="(" close=")" separator=",">
+        								#{brandId}
+        						   </foreach>
+        	</delete>
+        	
+        	
+        	<!-- [ foreach ] update 사용예시 -->
+        	<update id="foreachEx04" parameterType="int">
+        		UPDATE PRODUCT
+        		SET    PRICE = PRICE + 1
+        		WHERE  PRODUCT_ID IN <foreach item="productId" collection="array" open="(" separator="," close=")">
+        									#{productId}
+        							 </foreach>
+        	</update>
+        	
+        	<!-- [ foreach ] update 사용예시 -->
+        	<!-- update 쿼리를 전체 반복할 경우 데이터베이스 컨넥션 url에 allowMultiQueries=true옵션을 추가하여 사용한다. -->
+        	<update id="foreachEx05" parameterType="hashmap">
+        		
+        		<foreach item="map" collection="list" separator=";">
+        			
+        			UPDATE PRODUCT
+        			SET    PRICE = PRICE + #{map.addPrice}
+        			WHERE  PRODUCT_ID = #{map.productId}
+        			
+        			<!-- 
+        			
+        				UPDATE PRODUCT SET  PRICE = PRICE + 전달 WHERE  PRODUCT_ID = 전달;
+        				UPDATE PRODUCT SET  PRICE = PRICE + 전달 WHERE  PRODUCT_ID = 전달;
+        				UPDATE PRODUCT SET  PRICE = PRICE + 전달 WHERE  PRODUCT_ID = 전달;
+        				...
+        				...
+        				
+        			 -->
+        			 
+        		</foreach>
+        	
+        	</update>
+        	
+        </mapper> 
+        ```
+        
+        - **< where >**
+            - <where>태그는 단독으로 사용되지 않고 <if>, <choose>와 같은 태그들을 내포하여 SQL들을 연결하여 준다.
+            - **앞 뒤에 필요한 구문들(AND, OR)을 생략하는 역할**을 한다.
+        
+        ```java
+        @Mapper
+        public interface DynamicQueryDAO {
+        
+        	public List<ProductDTO> whereEx(ProductDTO productDTO);		  // [ where ] 사용예시
+        	
+        }
+        ```
+        
+        ```xml
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+        	<!-- [ where ] 사용예시 --> 
+        	<select id="whereEx" parameterType="ProductDTO" resultType="ProductDTO">
+        		
+        		SELECT *
+        		FROM   PRODUCT
+        		<where>
+        			  <if test="productNm != '' and productNm != null">
+        			  		PRODUCT_NM LIKE CONCAT('%' , #{productNm} ,'%')
+        			  </if> 
+        			  <if test="brandId != '' and brandId != null">
+        			  		AND BRAND_ID = #{brandId}
+        			  </if>
+        		</where>
+        		
+        	</select>
+        	
+        </mapper> 
+        ```
+        
+        - **<set>**
+            - <set>태그는 단독으로 사용되지 않고 <if>, <choose>와 같은 태그들을 내포하여 SQL들을 연결하여 준다.
+            - **SQL앞 뒤에 적용되지 않는 구문(,)을 생략**하여 준다.
+        
+        ```java
+        @Mapper
+        public interface DynamicQueryDAO {
+        
+        	public void setEx(ProductDTO productDTO);					  // [ set ] 사용예시
+        	
+        }
+        ```
+        
+        ```xml
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+        	<!-- [ set ] 사용예시 --> 
+        	<update id="setEx" parameterType="ProductDTO">
+        			UPDATE PRODUCT
+        			<set>
+        				<if test="price != 0">
+        					PRICE = PRICE + #{price},
+        				</if>
+        				<if test="deliveryPrice != 0">
+        					DELIVERY_PRICE = DELIVERY_PRICE + #{deliveryPrice}
+        				</if>
+        			</set>
+        			WHERE PRODUCT_ID = 1
+        	</update>
+        	
+        </mapper> 
+        ```
+
     - **AJAX**
         - **Controller TO AJAX 데이터 전송**
             - 과거에는 jackson , gson등 JSON과 자바의 매핑관련 기능 의존성을 추가하여 사용하였으나
