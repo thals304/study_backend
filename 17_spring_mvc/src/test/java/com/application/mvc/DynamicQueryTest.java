@@ -97,6 +97,8 @@ public class DynamicQueryTest {
 			
 		}
 		
+		dynamicQueryDAO.foreachEx01(brandList);
+		
 	}
 
 	
@@ -108,6 +110,11 @@ public class DynamicQueryTest {
 		
 		long[] brandIdList = {1 , 2 , 3};
 		
+		
+		for (BrandDTO brandDTO : dynamicQueryDAO.foreachEx02(brandIdList)) {
+			System.out.println(brandDTO);
+		}
+		
 	}
 
 	
@@ -117,6 +124,8 @@ public class DynamicQueryTest {
 		
 		System.out.println("\n --- foreachEx03 --- \n");
 		long[] brandIdList = {100 , 101 , 102 , 103 , 104 };
+		
+		dynamicQueryDAO.foreachEx03(brandIdList);
 		
 	}
 
@@ -128,6 +137,8 @@ public class DynamicQueryTest {
 		System.out.println("\n --- foreachEx04 --- \n");
 		
 		int[] productIdList = {1 , 2 , 3 , 4 , 5 , 6};
+		
+		dynamicQueryDAO.foreachEx04(productIdList);
 		
 	}
 	
@@ -144,7 +155,10 @@ public class DynamicQueryTest {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("productId" , i);
 			map.put("addPrice" , 100 * i);
+			mapList.add(map);
 		}
+		
+		dynamicQueryDAO.foreachEx05(mapList);
 		
 	}
 	
@@ -158,15 +172,19 @@ public class DynamicQueryTest {
 		
 			# 실습환경
 			
-			시나리오 1) productNm과 brandId가 모두 있을 경우  > success
+			시나리오 1) productNm과 brandId가 모두 있을 경우   > success
 			시나리오 2) productNm만 있을 경우 				  > success
 			시나리오 3) brandId만 있을 경우 				  > error
 		
 		 */
 
 		ProductDTO productDTO = new ProductDTO();
-		// productDTO.setProductNm("삼성");
+		//productDTO.setProductNm("삼성");
 		productDTO.setBrandId(1);
+		
+		for ( ProductDTO dto : dynamicQueryDAO.whereEx(productDTO)) {
+				System.out.println(dto);
+		}
 
 	}
 
@@ -189,6 +207,8 @@ public class DynamicQueryTest {
 		ProductDTO productDTO = new ProductDTO();
 		productDTO.setPrice(1);
 		productDTO.setDeliveryPrice(1);
+		
+		dynamicQueryDAO.setEx(productDTO);
 	
 	}
 	
