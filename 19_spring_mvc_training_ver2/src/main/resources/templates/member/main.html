@@ -9,7 +9,7 @@
 	<div align="center">
 	
 		<img th:src="@{/img/member.PNG}"/>
-		
+		<!-- session. : role인 것 같은데 session인게 어디서 받아온거지? login을 통해 알 수 있음 -->
 		<div th:if="${session.memberId == null}">
 			<p><a th:href="@{/member/register}">회원가입</a></p>
 			<p><a th:href="@{/member/login}">로그인</a></p>
