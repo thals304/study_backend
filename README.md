@@ -6158,6 +6158,12 @@
         </body>
         </html>
         ```
+
+    - **REST API**
+    
+        - **REST(Representational State Transfer)** : 자원의 상태를 주고 받는 것
+          
+        - **API** : 클라이언트와 서버 사이의 중간자 역할을 한다. 클라이언트로부터 받은 요청을 서버가 이해할 수 있는 형태로 변환하고, 서버의 응답을 다시 클라이언트에게 전달
             
 - **AOP ( Aspect-Oriented Programming ) 관점 지향 프로그래밍**
     
