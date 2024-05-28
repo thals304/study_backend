@@ -36,12 +36,21 @@ public class RestAPIController {
 		return supposeDAO.getDTO();
 	}
 	// postman으로 raw > json으로 보냄
-	@PostMapping                   // 데이터 추가
+	@PostMapping                   // 데이터 추가 (@RequestBody 어노테이션으로 데이터를 전달받는다.)
 	public void createProduct(@RequestBody ProductDTO productDTO) {
 		System.out.println(productDTO);
 	}
 	
-	//@PutMapping("")    // 데이터 수정
-	//@DeleteMapping("") // 데이터 삭제 
+	@PutMapping("/{productId}")    // 데이터 수정 (@PathVariable 어노테이션으로 ID를 전달받는다.)
+	public void updateProduct(@PathVariable("productId") long productId , 
+			                  @RequestBody ProductDTO productDTO) { // 수정할 내용 - @RequestBody 어노테이션으로 데이터를 전달받는다.
+		System.out.println("productId : " + productId);
+		System.out.println("productDTO : " + productDTO);
+	}
+	
+	@DeleteMapping("/{productId}") // 데이터 삭제 
+	public void deleteProduct(@PathVariable("productId") long productId) {
+		System.out.println("productId : " + productId);
+	}
 	
 }

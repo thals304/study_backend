@@ -39,7 +39,7 @@ import jakarta.servlet.http.HttpSession;
    2.로그인
    Controller @GetMapping > login.html $.ajax()에서 id, passwd Controller @Post로 보냄
    > Controller @PostMapping("/login") @RequestBody로 받음 <> Service & ServiceImpl에서 조회된 id가 있으면 activeYn과 passwd를 select해서 passwordEncoder.matches로 passwd까지 비교
-                                                                                                  (activeYn을 받아오는 이유? activeYn 역할 ? session과 관련있는 것 같은데)
+                                                                                                  (activeYn을 받아오는 이유? activeYn 역할 ? 탈퇴 = n , 활동 중 = y)
                                        & 로그인 성공하면 session에 memberId 추가 -> /member/main -> main.html의 unless 부분이 보임
  * 
  * 3. 수정하기
@@ -58,7 +58,7 @@ import jakarta.servlet.http.HttpSession;
  * 당일 회원가입 수 체크 스케쥴러
  * Service > ServiceImpl: SimpleDateFormat sdf, sdf.format(new Date())으로 오늘 날짜 구함 > dao > mapper : LEFT?
  * 회원 삭제 체크 스케쥴러 
- * Service > ServiceImpl : 비활성화 회원 목록이 있으면 C 드라이브에 저장된 탈퇴 회원 프로필 삭제 & db 회원 삭제 쿼리 수행 <> dao <> mapper : 비활성화 된지 90일 이상 지난 회원
+ * Service > ServiceImpl : 비활성화 회원 목록이 있으면 C 드라이브에 저장된 탈퇴 회원 프로필 삭제 & db 회원 삭제 쿼리 수행 <> dao <> mapper : 비활성화 된지 90일 이상 지난 회원 (inactiveAt)
  * */
 
 @Controller
