@@ -6164,6 +6164,314 @@
         - **REST(Representational State Transfer)** : 자원의 상태를 주고 받는 것
           
         - **API** : 클라이언트와 서버 사이의 중간자 역할을 한다. 클라이언트로부터 받은 요청을 서버가 이해할 수 있는 형태로 변환하고, 서버의 응답을 다시 클라이언트에게 전달
+
+        - **HTTP 메서드**
+            - **Get - 전체/상세 데이터 조회(요청)**
+            - **Post  - 새로운 데이터 생성(추가)**
+            - **Put - 데이터 부분 업데이트(수정)**
+            - **Delete - 데이터 삭제**
+            - URL자원(데이터)에 대한 **CRUD (Create, Read, Update, Delete) 작업**을 REST API를 통해 제공
+            - **@PathVariable , @RequestBody** 어노테이션을 통해  데이터 전달 받음
+            - **AJAX와 Rest API 예시**
+            
+            ```html
+            <!DOCTYPE html>
+            <html xmlns:th="http://www.thymeleaf.org">
+            <head>
+            <meta charset="UTF-8">
+            <title>RESTFUL API 사용예시</title>
+            <script th:src="@{/jquery/jquery-3.7.1.min.js}"></script>
+            <script>
+            
+            	$(function(){
+            	
+            		getBrandList();
+            		
+            		// 브랜드 상세조회
+            		$("#getDetail").click(function(){
+            	
+            			$.ajax({
+            				
+            				url : "/brand/" + $("#getDetailId").val(),
+            				type : "get",
+            				success : function(data) {
+            					
+            					let printData = `
+            						<table border='1'>
+            							<tr>
+            								<th>brandId</th>
+            								<th>brandNm</th>
+            								<th>activeYn</th>
+            								<th>enteredDt</th>
+            							</tr>
+            							<tr>
+            								<td>${data.brandId}</td>
+            								<td>${data.brandNm}</td>
+            								<td>${data.activeYn}</td>
+            								<td>${data.enteredDt}</td>
+            							</tr>
+            						</table>`;
+            					
+            				}
+            				
+            			});
+            			
+            		});
+            
+            		
+            		// 브랜드 추가
+            		$("#post").click(function(){
+            			
+            			let param = {
+            					"brandId"   : $("#postBrandId").val(),
+            					"brandNm"   : $("#postBrandNm").val(),
+            					"enteredDt" : $("#postEnteredDt").val(),
+            					"activeYn"  : $("#postActiveYn").val()
+            				};
+            				
+            				$.ajax({
+            					
+            					url : "/brand",
+            					type : "post",
+            					contentType : "application/json",
+            					data : JSON.stringify(param),
+            					success : function() {
+            						getBrandList();
+            					}
+            					
+            				});
+            
+            		});
+            	
+            		// 브랜드 수정
+            		$("#put").click(function(){
+            			
+            			let param = {
+            					//"brandId"   : $("#putBrandId").val(),
+            					"brandNm"   : $("#putBrandNm").val(),
+            					"enteredDt" : $("#putEnteredDt").val(),
+            					"activeYn"  : $("#putActiveYn").val()
+            				};
+            				
+            				$.ajax({
+            					
+            					url : "/brand/" + $("#putBrandId").val(),
+            					type : "put",
+            					contentType : "application/json",
+            					data : JSON.stringify(param),
+            					success : function() {
+            						getBrandList();
+            					}
+            					
+            				});
+            
+            		});
+            	
+            		// 브랜드 삭제
+            		$("#delete").click(function(){
+            			$.ajax({
+            				url : "/brand/" + $("#delBrandId").val(),
+            				type : "delete",
+            				success : function(){
+            					getBrandList();
+            				}
+            			});
+            
+            		});
+            	});
+            
+            	// 브랜드 전체조회
+            	function getBrandList() {
+            	
+            		$.ajax({
+            			
+            			url : "/brand",
+            			type : "get",
+            			success : function(brandList) {
+            				
+            				let printData = `
+            					<table border="1">
+            						<tr align="center">
+            							<th>brandId</th>
+            							<th>brandNm</th>
+            							<th>activeYn</th>
+            							<th>enteredDt</th>
+            						</tr>`;
+            						$(brandList).each(function(){
+            							printData += `
+            								<tr align="center">
+            									<td>${this.brandId}</td>
+            									<td>${this.brandNm}</td>
+            									<td>${this.activeYn}</td>
+            									<td>${this.enteredDt}</td>
+            								</tr>`;
+            						});	
+            						
+            				printData += `</table>`;
+            				
+            				$("#printBrandList").html(printData);
+            				
+            			}
+            			
+            		});
+            		
+            	}
+            
+            </script>
+            </head>
+            <body>
+            
+            	<h1>Brand Management</h1>
+            	
+            	<h3>Get Brand List(전체조회)</h3>
+            	<div id="printBrandList">
+            	
+            	</div>
+            	<hr>
+            	
+            	<div>
+            		<h3>Get Brand Detail(상세조회)</h3>
+            		<p>brandId : <input type="text" id="getDetailId" placeholder="brandId"/></p>
+            		<div id="printBrandDetail">
+            		
+            		</div>
+            		<input type="button" id="getDetail" value="Get Detail">
+            	</div>
+            	<hr/>
+            	
+            	<div>
+            		<h3>Post Brand(추가)</h3>
+            		<p>brandId :   <input type="text" id="postBrandId" 	placeholder="brandId"/></p>
+            		<p>brandNm :   <input type="text" id="postBrandNm" 	placeholder="brandNm"/></p>
+            		<p>enteredDt : <input type="text" id="postEnteredDt" placeholder="enteredDt"/></p>
+            		<p>activeYn :  <input type="text" id="postActiveYn" 	placeholder="activeYn"/></p>
+            		<input type="button" id="post" value="Post">
+            	</div>
+            	<hr/>
+            
+            	<div>
+            	<h3>Put Brand(수정)</h3>
+            		<p>brandId :   <input type="text" id="putBrandId" 	placeholder="brandId"/></p>
+            		<p>brandNm :   <input type="text" id="putBrandNm" 	placeholder="brandNm"/></p>
+            		<p>enteredDt : <input type="text" id="putEnteredDt" placeholder="enteredDt"/></p>
+            		<p>activeYn :  <input type="text" id="putActiveYn" 	placeholder="activeYn"/></p>
+            		<input type="button" id="put" value="Put">
+            	</div>
+            	<hr/>
+            
+            	<div>
+            		<h3>Delete Brand(삭제)</h3>
+            		<p>brandId : <input type="text" id="delBrandId" placeholder="brandId"/></p>
+            		<input type="button" id="delete" value="Delete">
+            	</div>
+            
+            </body>
+            </html>
+            ```
+            
+            ```java
+            @RestController
+            @RequestMapping("/brand")
+            public class BrandController {
+            
+            	@Autowired
+            	private BrandDAO brandDAO;
+            	
+            	@GetMapping // 브랜드 데이터 전체 요청
+            	// 이미 RestController 어노테이션에 ResponseBody가 포함됨
+            	public List<BrandDTO> getBrandList(){
+            		return brandDAO.getBrandList(); // brand.html 파일에 List<BrandDTO> 데이터 전송
+            	}
+            	
+            	@GetMapping("/{brandId}") // 브랜드 디테일 데이터 요청
+            	public BrandDTO getBrandDetail(@PathVariable("brandId") long brandId) {
+            		return brandDAO.getBrandDetail(brandId); // brand.html파일에 BrandDTO 데이터 전송
+            	}
+            	
+            	@PostMapping
+            	public void updateBrand(@RequestBody BrandDTO brandDTO) { // 브랜드 추가 요청
+            		brandDAO.createBrand(brandDTO); // DAO객체로 DTO전송
+            	}
+            	
+            	@PutMapping("/{brandId}") // 브랜드 수정 요청
+            	public void updateBrand(@PathVariable("brandId") long brandId ,
+            			                @RequestBody BrandDTO brandDTO) {
+            		
+            		brandDTO.setBrandId(brandId);
+            		
+            		brandDAO.updateBrand(brandDTO); // DAO객체로 DTO전송
+            	}
+            	
+            	@DeleteMapping("/{brandId}") // 브랜드 삭제 요청
+            	public void deleteBrand(@PathVariable("brandId") long brandId) {
+            		brandDAO.deleteBrand(brandId);  // DAO객체로 brandId전송
+            	}
+            	
+            	
+            }
+            ```
+            
+            ```java
+            @Mapper
+            public interface BrandDAO {
+            
+            	public List<BrandDTO> getBrandList(); 		  // 브랜드 전체조회
+            	public BrandDTO getBrandDetail(long brandId); // 브랜드 상세조회
+            	public void createBrand(BrandDTO brandDTO);	  // 브랜드 추가
+            	public void updateBrand(BrandDTO brandDTO);	  // 브랜드 수정
+            	public void deleteBrand(long brandId);		  // 브랜드 삭제
+            	
+            }
+            ```
+            
+            ```xml
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+            
+            <mapper namespace="com.application.mvc.chapter06_REST_API.BrandDAO">
+            	
+            	<!-- 브랜드 전체조회 -->
+            	<select id="getBrandList" resultType="BrandDTO">
+            		SELECT *
+            		FROM   BRAND
+            	</select>
+            	
+            	<!-- 브랜드 상세조회 -->
+            	<select id="getBrandDetail" parameterType="long" resultType="BrandDTO">
+            		SELECT  *
+            		FROM	BRAND
+            		WHERE	BRAND_ID = #{brandId}
+            	</select>
+            	
+            	<!-- 브랜드 추가 -->
+            	<insert id="createBrand" parameterType="BrandDTO">
+            		INSERT INTO
+            				BRAND
+            		VALUES (
+            			#{brandId},
+            			#{brandNm},
+            			#{enteredDt},
+            			#{activeYn}
+            		)
+            	</insert>
+            	
+            	<!-- 브랜드 수정 -->
+            	<update id="updateBrand" parameterType="BrandDTO">
+            		UPDATE	BRAND
+            		SET		BRAND_NM = #{brandNm},
+            				ENTERED_DT = #{enteredDt},
+            				ACTIVE_YN = #{activeYn}
+            		WHERE	BRAND_ID = #{brandId}
+            	</update>
+            	
+            	<!-- 브랜드 삭제 -->
+            	<delete id="deleteBrand" parameterType="long">
+            		DELETE FROM	BRAND
+            		WHERE		BRAND_ID = #{brandId}
+            	</delete>
+            		
+            </mapper> 
+            ```
             
 - **AOP ( Aspect-Oriented Programming ) 관점 지향 프로그래밍**
     
