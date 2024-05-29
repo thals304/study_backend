@@ -4122,6 +4122,51 @@
                         </html>
         
                         ```
+                - **Thymeleaf Layout**
+    
+                    - **구현방법**
+                        - **build.gradle 파일에 아래의 의존성을 추가한다. (Refresh Gradel Project)**
+                        
+                        **implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect’**
+                        
+                        - **layout역할.html**
+                            - html태그에 아래의 2속성을 추가하여 사용한다.
+                                
+                                **xmlns:th="http://www.thymeleaf.org"**
+                                
+                                **xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"**
+                                
+                            - 아래와 같은 형태로 페이지(프레그먼트)가 조립될 수 있도록 구성한다.
+                                
+                                ```
+                                	 	import
+                                	 	
+                                	 	고정화면
+                                
+                                		<div layout:fragment="속성명">
+                                				동적화면
+                                		</div>
+                                
+                                		고정화면
+                                ```
+                                
+                        - **fragment역할.html**
+                            - html태그에 아래의 3가지 속성을 추가하여 사용한다.
+                                
+                                **xmlns:th="http://www.thymeleaf.org"**
+                                
+                                **xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"**
+                                
+                                **layout:decorate="~{template하위 경로부터 작성하여 layout역할 html을 작성}”**
+                                
+                            - 아래와 같은 형태로 페이지(프레그먼트)가 조립될 수 있도록 구성한다.
+                            
+                            ```
+                            <div layout:fragment="속성명">
+                            				동적 화면
+                            </div>
+                            ```
+
     - **View → Controller**
         - **@ModelAttribute**
             - @ModelAttribute 어노테이션을 사용하여 HTML element name 과 DTO property가 일치된 경우(타입도 일치 해야함)에 DTO 형식으로 바인딩(매핑) 된 전달 받을 수 있다.
