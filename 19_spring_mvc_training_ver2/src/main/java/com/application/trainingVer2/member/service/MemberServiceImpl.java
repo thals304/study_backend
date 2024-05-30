@@ -32,7 +32,7 @@ public class MemberServiceImpl implements MemberService {
 	@Autowired
 	private PasswordEncoder passwordEncoder; // SecurityConfig클래스의 new BCryptPasswordEncoder(); 객체 주입
 	
-	private static Logger logger = LoggerFactory.getLogger(MemberServiceImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(MemberServiceImpl.class); // 얘는 왜 있는거지? scheduler에서 sysout으로 찍기 보다는 파일에도 쓰여질 수 있게끔
 	
 	
 	@Override
@@ -40,7 +40,7 @@ public class MemberServiceImpl implements MemberService {
 		
 		if (!uploadProfile.isEmpty()) { 													 // 업로드된 파일이 있으면
 			String originalFilename = uploadProfile.getOriginalFilename();					 // 원본파일명을 구한다.
-			memberDTO.setProfileOriginalName(originalFilename);								 // memberDTO에 저장한다.
+			memberDTO.setProfileOriginalName(originalFilename);	         					 // memberDTO에 저장한다.
 			
 			String extension = originalFilename.substring(originalFilename.lastIndexOf(".")); // 확장자를 구한다.
 			
@@ -100,7 +100,7 @@ public class MemberServiceImpl implements MemberService {
 	
 	
 	@Override
-	public void updateMember(MultipartFile uploadProfile , MemberDTO memberDTO) throws IllegalStateException, IOException  {
+	public void updateMember(MultipartFile uploadProfile , MemberDTO memberDTO) throws IllegalStateException, IOException   {
 		
 		if (!uploadProfile.isEmpty()) { 														// 업로드된 파일이 있으면		
 			

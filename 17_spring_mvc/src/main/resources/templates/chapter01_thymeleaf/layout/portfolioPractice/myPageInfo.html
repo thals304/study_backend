@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"  
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{/chapter01_thymeleaf/layout/portfolioPractice/layout3.html}">
+<head>
+<meta charset="UTF-8">
+<title>MyPageInfo</title>
+</head>
+<body>
+	<div layout:fragment="content3">
+		<main id="main">
+
+			<div class="site-section pb-0 site-portfolio">
+				<div class="container">
+
+					<div class="row mb-5 align-items-end">
+						<div class="col-md-6" data-aos="fade-up">
+							<h2>Info</h2>
+							<p class="mb-0">개인 정보 관리</p>
+						</div>
+
+					</div>
+
+					<div class="row">
+						<div class="col-md-6 mb-5 mb-md-0" data-aos="fade-up">
+
+							<form action="forms/contact.php" method="post" role="form"
+								class="php-email-form">
+
+								<div class="row">
+									<div class="col-md-6 form-group">
+										<label for="name">Password</label> <input type="password"
+											name="password" class="form-control" id="password"
+											data-rule="minlen:8" data-msg="Please enter at least 8 chars" />
+										<div class="validate"></div>
+									</div>
+									<div class="col-md-6 form-group">
+										<label for="name">Password confirm</label> <input
+											type="password" class="form-control" name="checkPassword"
+											id="checkPassword" />
+										<div class="validate"></div>
+									</div>
+									<div class="col-md-12 form-group">
+										<label for="name">Email</label> <input type="email"
+											class="form-control" name="email" id="email"
+											data-rule="email" data-msg="Please enter a valid email" />
+										<div class="validate"></div>
+									</div>
+									<div class="col-md-12 form-group">
+										<label for="name">Address</label>
+										<textarea class="form-control" name="message" cols="30"
+											rows="10" data-rule="required"
+											data-msg="Please write your address"></textarea>
+										<div class="validate"></div>
+									</div>
+
+
+									<div class="col-md-12 mb-3">
+										<div class="loading">Loading</div>
+										<div class="error-message"></div>
+										<div class="sent-message">Your private info has been
+											changed. Thank you!</div>
+									</div>
+
+									<div class="col-md-6 form-group">
+										<input type="submit" class="readmore d-block w-100"
+											value="UPDATE">
+									</div>
+								</div>
+
+							</form>
+
+						</div>
+						<div class="col-md-4 ml-auto order-2" data-aos="fade-up">
+							<ul class="list-unstyled">
+								<li class="mb-3"><strong class="d-block mb-1">Password</strong>
+									<span style="color: red;">비밀번호는 최소 8글자이어야 하고 <br>
+										특수문자, 대문자, 소문자, 숫자 등을 섞어 쓰는 것을 추천 드립니다.
+								</span></li>
+								<li class="mb-3"><strong class="d-block mb-1">Password
+										Confirm</strong> <span style="color: red;">password 확인용으로 옆에서 쓴
+										password와 일치해야 합니다.</span></li>
+								<li class="mb-3"><strong class="d-block mb-1">Email</strong>
+									<span style="color: red;">이메일은 abcdefg@xxxx.com 형태로 <br>
+										써주셔야 합니다.
+								</span></li>
+							</ul>
+						</div>
+
+
+					</div>
+
+				</div>
+
+			</div>
+		</main>
+	</div>
+</body>
+</html>

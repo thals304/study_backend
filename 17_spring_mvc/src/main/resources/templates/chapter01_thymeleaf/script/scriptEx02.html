@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>script</title>
+<!--  
+
+	# [Thymeleaf Inline Javascript] 컨트롤러에서 전송된 데이터 사용
+	
+	- 타임리프의 자바스크립트를 사용할 경우 서버 사이드 렌더링 없이(네추럴 템플릿)도 템플릿 파일 자체로서 사용 가능한 웹 페이지의 모습을 유지할 수 있다.
+	
+	
+		[ 사용방법 ]
+	
+		1) <script th:inline="javascript"> 와 같은 형태로 스크립트 태그를 작성한다.
+		    
+		2) CDATA(Character Data)구역 안에서 스크립트 코드를 작성한다. 
+		
+			/*<![CDATA[*/
+				 	
+				code 작성
+				 	
+			/*]]>*/
+			
+		3) 아래와 같은 형태로 서버에서 전송된 데이터를 스크립트에서 사용한다.
+		
+			/*[[${동적데이터}]]*/정적데이터   
+		
+-->
+
+<script th:inline="javascript"> <!-- th:inline="javascript"를 붙여서 사용 -->
+
+/*<![CDATA[*/
+	
+	//console.log(/*[[${string}]]*/); // 사용 가능
+	//let test = /*[[${string}]]*/;   // 불가능(초깃값을 지정해야한다/)
+	
+	console.log("1. single data ");
+	let data1 = /*[[${string}]]*/"init data1";
+	let data2 = /*[[${int}]]*/-1;
+	let data3 = /*[[${double}]]*/3.14;
+	let data4 = /*[[${boolean}]]*/false;
+	let data5 = /*[[${date}]]*/null;
+	console.log(data1);
+	console.log(data2);
+	console.log(data3);
+	console.log(data4);
+	console.log("");
+	
+	// DTO & Map : 타임리프 인라인스크립트를 사용하면 서버에서 전송된 객체나 배열을 JSON으로 변환해준다.
+	console.log("2. DTO");
+	let dto = /*[[${dto}]]*/{"productId" : 0, "productNm" : "임시상품"};
+	console.log(dto);
+	console.log(dto.productId);
+	console.log(dto.productNm);
+	console.log("");
+	
+	console.log("3. Map");
+	let map = /*[[${map}]]*/{"productNm" : "init productNm" , "brandNm" : "init brandNm"};
+	console.log(map);
+	console.log(map.productNm);
+	console.log(map.brandNm);
+	console.log("");
+	
+	console.log("4. DTO List");
+	let dtoList = /*[[${dtoList}]]*/[{"productId" : -1 , "productNm" : "init productNm1" , "price" : -1 } ,
+									 {"productId" : -2 , "productNm" : "init productNm2" , "price" : -2 } ,
+									 {"productId" : -3 , "productNm" : "init productNm3" , "price" : -3 }  ];
+	console.log(dtoList);
+	console.log(dtoList[0]);
+	console.log(dtoList[0].productId + " / " + dtoList[0].productNm + " / " + dtoList[0].price);
+	console.log("");
+
+	console.log("5. Map List");
+	let mapList = /*[[${mapList}]]*/[{"productNm" : "init productNm1" , "brandNm" : "init brandNm1" , "totalPrice" : -1 } ,
+									 {"productNm" : "init productNm2" , "brandNm" : "init brandNm2" , "totalPrice" : -2 } ,
+									 {"productNm" : "init productNm3" , "brandNm" : "init brandNm3" , "totalPrice" : -3 }  ];
+	console.log(mapList);
+	console.log(mapList[0]);
+	console.log(mapList[0].productNm + " / " + mapList[0].brandNm + " / " + mapList[0].totalPrice);
+	console.log("");
+	
+	console.log("6. Session ");
+	let userId = /*[[${session.userId}]]*/null;
+	let role   = /*[[${session.role}]]*/null;
+	console.log(userId);
+	console.log(role);
+
+	
+
+	
+/*]]>*/
+</script>
+
+
+</head>
+<body>
+
+	<h1>HTML 본문</h1>
+
+</body>
+</html>

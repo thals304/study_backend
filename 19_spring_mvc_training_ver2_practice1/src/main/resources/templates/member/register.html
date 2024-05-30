@@ -48,6 +48,9 @@
 </script>
 
 <script>
+	
+	let isPassId = false;
+	let isPassPasswd = false;
 
 	$().ready(function(){
 		$("#isValidId").click(function(){
@@ -55,19 +58,57 @@
 			let memberId = $("#memberId").val();
 			
 			if (memberId == ""){
-				$("#isValidIdMsg").html("<span style=></span>");
+				$("#isValidIdMsg").html("<span style='color:red;'>아이디를 입력하세요.</span>");
+				return;
 			}
 			
 			$.ajax({
 				url : "/member/validId",
 				type : "post",
 				data : {"memberId" : memberId },
-				success : function(){
-					
+				success : function(isValid){
+					if (isValid == "y"){
+						$("#isValidIdMsg").html("<span style='color:green;'>사용가능한 아이디입니다.</span>");
+						isPassId = true;
+					}
+					else {
+		        		$("#isValidIdMsg").html("<span style='color:red;'>중복된 아이디입니다.</span>");
+			        	isPassId = false;  
+					}
 				}
 			});
 		});
+		
+		$("#confirmPasswd").blur(function(){
+			
+			let passwd = $("#passwd").val();
+			let confirmPasswd = $("#confirmPasswd").val();
+			
+			if(passwd == confirmPasswd){
+				$("#isValidPasswdMsg").html("<span style='color:green'>패스워드가 일치합니다.</span>");
+				isPassPasswd = true;
+			}
+			else {
+				$("#isValidPasswdMsg").html("<span style='color:red'>패스워드가 일치하지 않습니다.</span>")
+				isPassPasswd = false;
+			}
+		});
+		
 	});
+	
+	function checkFormValidation(){
+		
+		if (!isPassId){
+			alert("아이디를 확인해주세요");
+			$("#memberId").focus();
+		}
+		
+		if (!isPassPasswd){
+			alert("패스워드를 확인해주세요.");
+			$("#confirmPasswd").focus();
+			return false;
+		}
+	}
 	
 </script>
 </head>

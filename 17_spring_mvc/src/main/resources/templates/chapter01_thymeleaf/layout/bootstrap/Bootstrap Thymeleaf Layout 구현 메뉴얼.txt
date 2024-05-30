@@ -1,0 +1,38 @@
+<!--  
+
+
+	# Bootstrap Thymeleaf Layout 구현 메뉴얼
+
+
+	1. 부트스트랩 템플릿에서 레이아웃 역할의 HTML파일을 찾는다. (예시 index.html , main.html) 
+	
+	
+	2. 1번에서 찾은 HTML파일에서 
+	   공통화면 코드('header' , 'side' , 'footer')와 비공통화면 코드('content')를 찾는다.
+	   
+		   (예시)
+		   공통화면 코드 : <header> , <side> , <footer>
+		   비공통화면 코드 : <main> , 등 , 태그 없음
+	   
+	
+	3. 1번 파일을 복사하여 레이아웃 HTML(layout.html)파일을 만들고 Thymeleaf Layout 설정을 적용한다.
+		
+		- layout_sample.html 예시 참조
+	   
+	   
+	4. 콘텐츠 화면의 코드(비공통화면 코드)를 새로운 HTML파일로 분리하여 fragment 설정을 적용한다.
+		
+		- layout_content_sample.html 예시 참조
+		
+		
+	5. script , css , img , editor 등 web resources 자원들을 static폴더로 이동시키고 참조 경로를 현재 경로에 맞도록 조절한다.
+
+
+
+	6. Thymeleaf 설정(layout , content)이 완료된 이후부터 
+	
+	   부트스트랩의 공통코드를 제외한 컨텐츠(비공통화면 코드)만 새로운 HTML파일에 이동시켜 
+	   레이아웃 HTML파일에 조립하여 구현한다.
+
+
+-->

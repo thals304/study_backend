@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!-- 
+
+	# Thymeleaf Layout 구현방법
+
+
+	1) build.gradle 파일에 아래의 의존성을 추가한다. (Refresh Gradel Project)
+
+		implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+
+
+	2) layout역할.html
+	
+		2-1) html태그에 아래의 2속성을 추가하여 사용한다.
+
+			xmlns:th="http://www.thymeleaf.org"  
+			xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+		
+		2-2) 아래와 같은 형태로 페이지(프레그먼트)가 조립될 수 있도록 구성한다.
+		 
+		 	import
+		 
+		 	고정화면
+		 
+			<div layout:fragment="속성명">
+					동적화면
+			</div>
+			
+			고정화면
+		
+		
+	3) fragment역할.html
+		
+		3-1) html태그에 아래의 3가지 속성을 추가하여 사용한다.
+		
+			xmlns:th="http://www.thymeleaf.org"  
+	  		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+ 	  		layout:decorate="~{template하위 경로부터 작성하여 layout역할 html을 작성}"
+		
+		3-2) 아래와 같은 형태로 페이지(프레그먼트)가 조립될 수 있도록 구성한다.
+		 
+			<div layout:fragment="속성명">
+				동적 화면
+			</div>
+
+ -->
+ 
+<html xmlns:th="http://www.thymeleaf.org"  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<title>Layout Sample</title>
+</head>
+<body>
+
+	<h1>Header</h1>
+
+	<h1>Side , Aside , Menu , Nav </h1>
+	
+	<div layout:fragment="content">
+        <h1>동적으로 교체될 화면(Content , Body , Main , Section)</h1>
+    </div>
+
+	<h1>Footer</h1>
+
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>script</title>
+<script>
+
+	/*
+	
+		# [Javascript] 컨트롤러에서 전송된 데이터 표현
+	
+		1) 서버사이드에서 전송된 데이터 타입을 모두 문자열로 처리해야하므로 JSON 및 배열 타입으로 변환할 수 없다.
+		  
+		2) 서버사이드를 통한 동적 페이지 렌더링시에는 데이터가 표시될 수 있으나 
+		   정적으로 페이지를 렌더링 할 경우 데이터를 표시 할 수 없다.
+	
+	*/
+	
+	console.log("1. single data ");
+	console.log("[[${string}]]");
+	console.log("[[${int}]]");
+	console.log("[[${double}]]");
+	console.log("[[${boolean}]]");
+	console.log("[[${date}]]");
+	console.log("");
+	
+	console.log("2. DTO");
+	let dto = "[[${dto}]]";
+	console.log(dto);
+	console.log(dto.productId); // 불가능
+	console.log(dto.productNm); // 불가능
+	console.log(dto.price);     // 불가능
+	console.log("");
+		
+	console.log("3. Map");
+	let map = "[[${map}]]";
+	console.log(map);
+	console.log(map.productNm);  // 불가능
+	console.log(map.brandNm);    // 불가능
+	console.log(map.totalPrice); // 불가능
+	console.log("");
+	
+	console.log("4. DTO List");
+	let dtoList = "[[${dtoList}]]";
+	console.log(dtoList);
+	console.log(dtoList[0]);
+	console.log(dtoList[0].productId + " / " + dtoList[0].productNm);
+	console.log("");
+	
+	console.log("5. Map List");
+	let mapList = "[[${mapList}]]";
+	console.log(mapList);
+	console.log(mapList[0]);
+	console.log(mapList[0].productNm + " / " + mapList[0].brandNm);
+	console.log("");
+	
+	console.log("6. Session ");
+	console.log("[[${session.userId}]]");
+	console.log("[[${session.role}]]");
+	console.log("");
+	
+</script>
+</head>
+<body>
+
+	<h1>HTML 본문</h1>
+
+</body>
+</html>
