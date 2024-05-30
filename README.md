@@ -4166,6 +4166,253 @@
                             				동적 화면
                             </div>
                             ```
+                - **[Javascript] 컨트롤러에서 전송된 데이터 표현**
+                    - 서버사이드에서 전송된 데이터 타입을 모두 문자열로 처리해야하므로 **JSON 및 배열 타입으로 변환할 수 없다.**
+                    - 서버사이드를 통한 동적 페이지 렌더링시에는 데이터가 표시될 수 있으나 정적으로 페이지를 렌더링 할 경우 데이터를 표시 할 수 없다.
+                    
+                    ```html
+                    <!DOCTYPE html>
+                    <html xmlns:th="http://www.thymeleaf.org">
+                    <head>
+                    <meta charset="UTF-8">
+                    <title>script</title>
+                    <script>
+                        
+                        console.log("1. single data ");
+                        console.log("[[${string}]]");
+                        console.log("[[${int}]]");
+                        console.log("[[${double}]]");
+                        console.log("[[${boolean}]]");
+                        console.log("[[${date}]]");
+                        console.log("");
+                        
+                        console.log("2. DTO");
+                        let dto = "[[${dto}]]";
+                        console.log(dto);
+                        console.log(dto.productId); // 불가능
+                        console.log(dto.productNm); // 불가능
+                        console.log(dto.price);     // 불가능
+                        console.log("");
+                            
+                        console.log("3. Map");
+                        let map = "[[${map}]]";
+                        console.log(map);
+                        console.log(map.productNm);  // 불가능
+                        console.log(map.brandNm);    // 불가능
+                        console.log(map.totalPrice); // 불가능
+                        console.log("");
+                        
+                        console.log("4. DTO List");
+                        let dtoList = "[[${dtoList}]]";
+                        console.log(dtoList);
+                        console.log(dtoList[0]);
+                        console.log(dtoList[0].productId + " / " + dtoList[0].productNm);
+                        console.log("");
+                        
+                        console.log("5. Map List");
+                        let mapList = "[[${mapList}]]";
+                        console.log(mapList);
+                        console.log(mapList[0]);
+                        console.log(mapList[0].productNm + " / " + mapList[0].brandNm);
+                        console.log("");
+                        
+                        console.log("6. Session ");
+                        console.log("[[${session.userId}]]");
+                        console.log("[[${session.role}]]");
+                        console.log("");
+                        
+                    </script>
+                    </head>
+                    <body>
+                    
+                        <h1>HTML 본문</h1>
+                    
+                    </body>
+                    </html>
+                    ```
+                    
+            **vs**
+                    
+          - **[Thymeleaf Inline Javascript] 컨트롤러에서 전송된 데이터 사용**
+                    - 타임리프의 자바스크립트를 사용할 경우 서버 사이드 렌더링 없이(네추럴 템플릿)도 템플릿 파일 자체로서 사용 가능한 웹 페이지의 모습을 유지할 수 있다.
+                    - **[ 사용방법 ]**
+                        - **<script th:inline="javascript">** 와 같은 형태로 스크립트 태그를 작성한다.
+                        - **CDATA(Character Data)구역 안에서 스크립트 코드를 작성**한다.
+                        
+                        ```
+                                    /*<![CDATA[*/
+                                    
+                                    code 작성
+                        
+                                /*]]>*/
+                        ```
+                        
+                        - 아래와 같은 형태로 서버에서 전송된 데이터를 스크립트에서 사용한다.
+                            
+                            **/*[[${동적데이터}]]*/정적데이터** 
+                            
+                        
+                        ```html
+                        <!DOCTYPE html>
+                        <html xmlns:th="http://www.thymeleaf.org">
+                        <head>
+                        <meta charset="UTF-8">
+                        <title>script</title>
+                        
+                        <script th:inline="javascript"> <!-- th:inline="javascript"를 붙여서 사용 -->
+                        
+                        /*<![CDATA[*/
+                            
+                            //console.log(/*[[${string}]]*/); // 사용 가능
+                            //let test = /*[[${string}]]*/;   // 불가능(초깃값을 지정해야한다/)
+                            
+                            console.log("1. single data ");
+                            let data1 = /*[[${string}]]*/"init data1";
+                            let data2 = /*[[${int}]]*/-1;
+                            let data3 = /*[[${double}]]*/3.14;
+                            let data4 = /*[[${boolean}]]*/false;
+                            let data5 = /*[[${date}]]*/null;
+                            console.log(data1);
+                            console.log(data2);
+                            console.log(data3);
+                            console.log(data4);
+                            console.log("");
+                            
+                            // DTO & Map : 타임리프 인라인스크립트를 사용하면 서버에서 전송된 객체나 배열을 JSON으로 변환해준다.
+                            console.log("2. DTO");
+                            let dto = /*[[${dto}]]*/{"productId" : 0, "productNm" : "임시상품"};
+                            console.log(dto);
+                            console.log(dto.productId);
+                            console.log(dto.productNm);
+                            console.log("");
+                            
+                            console.log("3. Map");
+                            let map = /*[[${map}]]*/{"productNm" : "init productNm" , "brandNm" : "init brandNm"};
+                            console.log(map);
+                            console.log(map.productNm);
+                            console.log(map.brandNm);
+                            console.log("");
+                            
+                            console.log("4. DTO List");
+                            let dtoList = /*[[${dtoList}]]*/[{"productId" : -1 , "productNm" : "init productNm1" , "price" : -1 } ,
+                                                             {"productId" : -2 , "productNm" : "init productNm2" , "price" : -2 } ,
+                                                             {"productId" : -3 , "productNm" : "init productNm3" , "price" : -3 }  ];
+                            console.log(dtoList);
+                            console.log(dtoList[0]);
+                            console.log(dtoList[0].productId + " / " + dtoList[0].productNm + " / " + dtoList[0].price);
+                            console.log("");
+                        
+                            console.log("5. Map List");
+                            let mapList = /*[[${mapList}]]*/[{"productNm" : "init productNm1" , "brandNm" : "init brandNm1" , "totalPrice" : -1 } ,
+                                                             {"productNm" : "init productNm2" , "brandNm" : "init brandNm2" , "totalPrice" : -2 } ,
+                                                             {"productNm" : "init productNm3" , "brandNm" : "init brandNm3" , "totalPrice" : -3 }  ];
+                            console.log(mapList);
+                            console.log(mapList[0]);
+                            console.log(mapList[0].productNm + " / " + mapList[0].brandNm + " / " + mapList[0].totalPrice);
+                            console.log("");
+                            
+                            console.log("6. Session ");
+                            let userId = /*[[${session.userId}]]*/null;
+                            let role   = /*[[${session.role}]]*/null;
+                            console.log(userId);
+                            console.log(role);
+                        
+                            
+                        
+                            
+                        /*]]>*/
+                        </script>
+                        
+                        </head>
+                        <body>
+                        
+                            <h1>HTML 본문</h1>
+                        
+                        </body>
+                        </html>
+                        ```
+                        
+                    - **반복문 each**
+                        - **사용 방법 1**
+                            
+                            ```
+                            /**[# th:each="변수 : ${배열 & 리스트}"]**/
+                            
+                                 /**[[${변수}]]**/;
+                                 
+                            /**[/]**/
+                            ```
+                            
+                        - **사용 방법 2**
+                            
+                            ```
+                                배열&리스트.forEach(function(임시변수){
+                                        
+                                        임시변수.속성
+                            
+                                    });
+                            ```
+                            
+                        
+                        ```html
+                        <!DOCTYPE html>
+                        <html xmlns:th="http://www.thymeleaf.org">
+                        <head>
+                        <meta charset="UTF-8">
+                        <title>Thymeleaf Loop</title>
+                         
+                        <script th:inline="javascript">
+                            
+                        /*<![CDATA[*/     
+                        
+                            console.log("1-1) for문 사용방법 (DTO List)");
+                            let tempDTO;
+                            /*[# th:each="dto : ${dtoList}"]*/
+                                console.log(/*[[${dto}]]*/);
+                                tempDTO = /*[[${dto}]]*/null;
+                                console.log(tempDTO.productId + " / " + tempDTO.productNm + " / " + tempDTO.price)
+                            /*[/]*/
+                            console.log("");
+                            
+                            console.log("1-2) for문 사용방법 (Map List)");
+                            let tempMap;
+                            /*[# th:each="map : ${mapList}"]*/
+                                console.log(/*[[${map}]]*/);
+                                tempMap = /*[[${map}]]*/null;
+                                console.log(tempMap.productNm + " / " + tempMap.brandNm + " / " + tempMap.totalPrice);
+                            /*[/]*/
+                            console.log("");
+                            
+                            
+                            console.log("2-1) for문 사용방법 (DTO List)");
+                            let dtoList = /*[[${dtoList}]]*/null;
+                            dtoList.forEach(function(dto){
+                                console.log(dto);
+                                console.log(dto.productId + " / " + dto.productNm + " / " + dto.price); 
+                            });
+                            console.log("");
+                        
+                            console.log("2-2) for문 사용방법 (Map List)- ");
+                            let mapList = /*[[${mapList}]]*/null;
+                            mapList.forEach(function(map){
+                                console.log(map);
+                                console.log(map.productNm + " / " + map.brandNm + " / " + map.totalPrice); 
+                            });
+                            console.log("");
+                            
+                        /*]]>*/   
+                            
+                        </script>
+                        
+                        </head>
+                        <body>
+                            
+                            <h1>HTML 본문</h1>
+                            
+                        </body>
+                        </html>
+                        ```
+
 
     - **View → Controller**
         - **@ModelAttribute**
