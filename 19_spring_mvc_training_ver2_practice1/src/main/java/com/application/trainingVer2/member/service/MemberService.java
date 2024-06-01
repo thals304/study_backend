@@ -13,4 +13,13 @@ public interface MemberService {
 	public void createMember(MultipartFile uploadProfile , MemberDTO memberDTO) throws IllegalStateException, IOException;
 	
 	public boolean login(MemberDTO memberDTO);
+	
+	public MemberDTO getMemberDetail(String memberId);
+	
+	public void updateMember(MultipartFile uploadProfile , MemberDTO memberDTO) throws IllegalStateException, IOException;
+
+	public void updateInactiveMember(String memberId);
+	
+	public void getTodayNewMemberCnt();
+	public void deleteMemberScheduler();
 }
