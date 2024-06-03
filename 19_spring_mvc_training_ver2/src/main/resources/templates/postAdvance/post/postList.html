@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Post List</title>
+</head>
+<body>
+	
+	<p align="right">
+		<a th:href="@{/post/postList}">(공통)커뮤니티 게시글로 이동</a> 
+		<th:block th:if="${session.userId == null}">
+			<a th:href="@{/user/signIn}">로그인</a>
+		</th:block>
+		<th:block th:if="${session.userId != null}">
+			<a th:href="@{/user/myPage}">마이페이지</a> 
+			<a th:href="@{/user/signOut}">로그아웃</a>
+		</th:block>
+	</p>
+
+	<div align="center">
+		<h2> 커뮤니티 게시글 리스트 </h2>
+		<p th:text="|전체 게시글 수 : ${allPostCnt}개|"></p>
+		<table border="1">
+			<tr align="center">
+				<th>번호</th>
+				<th>작성자</th>
+				<th>작성자 이미지</th>
+				<th>제목</th>
+				<th>작성일</th>
+				<th>조회수</th>
+			</tr>
+			<tr align="center" th:each="postMap : ${postListMap}">
+				<td th:text="${postMapStat.count}"></td>
+				<td th:text="${postMap.nickname}"></td>
+				<td><img th:src="@{/user/thumbnails(fileName=${postMap.profileUUID})}"  width="50" height="50"/></td>
+				<td><a th:href="@{/post/postDetail(postId=${postMap.postId })}" th:text="${postMap.subject}"></a></td>
+				<td th:text="${#dates.format(postMap.enrollAt , 'yyyy-MM-dd')}"></td>
+				<td th:text="${postMap.readCnt}"></td>
+			</tr>
+			<th:block th:if="${session.userId != null}">
+				<tr align="right">
+					<td colspan="6">
+						<input type="button" value="작성하기" th:onclick="|location.href='@{/post/createPost}'|">
+					</td>
+				</tr>
+			</th:block>
+		</table>
+	</div>
+	
+</body>
+</html>
