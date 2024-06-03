@@ -8479,3 +8479,176 @@ db 테이블의 컬럼과 같은 내용의 private 필드를 만들고
 **Controller에서는 Service 객체를 ServiceImpl에서는 DAO 객체를 injection 해야함 
 → @Autowired**
 
+### JPA
+
+- **Basic**
+    - **Repository**
+        - mapper를 사용하지 않기 때문에 dao가 아닌 respository라고 씀
+        - **JpaRepository<Entity , Primary Key>**
+            - JpaRepository 인터페이스를 **상속(extends)**하여 사용한다.
+            JpaRepository는 Spring Data JPA가 제공하는 인터페이스로 기본적인 CRUD(Create, Read, Update, Delete) 작업과 추가 기능들(정렬,페이징,등)을 제공한다.
+            - **<Entity Type , Primary Key Type>**
+                - 첫번째 인자는 **Repository가 다룰 엔티티 타입**(데이터베이스에 저장 및 검색)을 나타낸다.
+                - 두번째 인자는 **엔티티 기본 키(Primary Key)**의 타입을 나타낸다.
+            - BasicRepository 인터페이스를 통해 데이터베이스와의 상호작용을 쉽게 처리할 수 있으며, 복잡한 SQL 쿼리 없이도 필요한 데이터 작업을 할 수 있다.
+            - 개발자가 특정 데이터베이스 작업을 위한 쿼리 메서드를 직접 작성할 필요가 없다. Spring Data JPA가 제공하는 메서드를 사용하거나, 메서드 이름 규칙에 따라 새로운 쿼리 메서드를 정의하기만 하면 된다. 이 인터페이스를 사용함으로써, 데이터베이스 작업을 보다 효율적이고 간결하게 수행할 수 있게 된다.
+    
+    ```java
+    @Repository // JPA의 Repository 역할을 수행하는 어노테이션(생략 가능)
+    public interface BasicRepository extends JpaRepository<Brand, Long>{
+    
+    }
+    ```
+    
+    - **JPA 주요 어노테이션**
+        - **@Entity** : 클래스가 JPA 엔티티임을 나타낸다. 클래스 이름이 DB 테이블 이름에 매핑된다.
+        - **@Table**  : 엔티티 클래스가 매핑될 테이블의 정보를 명시한다. (name, catalog, schema 등의 속성을 가질 수 있음)
+        - **@Id**		: 엔티티의 기본 키(Primary Key)를 나타낸다.
+        - **@GeneratedValue** : 기본 키의 값을 자동으로 생성할 전략을 명시한다. (AUTO, IDENTITY, SEQUENCE, TABLE 중 선택)
+        - **@Column** : 필드가 매핑될 테이블의 컬럼을 명시한다. (name, nullable, length 등의 속성을 가질 수 있음)
+        - **@ManyToOne, @OneToMany, @OneToOne, @ManyToMany** : 엔티티 간의 관계를 명시한다. (@JoinColumn과 함께 사용되는 경우가 많음)
+        - **@JoinColumn** : 외래 키(Foreign Key)를 매핑할 때 사용한다. (name, referencedColumnName 등의 속성을 가질 수 있음)
+        - **@Transient** : 필드가 영속성 컨텍스트에 저장되거나 검색되지 않음을 나타낸다.
+        - **@Temporal** : 날짜 타입(java.util.Date, java.util.Calendar)의 매핑을 명시한다. (TemporalType.DATE, TemporalType.TIME, TemporalType.TIMESTAMP 중 선택)
+    
+    ```java
+    @Data
+    @Entity // JPA 엔티티 사용 선언 어노테이션
+    public class Brand {
+    	
+    	@Id // primary key 컬럼 지정
+    	private Long brandId; // primary key를 클래스 형태로 써줌
+    	private String brandNm;
+    	private Date enteredDt;
+    	private String activeYn;
+    }
+    ```
+    
+    - **데이터 조회/추가/수정/삭제 문법**
+        - **findAll() :** 테이블의 **전체 데이터를 조회**한다.
+        - **findById(primary key)**
+            - **id(primary key)에 해당되는 데이터 조회**한다.
+            - **예외처리 로직**을 작성해야 한다.
+                - 방법 1) **orElse(); 메서드**를 사용한다.
+                - 방법 2) **Optional<Brand> 클래스**를 사용한다.
+        - **save(entity); 새로운 엔티티를 데이터베이스에 추가**한다. 하지만 이**미 존재하는 엔티티의 경우 업데이트를 수행**한다.
+            - 데이터베이스 업데이트 절차도 save(entity)를 사용
+                - **1) findById(priamry key) 메서드를 사용**하여 이미 저장되어 있는 데이터를 조회한다.
+                - **2) 데이터를 수정**한다.
+                - **3) save(entity); 메서드를 사용하여 데이터베이스를 수정**한다.
+        - **deleteById(primary key);** **id(primary key)에 해당되는 데이터를 삭제**한다.
+    
+    ```java
+    @SpringBootTest
+    public class BasicTest {
+    
+    	@Autowired
+    	private BasicRepository basicRepository;
+    
+    	@DisplayName(" - 데이터 전체조회 메뉴얼 - ")
+    	@Test
+    	public void getAllBrands() {
+    		
+    		System.out.println("\n - 브랜드 전체 조회 - \n");
+    		
+    		// findAll() : 테이블의 전체 데이터를 조회한다. = select *
+    		List<Brand> brands = basicRepository.findAll();
+    		
+    		for (Brand brand : brands) {
+    			System.out.println(brand);
+    		}
+    		
+    	}
+    	
+    	@DisplayName(" - 데이터 상세조회 메뉴얼 - ")
+    	@Test
+    	public void getBrandById() {
+    		
+    		System.out.println("\n - 브랜드 상세 조회 - \n");
+    		
+    		/*
+    		  
+    		   # findById(primary key) 
+    		   
+    		   - id(primary key)에 해당되는 데이터 조회한다.
+    		   - 예외처리 로직을 작성해야 한다.
+    		 
+    		 	  방법 1) orElse(); 메서드를 사용한다.
+    		 	  방법 2) Optional<Brand> 클래스를 사용한다.
+    		 
+    		 */
+    		
+    		// 예외처리 1) orElse();를 사용한다.
+    		Brand test1 = basicRepository.findById(1l).orElse(null);
+    		System.out.println(test1);
+    		// 예외처리 2) Optaional클래스를 사용한다. 
+    		Optional<Brand> test2 = basicRepository.findById(1l);
+    	}
+    	
+    	
+    	@DisplayName(" - 데이터 추가 메뉴얼 - ")
+    	@Test
+    	public void createBrand() {
+    		
+    		System.out.println("\n - 브랜드 추가 - \n");
+    	
+    		// save(entity); 새로운 엔티티를 데이터베이스에 추가한다. 하지만 이미 존재하는 엔티티의 경우 업데이트를 수행한다.
+    		Brand brand = new Brand();
+    		brand.setBrandId(100l);
+    		brand.setBrandNm("추가된브랜드100");
+    		brand.setActiveYn("N");
+    		brand.setEnteredDt(new Date());
+    		
+    		basicRepository.save(brand);
+    	
+    	}
+    	
+    	
+    	@DisplayName(" - 데이터 수정 메뉴얼 - ")
+    	@Test
+    	public void updateBrand() {
+    		
+    		System.out.println("\n - 브랜드 수정 - \n");
+    		
+    		/*
+    		  
+    		  	# save(entity);
+    		  	
+    		  	- 새로운 엔티티를 데이터베이스에 추가한다. 
+    		  	  하지만 이미 존재(primary key)하는 엔티티의 경우 업데이트를 수행한다.
+    		 
+    		  	- 데이터베이스 업데이트 절차
+    		  	
+    			1) findById(priamry key) 메서드를 사용하여 이미 저장되어 있는 데이터를 조회한다.
+    			2) 데이터를 수정한다.
+    			3) save(entity); 메서드를 사용하여 데이터베이스를 수정한다.
+    		  
+    		 */
+    		
+    
+    		
+    		// 1) 기존에 저장되어 있는 데이터를 조회한다.
+    		Brand brand = basicRepository.findById(100l).orElse(null);
+    		
+    		// 2) 데이터를 수정한다.
+    		brand.setBrandNm("수정된 브랜드 100");
+    		brand.setEnteredDt(new Date());
+    		brand.setActiveYn("Y");
+    		
+    		// 3) save(entity); 메서드를 사용하여 데이터베이스를 수정한다.
+    		basicRepository.save(brand);
+    	}
+    	
+    	
+    	@DisplayName(" - 데이터 삭제 메뉴얼 - ")
+    	@Test
+    	public void deleteBrand() {
+    		
+    		System.out.println("\n - 브랜드 삭제 - \n");
+    		
+    		// deleteById(primary key); id(primary key)에 해당되는 데이터를 삭제한다.
+    		basicRepository.deleteById(100l);
+    	}
+    	
+    }
+    ```
