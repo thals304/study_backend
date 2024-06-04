@@ -23,7 +23,7 @@ import lombok.Data;
 
 @JoinColumn : 외래 키(Foreign Key)를 매핑할 때 사용한다. (name, referencedColumnName 등의 속성을 가질 수 있음)
 
-@Transient : 필드가 영속성 컨텍스트에 저장되거나 검색되지 않음을 나타다.
+@Transient : 필드가 영속성 컨텍스트에 저장되거나 검색되지 않음을 나타낸다.
 
 @Temporal : 날짜 타입(java.util.Date, java.util.Calendar)의 매핑을 명시한다. (TemporalType.DATE, TemporalType.TIME, TemporalType.TIMESTAMP 중 선택)
 
