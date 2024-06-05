@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.application.trainingVer2.postAdvance.dto.PostDTO;
 import com.application.trainingVer2.postAdvance.service.PostService;
 import com.application.trainingVer2.postAdvance.service.ReplyService;
-
+/*
+ * 24.06.05 time
+ * today 소감문
+ * 
+ * */
 
 @Controller
 @RequestMapping("/post")

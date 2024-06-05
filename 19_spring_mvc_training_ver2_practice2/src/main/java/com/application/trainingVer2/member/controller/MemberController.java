@@ -24,11 +24,14 @@ import com.application.trainingVer2.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 /*
- * 24.06.03 time
+ * 24.06.03 time 19:30-21:30
  * today 소감문
  * PostMapping에서 @ResponseBody가 있어야 되는 경우? 없어도 되는 경우?
  * redirect:/ url로 이동하는 경우? -> 필요 없음
- * 다시 html에 data를 보내야 하는 경우?  return jsScript과 같다고 보나?
+ * 다시 html에 data를 보내야 하는 경우? return memberService.checkValidId(memberId); 
+ * ->return jsScript과 같다고 보면 되나? Nope 
+ * html에 데이터를 보내는 경우는 주로 ajax인데 , ajax는 화면은 그대로인데 부분만 왔다갔다 하는 것이므로 ResponseBody를 써주는 것
+ * jsScript는 원래 redirect로 바로 화면 이동해줄 때는 ResponseBody가 필요 없는데 alert 등을 넣기 위해 ResponseBody를 사용 
  * 
  * */
 @Controller
