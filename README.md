@@ -6,7 +6,7 @@
 
 ## 📆 기간
 
-24.01 ~ 24.06
+24.01 ~ 24.07
 
 ## 🏃 계획
 
@@ -8650,5 +8650,528 @@ db 테이블의 컬럼과 같은 내용의 private 필드를 만들고
     		basicRepository.deleteById(100l);
     	}
     	
+    }
+    ```
+
+- **mapping**
+
+  - **Controller <DTO> Service, ServiceImpl mapper <Entity> Repository <>DB**
+    
+    **→ mapper에서** **Entity를 DTO로, DTO를 Entity 바꾸고 이를 ServiceImpl에서 사용** 
+    
+    
+    **DTO**
+    
+    - **@Data**
+    
+    ```java
+    @Data
+    public class BrandDTO {
+        
+        private Long brandId;
+        private String brandNm;
+        private Date enteredDt;
+        private String activeYn;
+    }
+    ```
+    
+    **Entity**
+    
+    - **@Entity , @Data**
+    
+    ```java
+    @Data
+    @Entity // JPA 엔티티 사용 선언 어노테이션
+    @DynamicUpdate // 하이버네이트 스펙에서 지원해주는 기능으로 @DynamicUpdate 애노테이션을 사용하여 변경되는 컬럼만 추적하여 수정한다.
+    public class Brand {
+        
+        @Id // primary key 컬럼 지정
+        private Long brandId; // primary key를 클래스 형태로 써줌
+        private String brandNm;
+        private Date enteredDt;
+        private String activeYn;
+    }
+    ```
+    
+    **Mapper**
+    
+    - **static : ‘클래스명.매서드명’ 으로 바로 사용 가능하게 함**
+    - **Entity를 DTO로, DTO를 Entity로 변환/매핑**
+    - **List<Entity> 를 List<DTO>로 변환/매핑 (실전에서는 복붙하기)**
+    
+    ```java
+    public class BrandMapper { // DTO <> Entity 매핑 클래스로 사용
+        
+        // DTO > Entity 매핑 예시
+        public static Brand toEntity(BrandDTO brandDTO) {
+            
+            Brand brand = new Brand();
+            brand.setBrandId(brandDTO.getBrandId());
+            brand.setBrandNm(brandDTO.getBrandNm());
+            brand.setEnteredDt(brandDTO.getEnteredDt());
+            brand.setActiveYn(brandDTO.getActiveYn());
+            
+            return brand;
+        }
+        
+        // Entity > DTO 매핑 예시
+        public static BrandDTO toDTO(Brand brand) {
+            
+            BrandDTO brandDTO = new BrandDTO();
+            brandDTO.setBrandId(brand.getBrandId());
+            brandDTO.setBrandNm(brand.getBrandNm());
+            brandDTO.setEnteredDt(brand.getEnteredDt());
+            brandDTO.setActiveYn(brand.getActiveYn());
+            
+            return brandDTO;
+        }
+        
+        // List<Entity> > List<DTO> 매핑 예시
+        public static List<BrandDTO> toDTOList(List<Brand> brands){
+            /*
+             
+            객체.stream() : 스트림변환
+             
+                - 객체.stream()을 통해 객체들의 스트림(Stream)을 생성한다.
+                - 스트림은 자바 8부터 도입된 컬렉션을 효율적으로 처리하기 위한 API이다.
+        
+            .map(BrandMapper::toDTO) : 매핑
+            
+                - 구문은 각 entity 객체를 DTO 객체로 변환하는 작업을 수행한다. 
+                -  BrandMapper::toDTO는 메소드 레퍼런스로, BrandMapper 클래스에 정의된 toDTO 메소드를 각 Brand 객체에 적용한다.
+            
+            .collect(Collectors.toList()) : 결과 수집
+            
+                - 스트림을 통해 변환된 BrandDTO 객체들을 새로운 리스트로 수집한다.
+    
+         */
+            //return brands.stream().map(BrandMapper::toDTO).collect(Collectors.toList());
+            return brands.stream().
+                    map(BrandMapper::toDTO).
+                    collect(Collectors.toList());
+        }
+    
+    }
+    
+    ```
+    
+    **Controller**
+    
+    ```java
+    @Controller
+    public class BrandController {
+        
+        @GetMapping("/jpa/brand/view")
+        public String view() {
+            return "brand";
+        }
+    }
+    ```
+    
+    **html**
+    
+    - .ajax를 통해 **전체 조회(Get), 상세 조회(Get) , 추가(Post), 수정(Put), 삭제(Delete)** 타입으로 전달
+    
+    ```html
+    <!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org">
+    <head>
+    <meta charset="UTF-8">
+    <title>JPA CRUD Test</title>
+    <script th:src="@{/jquery-3.7.1.min.js}"></script>
+    <script>
+    
+        $(function(){
+        
+            getBrandList();
+        
+            $("#getDetail").click(function(){
+                
+                $.ajax({
+                    url : "/brand/" + $("#getDetailId").val(),
+                    type : "get",
+                    success : function(data) {
+                        
+                        let brandDetail =  `
+                        <table border='1'>
+                            <tr>
+                            <th>brandId</th>
+                            <th>brandNm</th>
+                            <th>activeYn</th>
+                            <th>enteredDt</th>
+                        </tr>
+                        <tr>
+                            <td>${data.brandId}</td>
+                            <td>${data.brandNm}</td>
+                            <td>${data.activeYn}</td>
+                            <td>${data.enteredDt}</td>
+                        </tr>`
+                        
+                        $("#printBrandDetail").html(brandDetail);
+                    }
+                });
+        
+            });
+            
+            $("#post").click(function(){
+        
+                let param = {
+                    "brandId"   : $("#postBrandId").val(),
+                    "brandNm"   : $("#postBrandNm").val(),
+                    "enteredDt" : $("#postEnteredDt").val(),
+                    "activeYn"  : $("#postActiveYn").val()
+                }
+        
+                $.ajax({
+                    url : "/brand",
+                    type : "post",
+                    contentType: "application/json",
+                    data: JSON.stringify(param), 
+                    success : function() {
+                        getBrandList();
+                    }
+                });
+        
+            });
+        
+            
+            $("#put").click(function(){
+        
+                let param = {
+                    "brandNm"   : $("#putBrandNm").val(),
+                    "enteredDt" : $("#putEnteredDt").val(),
+                    "activeYn"  : $("#putActiveYn").val()
+                }
+        
+                $.ajax({
+                    
+                    url : "/brand/" + $("#putBrandId").val(),
+                    type : "put",
+                    contentType: "application/json",
+                    data: JSON.stringify(param),
+                    success : function() {					
+                        getBrandList();
+                    }
+                
+                });
+        
+            });
+        
+            
+            $("#delete").click(function(){
+        
+                $.ajax({
+                    url : "/brand/" + $("#delBrandId").val(),
+                    type : "delete",
+                    success : function() {
+                        
+                        getBrandList();
+                        
+                    }
+                
+                });
+        
+            });
+        });
+    
+        function getBrandList() {
+        
+            $.ajax({
+                url : "/brand",
+                type : "get",
+                success : function(data) {
+        
+                    let brandList = `<table border='1'>
+                    <tr>
+                        <th>brandId</th>
+                        <th>brandNm</th>
+                        <th>activeYn</th>
+                        <th>enteredDt</th>
+                    </tr>`;
+                    $(data).each(function(){
+                        brandList += "<tr>"
+                        brandList += "<td>" + this.brandId +"</td>"
+                        brandList += "<td>" + this.brandNm +"</td>"
+                        brandList += "<td>" + this.activeYn +"</td>"
+                        brandList += "<td>" + this.enteredDt +"</td>"
+                        brandList += "</tr>"
+                    });
+                    brandList += "</table>";
+                    
+                    $("#printBrandList").html(brandList);
+                }
+        
+            });
+        }
+    
+    </script>
+    </head>
+    <body>
+    
+        <h1>Brand Management</h1>
+        
+        <h3>Get Brand List(전체조회)</h3>
+        <div id="printBrandList">
+        
+        </div>
+        <hr/>
+        
+        <div>
+            <h3>Get Brand Detail(상세조회)</h3>
+            <p>brandId : <input type="text" id="getDetailId" placeholder="brandId"/></p>
+            <div id="printBrandDetail">
+            
+            </div>
+            <input type="button" id="getDetail" value="Get Detail">
+        </div>
+        <hr/>
+        
+        <div>
+            <h3>Post Brand(추가)</h3>
+            <p>brandId :   <input type="text" id="postBrandId" 	placeholder="brandId"/></p>
+            <p>brandNm :   <input type="text" id="postBrandNm" 	placeholder="brandNm"/></p>
+            <p>enteredDt : <input type="text" id="postEnteredDt" placeholder="enteredDt"/></p>
+            <p>activeYn :  <input type="text" id="postActiveYn" 	placeholder="activeYn"/></p>
+            <input type="button" id="post" value="Post">
+        </div>
+        <hr/>
+    
+        <div>
+            <h3>Put Brand(수정)</h3>
+                <p>brandId :   <input type="text" id="putBrandId" 	placeholder="brandId"/></p>
+                <p>brandNm :   <input type="text" id="putBrandNm" 	placeholder="brandNm"/></p>
+                <p>enteredDt : <input type="text" id="putEnteredDt" placeholder="enteredDt"/></p>
+                <p>activeYn :  <input type="text" id="putActiveYn" 	placeholder="activeYn"/></p>
+                <input type="button" id="put" value="Put">
+            </div>
+        <hr/>
+    
+        <div>
+            <h3>Delete Brand(삭제)</h3>
+            <p>brandId : <input type="text" id="delBrandId" placeholder="brandId"/></p>
+            <input type="button" id="delete" value="Delete">
+        </div>
+    
+    </body>
+    </html>
+    ```
+    
+    **RestController**
+    
+    - **@RestController**
+    - **= @Controller + @ResponseBody**
+    - **id를 Path를 통해 전달 받았을 경우, @PathVariable**
+    
+    ```java
+    @RestController // = @Controller + @ResponseBody 
+    @RequestMapping("/brand")
+    public class BrandRestController {
+        
+        @Autowired
+        private BrandService brandService;
+        
+        @GetMapping // localhost/brand (브랜드 전체조회)
+        public List<BrandDTO> getAllBrands() {
+            return brandService.getAllBrands(); // 브랜드 전체조회 데이터
+        }
+        
+        @GetMapping("/{brandId}") // localhost/brand/{id} (브랜드 상세조회)
+        public BrandDTO getBrandById(@PathVariable("brandId") long brandId) {
+            return brandService.getBrandById(brandId); // 브랜드 상세조회
+        }
+        
+        @PostMapping // localhost/brand (브랜드 추가)
+        public void createBrand(@RequestBody BrandDTO brandDTO) {
+            brandService.createBrand(brandDTO); // 브랜드 추가
+        }
+        
+        @PutMapping("/{brandId}")// localhost/brand/{id} (브랜드 수정)
+        public void updateBrand(@PathVariable("brandId") long brandId, // ID를 따로 -> findById를 하기 위함 
+                                @RequestBody BrandDTO brandDTO) { // 수정할 데이터 따로
+            brandService.updateBrand(brandId, brandDTO);
+        }
+        
+        @DeleteMapping("/{brandId}") // localhost/brand/{id} (브랜드 삭제)
+        public void deleteBrand(@PathVariable("brandId") long brandId) {
+            brandService.deleteBrand(brandId); // 브랜드 삭제
+        }
+        
+    }
+    ```
+    
+    **Service (Interface)**
+    
+    ```java
+    public interface BrandService {
+    
+        public List<BrandDTO> getAllBrands(); 		// 브랜드 전체조회
+        public BrandDTO getBrandById(Long brandId); // 브랜드 상세조회
+        public void createBrand(BrandDTO brandDTO); // 브랜드 추가
+        public void updateBrand(Long brandId ,BrandDTO brandDTO); // 브랜드 수정
+        public void deleteBrand(Long brandId);		// 브랜드 삭제
+        
+    }
+    ```
+    
+    **ServiceImpl**
+    
+    - **@Service**
+    
+    ```java
+    @Service
+    public class BrandServiceImpl implements BrandService {
+    
+        @Autowired
+        private BrandRepository brandRepository; // BrandRepository 객체 주입
+        
+        @Override
+        public List<BrandDTO> getAllBrands() {
+            // 정적 메서드 매핑
+            return BrandMapper.toDTOList(brandRepository.findAll());
+        }
+    
+        @Override
+        public BrandDTO getBrandById(Long brandId) {
+            
+            // brandId를 사용하여 entity타입으로 데이터를 조회
+            Brand brand = brandRepository.findById(brandId).orElse(null);
+            
+            // 정적(static) 메서드 매핑
+            return BrandMapper.toDTO(brand); // entity > DTO로 변환하여 컨트롤러로 return
+            
+        }
+    
+        @Override
+        public void createBrand(BrandDTO brandDTO) {
+            
+            // 정적 메서드 매핑
+             brandRepository.save(BrandMapper.toEntity(brandDTO)); // DTO > entity로 변환하여 데이터베이스로 전송
+        
+        }
+    
+        @Override
+        public void updateBrand(Long brandId , BrandDTO brandDTO) {
+            
+            // 저장되어있는 데이터 조회
+            Brand brand = brandRepository.findById(brandId).orElse(null);
+            
+            // 데이터 수정
+            brand.setBrandNm(brandDTO.getBrandNm());
+            brand.setEnteredDt(brandDTO.getEnteredDt());
+            brand.setActiveYn(brandDTO.getActiveYn());
+            
+            // 업데이트
+            brandRepository.save(brand);
+            
+        }
+    
+        @Override
+        public void deleteBrand(Long brandId) {
+            brandRepository.deleteById(brandId);
+        }
+    
+    }
+    
+    ```
+    
+    **+) ModelMapper로도 매핑 가능**
+    
+    - **ModelMapper**
+        - ModelMapper는 객체 간의 매핑을 간소화하기 위한 라이브러리이다.
+        - ModelMapper는 반복적인 매핑 코드를 줄여주어 주로 데이터 전송 객체(DTO)와 도메인 모델 사이의 데이터 변환에 사용된다.
+        - build.gradle파일에 의존성을 추가하여 ModelMapper 라이브러리를 사용한다.
+            
+            **//modelMapper
+            implementation 'org.modelmapper:modelmapper:2.4.4'**
+            
+        - **[ 주요 메서드 ]**
+            - **map(Object source, Class<D> destinationType)**
+            위 함수는 source 객체의 데이터를 destinationType 클래스의 새 인스턴스로 매핑한다.
+    
+    ```java
+    @Configuration
+    public class ModelMapperConfig {
+    
+        // ModelMapper객체를 생성
+        @Bean
+        public ModelMapper modelMapper() {
+            return new ModelMapper();
+        }
+        
+    }
+    ```
+    
+    ```java
+    @Service
+    public class BrandServiceImpl implements BrandService {
+    
+        @Autowired
+        private BrandRepository brandRepository; // BrandRepository 객체 주입
+        
+        @Autowired
+        private ModelMapper modelMapper; // ModelMapper 객체 주입
+        
+        @Override
+        public List<BrandDTO> getAllBrands() {
+            
+            return brandRepository.findAll().stream() // 함수형 방식으로 처리할 수 있게반환
+                    .map(brand -> modelMapper.map(brand ,BrandDTO.class)) //각 Brand 객체를 BrandDTO 객체로 변환
+                    .collect(Collectors.toList()); // 변환된 BrandDTO 객체들을 리스트로 수집하여 List로 변환
+        }
+    
+        @Override
+        public BrandDTO getBrandById(Long brandId) {
+            
+            // brandId를 사용하여 entity타입으로 데이터를 조회
+            Brand brand = brandRepository.findById(brandId).orElse(null);	
+        
+            // ModelMapper 매핑
+            return modelMapper.map(brand , BrandDTO.class);
+            
+        }
+    
+        @Override
+        public void createBrand(BrandDTO brandDTO) {
+            
+            // ModelMapper 매핑
+            brandRepository.save(modelMapper.map(brandDTO, Brand.class));
+        
+        }
+    
+        @Override
+        public void updateBrand(Long brandId , BrandDTO brandDTO) {
+            
+            // 저장되어있는 데이터 조회
+            Brand brand = brandRepository.findById(brandId).orElse(null);
+            
+            // 데이터 수정
+            brand.setBrandNm(brandDTO.getBrandNm());
+            brand.setEnteredDt(brandDTO.getEnteredDt());
+            brand.setActiveYn(brandDTO.getActiveYn());
+            
+            // 업데이트
+            brandRepository.save(brand);
+            
+        }
+    
+        @Override
+        public void deleteBrand(Long brandId) {
+            brandRepository.deleteById(brandId);
+        }
+    
+    }
+    
+    ```
+    
+    **Repository (Interface)**
+    
+    - **@Repository**
+    - **Entity의 상속을 받음**
+    
+    ```java
+    @Repository
+    public interface BrandRepository extends JpaRepository<Brand, Long>{
+        
+        // db와만 연결
     }
     ```
