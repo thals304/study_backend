@@ -9175,3 +9175,11 @@ db 테이블의 컬럼과 같은 내용의 private 필드를 만들고
         // db와만 연결
     }
     ```
+
+  - **JPQL ( JAVA Persistence Query Language)**
+
+    - **쿼리 메서드**
+    - Spring Data JPA는 메소드 이름을 분석하여 특정 필드를 사용한 쿼리를 자동으로 생성하고 실행 할 수 있다.
+    - **[ 레퍼런스 메뉴얼 ]**
+        
+        https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html
