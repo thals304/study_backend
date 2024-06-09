@@ -166,7 +166,7 @@ public class UserController {
 		
 		model.addAttribute("userDTO"  , userService.getUserDetail(userId)); // 유저정보 데이터를 전달한다.
 		model.addAttribute("myPostCnt"  , userService.myPostCnt(userId)); 	// 내가 작성한 게시글 개수를 전달한다.
-		model.addAttribute("myReplyCnt" , userService.myReplyCnt(userId));	// 내가 작성한 댓글 갯수를 전달한다.
+		model.addAttribute("myReplyCnt" , userService.myReplyCnt(userId));	// 내가 작성한 댓글 개수를 전달한다.
 		
 		return "postAdvance/user/myPage";  // templates/postAdvance/user/myPage.html 포워딩(데이터포함)
 	
