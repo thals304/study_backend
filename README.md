@@ -9228,3 +9228,337 @@ db 테이블의 컬럼과 같은 내용의 private 필드를 만들고
         - **[ 레퍼런스 메뉴얼 ]**
             
             http://www.java2s.com/Tutorials/Java/JPA/4800__JPA_Query_new_Object.htm
+
+- **QueryDSL**
+    
+    - **build.gradle 설정 !!**
+        - **cmd에서 cd 파일 경로로 이동**
+        - **gradlew build 명령어를 실행**
+    
+    ```
+    // (추가) QueryDSL의 버전을 "5.0.0"으로 설정하는 사용자 정의 속성 
+    buildscript {
+    	ext {
+    		queryDslVersion = "5.0.0"
+    	}
+    }
+    
+    plugins {
+    	id 'java'
+    	id 'org.springframework.boot' version '3.2.3'
+    	id 'io.spring.dependency-management' version '1.1.4'
+    	// (추가) queryDSL 소스코드 생성을 위한 Gradle 플러그인 , Q-타입 소스 코드를 과정을 자동화해주는 역할
+    	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+    }
+    
+    group = 'com.example'
+    version = '0.0.1-SNAPSHOT'
+    
+    java {
+    	sourceCompatibility = '17'
+    }
+    
+    configurations {
+    	compileOnly {
+    		extendsFrom annotationProcessor
+    	}
+    }
+    
+    repositories {
+    	mavenCentral()
+    }
+    
+    dependencies {
+    	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    	implementation 'org.springframework.boot:spring-boot-starter-web'
+    	
+    	/*
+    		(추가)
+    		- QueryDSL을 사용하여 데이터베이스 및 메모리 내 컬렉션에 대한 타입 세이프 쿼리를 작성할 수 있게 된다. 
+    		- querydsl-core는 기본 기능을 제공하며 querydsl-collections는 메모리 내 컬렉션에 대한 쿼리 지원을 추가한다.
+    		  그리고 querydsl-jpa:jakarta는 JPA를 사용하는 애플리케이션에서 QueryDSL을 활용할 수 있게 해준다.
+    	*/
+    	implementation "com.querydsl:querydsl-core:5.0.0"
+    	implementation "com.querydsl:querydsl-collections" 		
+    	implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
+    	
+    	compileOnly 'org.projectlombok:lombok'
+    	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    	runtimeOnly 'com.mysql:mysql-connector-j'
+    	annotationProcessor 'org.projectlombok:lombok'
+    	
+    	/* 
+    		(추가)
+    		QueryDSL과 Jakarta Persistence를 사용하는 프로젝트에서 필요한 코드 생성과 어노테이션 처리가 컴파일 시점에 자동으로 이루어지도록 할 수 있다.
+    	*/
+    	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+    	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    	annotationProcessor "jakarta.persistence:jakarta.persistence-api:3.1.0"
+    	
+    	
+    	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    	
+    	/*
+    		(추가)
+    		- 테스트 코드에서 필요한 모든 기능을 사용할 수 있게 된다. 
+    		- 이 종속성들은 오직 테스트 컴파일과 실행 시에만 사용되며 메인 애플리케이션의 빌드나 실행에는 포함되지 않는다. 
+    	*/
+    	testImplementation 'jakarta.persistence:jakarta.persistence-api'
+    	testImplementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    	
+    }
+    
+    tasks.named('test') {
+    	useJUnitPlatform()
+    }
+    
+    // (아래의 설정 모두 추가)
+    def querydslDir = "src/main/generated/querydsl" // Q-타입 소스 코드가 생성될 디렉토리의 경로를 지정
+    
+    /*
+    	QueryDSL 설정을 진행 
+    	jpa = true는 JPA 엔티티를 위한 Q-타입 소스 코드 생성을 활성화
+    	querydslSourcesDir에 앞서 정의한 querydslDir 변수를 할당하여 생성된 Q-타입 소스 코드가 저장될 디렉토리를 지정
+    */
+    querydsl {
+    	jpa = true
+    	querydslSourcesDir = querydslDir
+    }
+    
+    // Gradle이 디렉토리를 자바 소스 코드의 일부로 인식하도록 설정
+    sourceSets {
+    	main.java.srcDir querydslDir
+    }
+    
+    // QueryDSL 관련 코드를 컴파일할 때 사용되는 설정
+    compileQuerydsl{
+    	options.annotationProcessorPath = configurations.querydsl
+    }
+    
+    // 프로젝트의 종속성 설정을 변경합니다.
+    configurations {
+    	compileOnly {
+    		extendsFrom annotationProcessor
+    	}
+    	querydsl.extendsFrom compileClasspath
+    }
+    ```
+    
+    - **Configuration**
+        - **EntityManager**
+            - @PersistenceContext 어노테이션은 EntityManager의 인스턴스를 자동으로 주입한다.
+            - EntityManager는 JPA(Java Persistence API)의 핵심 인터페이스로 엔티티 객체의 생명주기를 관리하고 데이터베이스 쿼리( 데이터를 조회, 저장, 삭제 등의 작업) 를 수행하는 역할을 한다
+            - 이 인스턴스는 영속성 컨텍스트(중요)와 연결되어 있으며 JPA 작업을 위한 기본적인 인터페이스를 제공한다.
+        - **JPAQueryFactory**
+            - JPAQueryFactory는 QueryDSL을 사용하여 타입 세이프 쿼리를 생성할 때 사용되는 클래스이다.
+            - JPAQueryFactory는 생성 시 EntityManager를 필요로 하므로 주입된 EntityManager를 생성자에 전달하여 생성한다.
+            - JPAQueryFactory 객체를 통해 JPQL이 아닌 자바 코드로 데이터베이스 쿼리를 구성하고 실행할 수 있다.
+            - JPAQueryFactory 객체를 스프링 빈으로 등록하여 **애플리케이션의 다른 부분에서 주입받아 사용**한다.
+    
+    ```java
+    @Configuration
+    public class QueryDslConfig {
+    
+    		// 1)
+    		@PersistenceContext
+    	    private EntityManager entityManager;  
+    		
+    		// 2)
+    	    @Bean
+    	    public JPAQueryFactory jpaQueryFactory() {
+    	        return new JPAQueryFactory(entityManager);
+    	    }
+    }
+    ```
+    
+    - **Repository (기본 + 맞춤)**
+        - 기본 상속 :  JpaRepository< , >
+        - 커스텀 상속 : 커스텀(인터페이스) 변수명
+    
+    ```java
+    //JPA Repository와 사용자 정의 Repository를 상속받은 Repository를 최종적으로 사용한다.
+    @Repository
+    public interface QueryDslRepository extends JpaRepository<Product, Long> , QueryDslRepositoryCustom{
+    
+    }
+    ```
+    
+    - **맞춤을 별도로 만듬**
+        - **RepositoryCustom (맞춤)**
+        
+        ```java
+        /*
+        
+        	# 사용자 정의 레포지토리 생성 절차 (Repository Custom)
+        	
+        	1) 사용자정의 인터페이스 생성 (예시 : ~~RepositoryCumstom)
+        	2) 사용자정의 인터페이스를 구현한 구현체 (Impl Class) 생성 (예시 : ~~RepositoryImpl)  
+        	3) 데이터 레포지토리(JpaRepoistory상속)에 사용자정의 인터페이스를 다중상속하여 구현 (예시 extends JpaRepoistory<Entity,PK> , ~~RepositoryCustom
+        
+        */
+        
+        public interface QueryDslRepositoryCustom {
+        
+        	// 1-1) 기초 메뉴얼 (전체컬럼 조회)
+        	public List<Product> basicEx01();
+        	
+        	// 1-2) 기초 메뉴얼 (단일컬럼 조회)
+        	public List<String> basicEx02();
+        	
+        	// 1-3) 기초 메뉴얼 (2개 이상의 컬럼 조회)
+        	public List<Tuple> basicEx03(); // import com.querydsl.core.Tuple;
+        	
+        	// 2) Where 구문 사용 메뉴얼
+        	public Product whereEx(Long productId);
+        	
+        	// 3) Order By 구문 사용 메뉴얼
+        	public List<Product> orderByEx(@Param("deliveryPrice") Integer deliveryPrice);
+        
+        	// 4) Group By 사용 메뉴얼
+        	public List<Tuple> groupByEx();
+        
+        	// 5) Join 구문 사용 메뉴얼
+        	public List<Product> joinEx();
+        	
+        	// 6) Subquery 구문 사용 메뉴얼
+        	public List<Product> subqueryEx();
+        	
+        }
+        ```
+        
+        - **RepositoryImpl (실현체)**
+        
+        ```java
+        /*
+        
+        	# 객체 주입 방법 2
+        	
+        	@RequiredArgsConstructor 					// final 키워드가 붙거나 @NonNull 어노테이션이 붙은 필드에 대한 생성자를 자동으로 생성
+        	private final JPAQueryFactory queryFactory; // 이 필드는 @RequiredArgsConstructor에 의해 생성되는 생성자를 통해 자동으로 주입된다.
+        
+        */
+        
+        @Repository
+        public class QueryDslRepositoryImpl implements QueryDslRepositoryCustom {  // 커스텀 인터페이스를 구현하여 사용
+        
+        	// 객체 주입 방법 1
+        	@Autowired
+        	private JPAQueryFactory queryFactory; // QueryDslConfig 파일의 JPAQueryFactory 객체 주입
+        	
+        	/*
+        	
+        	 	# Q-Type 클래스
+        	 	
+        	 	- Q-Type 클래스는 QueryDSL에서 자동으로 생성되며 , JPA 엔티티를 타입 안전하게 쿼리할 수 있도록 돕는 클래스이다.
+        	 	- Q-Type 클래스를 사용한 쿼리작성이 더욱 간편하고 안전해진다.
+        	 	- Q-Type 클래스는 각 엔티티 클래스에 대응한다.
+        	
+        	 */
+        	
+        	
+        	QProduct product = QProduct.product; // Q(Query)-Type 클래스 생성  
+        	QBrand brand = QBrand.brand;		 // Q(Query)-Type 클래스 생성
+        	
+        	/*
+        	 
+        	 	[ QueryDSL 레퍼런스 사이트 ] 
+        	 
+        	 	http://querydsl.com/
+        	 
+        	 */
+        	
+        	// 1-1) 기초 메뉴얼 (전체컬럼 조회)
+        	@Override
+        	public List<Product> basicEx01() {
+        		
+        		List<Product> products = queryFactory
+        								.selectFrom(product)
+        								.fetch(); // (가져오다,데려오다,불러오다) > 리스트로 조회 , 데이터가 없으면 빈 리스트를 반환
+        		
+        		// 매핑 후 반환 (추후에 공부)
+        		
+        		
+        		return products;
+        		
+        	}
+        	
+        	// 1-2) 기초 메뉴얼 (단일컬럼 조회)
+        	@Override
+        	public List<String> basicEx02() {
+        		List<String> productNms = queryFactory
+        								.select(product.productNm)
+        								.from(product)
+        								.fetch();
+        		return productNms;
+        	}
+        	
+        	// 1-3) 기초 메뉴얼 (2개 이상의 컬럼 조회)
+        	@Override
+        	// List<Tuple> : import com.querydsl.core.Tuple;
+        	public List<Tuple> basicEx03() {
+        		List<Tuple> products = queryFactory
+        				              .select(product.productId , product.productNm)
+        				              .from(product)
+        				              .fetch();
+        		
+        		// 매핑 후 반환(추후에 공부)
+        		/*for (Tuple tuple : products) {
+        			// Q-Type class.field 형태로 접근
+        			long productId = tuple.get(product.productId);
+        			String productNm = tuple.get(product.productNm);
+        		
+        			System.out.println(productId);
+        			System.out.println(productNm);
+        		}*/
+        		
+        		return products;
+        	}
+        
+        	@Override
+        	public Product whereEx(Long productId) {
+        		Product result = queryFactory
+        						.selectFrom(product)
+        						.where(product.productId.eq(productId))
+        						.fetchOne(); // 1건 조회 
+        		return result;
+        	}
+        
+        	@Override
+        	public List<Product> orderByEx(Integer deliveryPrice) {
+        		List<Product> products = queryFactory
+        				                .selectFrom(product)
+        				                .where(product.deliveryPrice.eq(deliveryPrice))
+        				                .orderBy(product.price.asc())
+        				                .fetch();
+        		return products;
+        	}
+        
+        	@Override
+        	public List<Tuple> groupByEx() {
+        		
+        		List<Tuple> result = queryFactory
+        				            .select(product.deliveryPrice , product.price.count())
+        				            .from(product)
+        				            .groupBy(product.deliveryPrice)
+        				            .fetch();
+        		return result;
+        	}
+        
+        	@Override
+        	public List<Product> joinEx() {
+        		// TODO Auto-generated method stub
+        		return null;
+        	}
+        
+        	@Override
+        	public List<Product> subqueryEx() {
+        		// TODO Auto-generated method stub
+        		return null;
+        	}
+        
+        }
+        
+        ```
+        
+        **→ test 코드에서 출력 확인 가능**
