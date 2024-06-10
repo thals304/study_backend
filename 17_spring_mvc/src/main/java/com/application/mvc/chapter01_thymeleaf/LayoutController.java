@@ -67,16 +67,7 @@ public class LayoutController {
 		return "chapter01_thymeleaf/layout/portfolioPractice/aboutMe";
 	}
 	
-	/*프로젝트 실습 - template3*/
-	@GetMapping("/myPageMain")
-	public String myPageMain() {
-		return "chapter01_thymeleaf/layout/portfolioPractice/myPageMain";
-	}
 	
-	@GetMapping("/myPageInfo")
-	public String myPageInfo() {
-		return "chapter01_thymeleaf/layout/portfolioPractice/myPageInfo";
-	}
 	
 	
 }
