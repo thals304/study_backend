@@ -1,0 +1,7 @@
+pluginManagement {
+	repositories {
+		maven { url 'https://repo.spring.io/snapshot' }
+		gradlePluginPortal()
+	}
+}
+rootProject.name = '21_spring_jpa_trinaing_ver1'
