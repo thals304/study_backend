@@ -1,5 +1,3 @@
-
-
 package com.application.trainingVer2.postAdvance.controller;
 
 import java.util.List;
@@ -19,7 +17,8 @@ import com.application.trainingVer2.postAdvance.dto.PostDTO;
 import com.application.trainingVer2.postAdvance.service.PostService;
 import com.application.trainingVer2.postAdvance.service.ReplyService;
 /*
- * 24.06.06-08 time
+ * 24.06.06-08 
+ * 24.06.13
  * today 소감문
  * 모든 Post, Reply, User html에 session.userId != null 로 로그인 / 마이페이지, 로그아웃이 나눠지는 부분이 포함
  * Post   > [Post - 게시물 디테일 정보 보기 ] -> PostServiceImpl에서 @Transactional을 사용한 이유? 기능?
@@ -29,7 +28,8 @@ import com.application.trainingVer2.postAdvance.service.ReplyService;
  * User   > [User - 회원 정보 수정] -> html에서 profileUUID를 hidden으로 보내는 이유? 
  * 어차피 다시 업로드 하는 건데 수정하지 않았을 때 기존 profileUUID를 보내주기 위함인가? 그러면 mapper에서 부분 update로 profileUUID는 업데이트 안해주면 되는 것 아닌가?
  *        > [User - 회원 탈퇴] -> Controller(Post)에서 session 객체 생성하는 것이 아닌 html에서 session.userId를 hidden으로 전달해서 사용해도 되나? 
- * Admin
+ * 모든 Admin html에 session.adminId != null로 공통화면, 로그아웃 나눠지는 부분 포함
+ * Admin 
  * */
 
 @Controller
