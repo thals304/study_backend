@@ -9562,3 +9562,78 @@ db 테이블의 컬럼과 같은 내용의 private 필드를 만들고
         ```
         
         **→ test 코드에서 출력 확인 가능**
+
+- **Hibernate > EntityRelation**
+    - **spring.jpa.hibernate.ddl-auto=정책 (application.properties 설정파일)**
+        - Hibernate는 애플리케이션을 시작할 때 데이터베이스 스키마를 자동으로 업데이트한다.
+        - Entity 클래스에 대한 변경 사항(새로운 엔티티 추가, 기존 엔티티의 필드 추가/삭제/변경 등)이 있을 경우
+        해당 변경 사항을 데이터베이스 스키마에 반영할 수 있다.
+        - **[ 정책 ]**
+            1. **none**: 데이터베이스 스키마를 자동으로 생성하지 않는다. 혹은 ddl-auto 설정을 주석처리하여 사용
+            2. **create**: 애플리케이션을 실행할 때마다 데이터베이스 스키마를 새로 생성한다.
+            3. **create-drop**: create와 유사하게 애플리케이션 시작 시 데이터베이스 스키마를 생성하지만
+            애플리케이션이 종료될 때 생성된 테이블을 모두 삭제한다.
+            4. **update**: 애플리케이션 실행 시 데이터베이스 스키마를 업데이트한다.
+            5. **validate**: 애플리케이션 실행 시 엔티티와 테이블이 올바르게 매핑되었는지 검증만 수행하고 데이터베이스 스키마는 변경하지 않는다.
+    - **객체와 테이블 매핑 @Entity , @Table**
+        - JPA를 사용하여 관계형 데이터베이스의 테이블과 매핑할 클래스에 @Entity 어노테이션을 사용한다.
+            - **@Entity** : **클래스가 JPA 엔티티임을 나타낸다.** 클래스 이름이 DB 테이블 이름에 매핑된다.
+            - **@Table**  : 엔티티 클래스가 매핑될 **테이블의 정보를 명시**한다. (name, catalog, schema 등의 속성을 가질 수 있음)
+        - 기본생성자는 필수로 존재해야 한다.
+    - **기본키 매핑**
+        - **@Id** : 엔티티의 **기본 키(Primary Key)**를 나타낸다.
+            - **strategy**: 기본 키 생성 전략을 지정한다
+            - **GenerationType** : 열거형(enum)의 값 중 하나를 사용할 수 있다.
+        - **@GeneratedValue** : 기본 **키의 값을 자동으로 생성할 전략**을 명시한다. **(AUTO, IDENTITY, SEQUENCE, TABLE 중 선택)**
+            - **@GeneratedValue(strategy = GenerationType.AUTO)**
+                - AUTO는 JPA 구현체가 기본 키 생성을 자동으로 선택하게 한다.
+                - 데이터베이스에 따라 적절한 전략을 자동으로 선택한다.
+            - **@GeneratedValue(strategy = GenerationType.IDENTITY)**
+                - IDENTITY는 데이터베이스의 자동 증가(auto-increment) 필드를 사용하여 기본 키 값을 생성한다.
+                - 주로 MySQL, SQL Server 등에서 사용된다.
+            - **@GeneratedValue(strategy = GenerationType.SEQUENCE)**
+                - SEQUENCE는 데이터베이스 시퀀스를 사용하여 기본 키 값을 생성한다.
+                - 주로 Oracle, PostgreSQL 등에서 사용되고 이 경우 @SequenceGenerator와 함께 사용해야 한다.
+            - **@GeneratedValue(strategy = GenerationType.TABLE)**
+                - TABLE은 키 생성용 테이블을 사용하여 기본 키 값을 생성한다.
+                - 모든 데이터베이스에서 사용할 수 있으며 @TableGenerator와 함께 사용해야 한다.
+    - **필드와 컬럼 매핑**
+        - **어노테이션**
+            - **@Column** : 필드가 매핑될 테이블의 컬럼을 명시한다. (name, nullable, length 등의 속성을 가질 수 있음)
+            - **@Temporal** : 날짜(java.util.Date, java.util.Calendar)타입의 매핑을 명시한다. (TemporalType.DATE, TemporalType.TIME, TemporalType.TIMESTAMP 중 선택)
+            - **@Lob** : 이진형 대용량 객체 BLOB(Binary Large Object) , 문자형 대용량 객체 CLOB(Character Large Object)타입의 매핑을 명시한다.
+            - **@Enumerated** : Enum 타입의 매핑을 명시한다.
+            - **@Transient** : 필드가 영속성 컨텍스트에 저장되거나 검색되지 않음을 나타낸다.
+        - **타입**
+            - **정수 (Long , Integer)**
+                - **Long** 	 : 메모리 사용량 8 바이트 , 범위 : -9,223,372,036,854,775,808 ~ 9,223,372,036,854,775,807
+                - **Integer**  : 메모리 사용량 4 바이트  , 범위 : -2,147,483,648 ~ 2,147,483,647
+            - **실수 (Double)**
+            - **문자열 (String , @Lob)**
+                - String  : 기본값 255
+                - **@Lob**
+                    - [Database마다 다름 MySQL 기준]
+                    - TEXT(최대 65,535자), MEDIUMTEXT(최대 16,777,215자), LONGTEXT(최대 4GB)
+                    - BLOB(최대 65,535바이트), MEDIUMBLOB(최대 16,777,215바이트), LONGBLOB(최대 4GB)
+            - **날짜 (@Temporal , LocalDate , LocalDateTime)**
+                - **@Temporal(TemporalType.정책) : DATE > 날짜 , TIME > 시간 , TIMESTAMP**
+                - **LocalDate 					 : 날짜  > Date**
+                - L**ocalDateTime 				 : 날짜 + 시간 > Timestamp**
+            - **enum**
+                - 이뉴머레이션(enumeration) 또는 열거형(enums)은 자바에서 특정 상수 집합을 정의할 때 사용되는 특별한 데이터 타입이다.
+                - 이뉴머레이션은 코드의 가독성과 유지보수성을 높이는 데 도움을 준다.
+                - 자바에서는 enum 키워드를 사용하여 이뉴머레이션을 정의한다.
+                - **Enumerated(EnumType.타입작성)**
+                    - @Enumerated(EnumType.ORDINAL) : 기본값 , 순서대로 데이터가 저장됨 (예시 : 0 , 1 , 2 > **불안한 정책**)
+                    - **@Enumerated(EnumType.STRING)**  : 타입으로 저장됨 (예시 : USER , SELLER , ADMIN > **권장**)
+            - **제약사항 (Constraint)**
+                - **기본 키는 엔티티의 각 인스턴스를 고유하게 식별한다.**
+                    - JPA에서는 **@Id와 @GeneratedValue** 어노테이션을 사용하여 기본 키를 정의한다.
+                - **NOT NULL 제약사항은 특정 컬럼이 NULL 값을 가질 수 없도록 한다.**
+                    - **@Column** 어노테이션의 **nullable 속성을 사용**하여 설정할 수 있다.
+                - **유니크 제약사항은 특정 컬럼의 값이 중복되지 않도록 한다.**
+                    - **@Column 어노테이션의 unique 속성**을 사용하거나 **@UniqueConstraint 어노테이션**을 사용하여 설정할 수 있다.
+                - **길이 제약사항**
+                    - 문자열 길이 제약사항은 **@Column 어노테이션의 length 속성**을 사용하여 설정할 수 있다.
+                - **외래 키 제약사항은 엔티티 간의 관계를 정의하고 무결성을 유지한다.**
+                    - **@ManyToOne, @OneToMany, @OneToOne, @ManyToMany 어노테이션**을 사용하여 설정할 수 있다.
